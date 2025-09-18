@@ -89,6 +89,11 @@
             background-color: rgba(255, 255, 255, 0.2);
         }
         
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
         .auth-buttons button {
             background-color: white;
             color: var(--primary);
@@ -103,6 +108,89 @@
         .auth-buttons button:hover {
             background-color: var(--light);
             transform: translateY(-2px);
+        }
+        
+        /* Auth Modal */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .auth-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .auth-tab.active {
+            border-bottom: 2px solid var(--primary);
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+        
+        .auth-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .auth-form button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .auth-form button:hover {
+            background-color: var(--secondary);
+        }
+        
+        .auth-error {
+            color: var(--danger);
+            margin-top: 1rem;
+            text-align: center;
+            display: none;
         }
         
         /* Hero Section */
@@ -150,7 +238,7 @@
             font-size: 1.2rem;
         }
         
-        /* Filter Section */
+        /* Filters Section */
         .filters {
             background-color: white;
             padding: 1.5rem;
@@ -321,6 +409,37 @@
             text-decoration: none;
         }
         
+        /* Dashboard */
+        .dashboard {
+            display: none;
+            margin: 2rem 0;
+        }
+        
+        .dashboard-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .dashboard-tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .dashboard-tab.active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .dashboard-content {
+            display: none;
+        }
+        
+        .dashboard-content.active {
+            display: block;
+        }
+        
         /* Notification */
         .notification {
             position: fixed;
@@ -447,19 +566,47 @@
             
             <nav>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Opportunities</a></li>
-                    <li><a href="#">Dashboard</a></li>
+                    <li><a href="#" class="nav-home">Home</a></li>
+                    <li><a href="#" class="nav-opportunities">Opportunities</a></li>
+                    <li><a href="#" class="nav-dashboard">Dashboard</a></li>
                     <li><a href="#">Resources</a></li>
                     <li><a href="#">Contact</a></li>
                 </ul>
             </nav>
             
             <div class="auth-buttons">
-                <button>Sign In</button>
+                <button id="loginBtn">Sign In</button>
+                <button id="signupBtn">Sign Up</button>
+                <button id="logoutBtn" style="display: none;">Logout</button>
             </div>
         </div>
     </header>
+    
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-content">
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">Login</div>
+                <div class="auth-tab" data-tab="signup">Sign Up</div>
+            </div>
+            
+            <div class="auth-form active" id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email">
+                <input type="password" id="loginPassword" placeholder="Password">
+                <button id="doLogin">Login</button>
+                <div class="auth-error" id="loginError"></div>
+            </div>
+            
+            <div class="auth-form" id="signupForm">
+                <input type="text" id="signupName" placeholder="Full Name">
+                <input type="email" id="signupEmail" placeholder="Email">
+                <input type="password" id="signupPassword" placeholder="Password">
+                <input type="password" id="signupConfirm" placeholder="Confirm Password">
+                <button id="doSignup">Sign Up</button>
+                <div class="auth-error" id="signupError"></div>
+            </div>
+        </div>
+    </div>
     
     <!-- Hero Section -->
     <section class="hero">
@@ -553,215 +700,31 @@
         
         <!-- Opportunities Grid -->
         <h2>Featured Opportunities</h2>
-        <div class="opportunities-grid">
-            <!-- Opportunity Card 1 -->
-            <div class="opportunity-card">
-                <div class="card-header">
-                    <span class="opportunity-type internship">Internship</span>
-                    <h3>Software Development Intern</h3>
-                    <p class="organization">Tech Innovations Inc.</p>
-                </div>
-                
-                <div class="card-body">
-                    <div class="detail">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <span>Paid - $25/hr</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Remote</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="deadline">Deadline: Jun 15, 2023</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Impact: High</span>
-                    </div>
-                    <p>Gain real-world experience in software development while working with a talented team on cutting-edge projects.</p>
-                </div>
-                
-                <div class="card-footer">
-                    <button class="save-btn" title="Save to dashboard"><i class="far fa-bookmark"></i></button>
-                    <a href="#" class="apply-link">View Details & Apply</a>
-                </div>
+        <div class="opportunities-grid" id="opportunitiesGrid">
+            <!-- Opportunity cards will be dynamically inserted here -->
+        </div>
+        
+        <!-- Dashboard -->
+        <div class="dashboard" id="dashboard">
+            <h2>My Dashboard</h2>
+            
+            <div class="dashboard-tabs">
+                <div class="dashboard-tab active" data-tab="pending">Pending Opportunities</div>
+                <div class="dashboard-tab" data-tab="completed">Completed</div>
             </div>
             
-            <!-- Opportunity Card 2 -->
-            <div class="opportunity-card">
-                <div class="card-header">
-                    <span class="opportunity-type research">Research</span>
-                    <h3>Environmental Science Research</h3>
-                    <p class="organization">University of Science</p>
-                </div>
-                
-                <div class="card-body">
-                    <div class="detail">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <span>Stipend - $2,000</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>On-site</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="deadline">Deadline: May 30, 2023</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Impact: Medium</span>
-                    </div>
-                    <p>Join our research team studying climate change impacts on local ecosystems. Perfect for students interested in environmental science.</p>
-                </div>
-                
-                <div class="card-footer">
-                    <button class="save-btn" title="Save to dashboard"><i class="far fa-bookmark"></i></button>
-                    <a href="#" class="apply-link">View Details & Apply</a>
-                </div>
+            <div class="dashboard-content active" id="pendingContent">
+                <p>You haven't saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>
             </div>
             
-            <!-- Opportunity Card 3 -->
-            <div class="opportunity-card">
-                <div class="card-header">
-                    <span class="opportunity-type summer">Summer Program</span>
-                    <h3>Business Leadership Academy</h3>
-                    <p class="organization">Global Business Institute</p>
-                </div>
-                
-                <div class="card-body">
-                    <div class="detail">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <span>Unpaid</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Hybrid</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="deadline">Deadline: Apr 20, 2023</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Impact: High</span>
-                    </div>
-                    <p>Develop leadership skills and business acumen through this intensive 4-week summer program. Networking opportunities with industry leaders.</p>
-                </div>
-                
-                <div class="card-footer">
-                    <button class="save-btn" title="Save to dashboard"><i class="far fa-bookmark"></i></button>
-                    <a href="#" class="apply-link">View Details & Apply</a>
-                </div>
-            </div>
-            
-            <!-- Opportunity Card 4 -->
-            <div class="opportunity-card">
-                <div class="card-header">
-                    <span class="opportunity-type internship">Internship</span>
-                    <h3>Graphic Design Intern</h3>
-                    <p class="organization">Creative Solutions Agency</p>
-                </div>
-                
-                <div class="card-body">
-                    <div class="detail">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <span>Paid - $20/hr</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Remote</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="deadline">Deadline: Jul 1, 2023</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Impact: Medium</span>
-                    </div>
-                    <p>Work with our design team to create visual content for clients. Build your portfolio with real-world projects.</p>
-                </div>
-                
-                <div class="card-footer">
-                    <button class="save-btn" title="Save to dashboard"><i class="far fa-bookmark"></i></button>
-                    <a href="#" class="apply-link">View Details & Apply</a>
-                </div>
-            </div>
-            
-            <!-- Opportunity Card 5 -->
-            <div class="opportunity-card">
-                <div class="card-header">
-                    <span class="opportunity-type research">Research</span>
-                    <h3>Neuroscience Research Assistant</h3>
-                    <p class="organization">City Medical Center</p>
-                </div>
-                
-                <div class="card-body">
-                    <div class="detail">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <span>Stipend - $1,500</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>On-site</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="deadline">Deadline: Jun 5, 2023</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Impact: High</span>
-                    </div>
-                    <p>Assist with cutting-edge neuroscience research. Ideal for students interested in medicine, psychology, or biology.</p>
-                </div>
-                
-                <div class="card-footer">
-                    <button class="save-btn" title="Save to dashboard"><i class="far fa-bookmark"></i></button>
-                    <a href="#" class="apply-link">View Details & Apply</a>
-                </div>
-            </div>
-            
-            <!-- Opportunity Card 6 -->
-            <div class="opportunity-card">
-                <div class="card-header">
-                    <span class="opportunity-type summer">Summer Program</span>
-                    <h3>Computer Science Summer Institute</h3>
-                    <p class="organization">Tech Education Foundation</p>
-                </div>
-                
-                <div class="card-body">
-                    <div class="detail">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <span>Scholarship Available</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>On-site</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="deadline">Deadline: May 15, 2023</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Impact: High</span>
-                    </div>
-                    <p>Intensive 4-week program focused on coding, algorithms, and software development. No prior experience required.</p>
-                </div>
-                
-                <div class="card-footer">
-                    <button class="save-btn" title="Save to dashboard"><i class="far fa-bookmark"></i></button>
-                    <a href="#" class="apply-link">View Details & Apply</a>
-                </div>
+            <div class="dashboard-content" id="completedContent">
+                <p>You haven't completed any opportunities yet.</p>
             </div>
         </div>
     </main>
     
     <!-- Notification -->
-    <div class="notification">
+    <div class="notification" id="notification">
         <i class="fas fa-bell"></i>
         <div class="notification-content">
             <h4>Deadline Approaching</h4>
@@ -811,29 +774,409 @@
             <p>&copy; 2023 OpportunityHub. All rights reserved.</p>
         </div>
     </footer>
-    
-    <script>
-        // Save opportunity functionality
-        const saveButtons = document.querySelectorAll('.save-btn');
+
+    <!-- Firebase App (core SDK is always required) -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+        import { getDatabase, ref, set, get, child, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDEFumFatqFMn29D1x9f-_WWiVh2F_aVtQ",
+            authDomain: "youthaxis-16bab.firebaseapp.com",
+            projectId: "youthaxis-16bab",
+            storageBucket: "youthaxis-16bab.firebasestorage.app",
+            messagingSenderId: "287063568472",
+            appId: "1:287063568472:web:9209a3a4a82407d63e9a2d",
+            measurementId: "G-7M9QET4FLZ",
+            databaseURL: "https://youthaxis-16bab-default-rtdb.firebaseio.com/"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        // DOM Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const authModal = document.getElementById('authModal');
+        const authTabs = document.querySelectorAll('.auth-tab');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const doLogin = document.getElementById('doLogin');
+        const doSignup = document.getElementById('doSignup');
+        const loginError = document.getElementById('loginError');
+        const signupError = document.getElementById('signupError');
+        const notification = document.getElementById('notification');
+        const opportunitiesGrid = document.getElementById('opportunitiesGrid');
+        const dashboard = document.getElementById('dashboard');
+        const navDashboard = document.querySelector('.nav-dashboard');
+        const navHome = document.querySelector('.nav-home');
+        const navOpportunities = document.querySelector('.nav-opportunities');
+
+        // Sample opportunities data
+        const opportunities = [
+            {
+                id: 'opp1',
+                type: 'internship',
+                title: 'Software Development Intern',
+                organization: 'Tech Innovations Inc.',
+                paid: true,
+                rate: '$25/hr',
+                location: 'Remote',
+                deadline: '2023-06-15',
+                impact: 'High',
+                description: 'Gain real-world experience in software development while working with a talented team on cutting-edge projects.'
+            },
+            {
+                id: 'opp2',
+                type: 'research',
+                title: 'Environmental Science Research',
+                organization: 'University of Science',
+                paid: false,
+                stipend: '$2,000',
+                location: 'On-site',
+                deadline: '2023-05-30',
+                impact: 'Medium',
+                description: 'Join our research team studying climate change impacts on local ecosystems. Perfect for students interested in environmental science.'
+            },
+            {
+                id: 'opp3',
+                type: 'summer',
+                title: 'Business Leadership Academy',
+                organization: 'Global Business Institute',
+                paid: false,
+                location: 'Hybrid',
+                deadline: '2023-04-20',
+                impact: 'High',
+                description: 'Develop leadership skills and business acumen through this intensive 4-week summer program. Networking opportunities with industry leaders.'
+            },
+            {
+                id: 'opp4',
+                type: 'internship',
+                title: 'Graphic Design Intern',
+                organization: 'Creative Solutions Agency',
+                paid: true,
+                rate: '$20/hr',
+                location: 'Remote',
+                deadline: '2023-07-01',
+                impact: 'Medium',
+                description: 'Work with our design team to create visual content for clients. Build your portfolio with real-world projects.'
+            },
+            {
+                id: 'opp5',
+                type: 'research',
+                title: 'Neuroscience Research Assistant',
+                organization: 'City Medical Center',
+                paid: false,
+                stipend: '$1,500',
+                location: 'On-site',
+                deadline: '2023-06-05',
+                impact: 'High',
+                description: 'Assist with cutting-edge neuroscience research. Ideal for students interested in medicine, psychology, or biology.'
+            },
+            {
+                id: 'opp6',
+                type: 'summer',
+                title: 'Computer Science Summer Institute',
+                organization: 'Tech Education Foundation',
+                paid: false,
+                scholarship: true,
+                location: 'On-site',
+                deadline: '2023-05-15',
+                impact: 'High',
+                description: 'Intensive 4-week program focused on coding, algorithms, and software development. No prior experience required.'
+            }
+        ];
+
+        // Event Listeners
+        loginBtn.addEventListener('click', () => showAuthModal('login'));
+        signupBtn.addEventListener('click', () => showAuthModal('signup'));
+        logoutBtn.addEventListener('click', handleLogout);
         
-        saveButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                this.classList.toggle('saved');
-                if (this.classList.contains('saved')) {
-                    this.innerHTML = '<i class="fas fa-bookmark"></i>';
-                    showNotification('Opportunity saved to your dashboard!');
-                } else {
-                    this.innerHTML = '<i class="far fa-bookmark"></i>';
-                }
+        authTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                switchAuthTab(tabName);
             });
         });
         
-        // Notification functionality
-        function showNotification(message) {
-            const notification = document.querySelector('.notification');
-            const notificationContent = notification.querySelector('.notification-content');
+        doLogin.addEventListener('click', handleLogin);
+        doSignup.addEventListener('click', handleSignup);
+        
+        navDashboard.addEventListener('click', (e) => {
+            e.preventDefault();
+            showDashboard();
+        });
+        
+        navHome.addEventListener('click', (e) => {
+            e.preventDefault();
+            showHome();
+        });
+        
+        navOpportunities.addEventListener('click', (e) => {
+            e.preventDefault();
+            showOpportunities();
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                authModal.style.display = 'none';
+            }
+        });
+
+        // Check auth state
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                loginBtn.style.display = 'none';
+                signupBtn.style.display = 'none';
+                logoutBtn.style.display = 'block';
+                
+                // Load user's saved opportunities
+                loadUserOpportunities(user.uid);
+            } else {
+                // User is signed out
+                loginBtn.style.display = 'block';
+                signupBtn.style.display = 'block';
+                logoutBtn.style.display = 'none';
+                
+                // Hide dashboard if user is not logged in
+                dashboard.style.display = 'none';
+            }
+        });
+
+        // Initialize the app
+        function initApp() {
+            renderOpportunities();
+            checkDeadlines();
+        }
+
+        // Render opportunities to the grid
+        function renderOpportunities() {
+            opportunitiesGrid.innerHTML = '';
             
+            opportunities.forEach(opp => {
+                const opportunityCard = document.createElement('div');
+                opportunityCard.className = 'opportunity-card';
+                opportunityCard.innerHTML = `
+                    <div class="card-header">
+                        <span class="opportunity-type ${opp.type}">${getOpportunityTypeText(opp.type)}</span>
+                        <h3>${opp.title}</h3>
+                        <p class="organization">${opp.organization}</p>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="detail">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>${getCompensationText(opp)}</span>
+                        </div>
+                        <div class="detail">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${opp.location}</span>
+                        </div>
+                        <div class="detail">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span class="deadline">Deadline: ${formatDate(opp.deadline)}</span>
+                        </div>
+                        <div class="detail">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Impact: ${opp.impact}</span>
+                        </div>
+                        <p>${opp.description}</p>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <button class="save-btn" data-id="${opp.id}" title="Save to dashboard"><i class="far fa-bookmark"></i></button>
+                        <a href="#" class="apply-link">View Details & Apply</a>
+                    </div>
+                `;
+                
+                opportunitiesGrid.appendChild(opportunityCard);
+            });
+            
+            // Add event listeners to save buttons
+            const saveButtons = document.querySelectorAll('.save-btn');
+            saveButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const user = auth.currentUser;
+                    if (user) {
+                        const oppId = this.getAttribute('data-id');
+                        const opportunity = opportunities.find(opp => opp.id === oppId);
+                        saveOpportunity(user.uid, opportunity);
+                    } else {
+                        showAuthModal('login');
+                        showNotification('Please sign in to save opportunities');
+                    }
+                });
+            });
+        }
+
+        // Get opportunity type text
+        function getOpportunityTypeText(type) {
+            switch(type) {
+                case 'internship': return 'Internship';
+                case 'research': return 'Research';
+                case 'summer': return 'Summer Program';
+                default: return type;
+            }
+        }
+
+        // Get compensation text
+        function getCompensationText(opp) {
+            if (opp.paid) return `Paid - ${opp.rate}`;
+            if (opp.stipend) return `Stipend - ${opp.stipend}`;
+            if (opp.scholarship) return 'Scholarship Available';
+            return 'Unpaid';
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Show auth modal
+        function showAuthModal(tab) {
+            authModal.style.display = 'flex';
+            switchAuthTab(tab);
+        }
+
+        // Switch auth tab
+        function switchAuthTab(tabName) {
+            // Update tabs
+            authTabs.forEach(tab => {
+                if (tab.getAttribute('data-tab') === tabName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Update forms
+            if (tabName === 'login') {
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+            } else {
+                loginForm.classList.remove('active');
+                signupForm.classList.add('active');
+            }
+            
+            // Clear errors
+            loginError.style.display = 'none';
+            signupError.style.display = 'none';
+        }
+
+        // Handle login
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in 
+                    authModal.style.display = 'none';
+                    showNotification('Successfully logged in!');
+                })
+                .catch((error) => {
+                    loginError.textContent = error.message;
+                    loginError.style.display = 'block';
+                });
+        }
+
+        // Handle signup
+        function handleSignup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+            
+            // Basic validation
+            if (password !== confirm) {
+                signupError.textContent = 'Passwords do not match';
+                signupError.style.display = 'block';
+                return;
+            }
+            
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed up 
+                    const user = userCredential.user;
+                    
+                    // Save user profile
+                    set(ref(database, 'users/' + user.uid), {
+                        name: name,
+                        email: email,
+                        createdAt: new Date().toISOString()
+                    });
+                    
+                    authModal.style.display = 'none';
+                    showNotification('Account created successfully!');
+                })
+                .catch((error) => {
+                    signupError.textContent = error.message;
+                    signupError.style.display = 'block';
+                });
+        }
+
+        // Handle logout
+        function handleLogout() {
+            signOut(auth)
+                .then(() => {
+                    showNotification('Successfully logged out');
+                })
+                .catch((error) => {
+                    console.error('Logout error:', error);
+                });
+        }
+
+        // Save opportunity to user's dashboard
+        function saveOpportunity(userId, opportunity) {
+            const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+            
+            set(userOppRef, {
+                ...opportunity,
+                savedAt: new Date().toISOString(),
+                status: 'pending'
+            })
+            .then(() => {
+                showNotification('Opportunity saved to your dashboard!');
+            })
+            .catch((error) => {
+                console.error('Error saving opportunity:', error);
+            });
+        }
+
+        // Load user's saved opportunities
+        function loadUserOpportunities(userId) {
+            const userOppRef = ref(database, `userOpportunities/${userId}`);
+            
+            onValue(userOppRef, (snapshot) => {
+                const data = snapshot.val();
+                // You would update the dashboard UI here with the saved opportunities
+            });
+        }
+
+        // Check for approaching deadlines
+        function checkDeadlines() {
+            // This would check the user's saved opportunities for deadlines
+            // and show notifications for approaching deadlines
+            
+            // For demo purposes, we'll just show a notification after 2 seconds
+            setTimeout(() => {
+                showNotification('You have 3 opportunities with deadlines in the next week.');
+            }, 2000);
+        }
+
+        // Show notification
+        function showNotification(message) {
             if (message) {
+                const notificationContent = notification.querySelector('.notification-content');
                 notificationContent.innerHTML = `
                     <h4>Notification</h4>
                     <p>${message}</p>
@@ -846,27 +1189,39 @@
                 notification.classList.remove('show');
             }, 3000);
         }
-        
-        // Show a notification on page load about deadlines
-        setTimeout(() => {
-            showNotification('You have 3 opportunities with deadlines in the next week.');
-        }, 1500);
-        
-        // Filter functionality (basic implementation)
-        const applyFiltersBtn = document.querySelector('.apply-btn');
-        const resetFiltersBtn = document.querySelector('.reset-btn');
-        
-        applyFiltersBtn.addEventListener('click', function() {
-            showNotification('Filters applied successfully.');
-        });
-        
-        resetFiltersBtn.addEventListener('click', function() {
-            const filterSelects = document.querySelectorAll('.filters select');
-            filterSelects.forEach(select => {
-                select.selectedIndex = 0;
-            });
-            showNotification('Filters reset successfully.');
-        });
+
+        // Show dashboard
+        function showDashboard() {
+            const user = auth.currentUser;
+            if (user) {
+                document.querySelector('.hero').style.display = 'none';
+                document.querySelector('.filters').style.display = 'none';
+                document.querySelector('#opportunitiesGrid').style.display = 'none';
+                document.querySelector('main h2').style.display = 'none';
+                dashboard.style.display = 'block';
+            } else {
+                showAuthModal('login');
+                showNotification('Please sign in to view your dashboard');
+            }
+        }
+
+        // Show home page
+        function showHome() {
+            document.querySelector('.hero').style.display = 'block';
+            document.querySelector('.filters').style.display = 'block';
+            document.querySelector('#opportunitiesGrid').style.display = 'grid';
+            document.querySelector('main h2').style.display = 'block';
+            dashboard.style.display = 'none';
+        }
+
+        // Show opportunities page
+        function showOpportunities() {
+            showHome();
+            // Additional logic for opportunities page could go here
+        }
+
+        // Initialize the app
+        initApp();
     </script>
 </body>
 </html>
