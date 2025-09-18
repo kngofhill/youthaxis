@@ -1,1 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouthAxis | The Central Hub for Student Opportunities</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --secondary: #3a0ca3;
+      --accent: #f72585;
+      --light: #f8f9fa;
+      --dark: #212529;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e6ecff 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+    }
+    
+    .hero-section {
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      border-radius: 15px;
+      padding: 3rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      background-size: 200% auto;
+      animation: gradientBG 15s ease infinite;
+      position: relative;
+      overflow: hidden;
+    }
 
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      transform: rotate(30deg);
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .logo-text {
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+      font-size: 2.5rem;
+      background: linear-gradient(45deg, #fff 0%, #dbe4ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .opportunity-card {
+      border-left: 4px solid var(--primary);
+      transition: all 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .opportunity-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(67, 97, 238, 0.15);
+    }
+    
+    .opportunity-header {
+      background: linear-gradient(135deg, rgba(67, 97, 238, 0.05) 0%, rgba(58, 12, 163, 0.05) 100%);
+      padding: 1rem;
+      border-radius: 12px 12px 0 0;
+      position: relative;
+    }
+    
+    .get-started-btn {
+      background: linear-gradient(to right, #f72585, #7209b7);
+      border: none;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s;
+    }
+    
+    .get-started-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(247, 37, 133, 0.4);
+    }
+    
+    .card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(67, 97, 238, 0.15);
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary:hover {
+      background: var(--secondary);
+      transform: translateY(-2px);
+    }
+    
+    .category-badge {
+      display: inline-block;
+      padding: 0.35rem 0.65rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .STEM { background: rgba(67, 97, 238, 0.1); color: var(--primary); }
+    .Business { background: rgba(58, 12, 163, 0.1); color: var(--secondary); }
+    .Arts { background: rgba(247, 37, 133, 0.1); color: var(--accent); }
+    .Humanities { background: rgba(114, 9, 183, 0.1); color: #7209b7; }
+    .Social-Sciences { background: rgba(253, 126, 20, 0.1); color: #fd7e14; }
+    .Leadership { background: rgba(13, 110, 253, 0.1); color: #0d6efd; }
+    
+    .hide { display: none !important; }
+    
+    .pulse-animation {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .floating {
+      animation: floating 3s ease-in-out infinite;
+    }
+    
+    @keyframes floating {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .feature-icon {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      transition: all 0.3s;
+    }
+    
+    .feature-icon:hover {
+      transform: scale(1.1);
+      color: var(--secondary);
+    }
+    
+    .impact-high { border-left: 4px solid #dc3545; }
+    .impact-medium { border-left: 4px solid #fd7e14; }
+    .impact-low { border-left: 4px solid #20c997; }
+    
+    .save-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+    }
+    
+    .filter-section {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(67, 97, 238, 0.08);
+      margin-bottom: 2rem;
+    }
+    
+    .filter-group {
+      margin-bottom: 1rem;
+    }
+    
+    .filter-group label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+    
+    .impact-badge {
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+    }
+    
+    .nav-brand {
+      font-weight: 800;
+      font-size: 1.8rem;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+    }
+    
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      border: 1px solid rgba(0,0,0,0.1);
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+    }
+    
+    .spinner-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <!-- Navigation -->
+    <nav class="d-flex justify-content-between align-items-center mb-4">
+      <div class="nav-brand">YouthAxis</div>
+      <div id="authButtons" class="d-flex gap-2">
+        <button class="btn btn-outline-primary" onclick="app.showAuth('login')">
+          <i class="bi bi-box-arrow-in-right"></i> Log In
+        </button>
+        <button class="btn btn-primary" onclick="app.showAuth('register')">
+          <i class="bi bi-person-plus"></i> Register
+        </button>
+      </div>
+      <div id="userControls" class="d-flex gap-2 hide">
+        <button id="savedOpportunitiesBtn" class="btn btn-outline-info" onclick="app.showSavedOpportunities()">
+          <i class="bi bi-bookmark-check"></i> Saved
+        </button>
+        <button id="logoutBtn" class="btn btn-outline-danger" onclick="app.handleLogout()">
+          <i class="bi bi-box-arrow-left"></i> Log Out
+        </button>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section text-center">
+      <h1 class="logo-text mb-3">YouthAxis</h1>
+      <p class="lead mb-4">The central hub connecting students with life-changing opportunities worldwide</p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <button class="btn btn-light btn-lg pulse-animation get-started-btn" onclick="document.getElementById('opportunities').scrollIntoView({behavior: 'smooth'})">
+          <i class="bi bi-compass"></i> Find Your Path
+        </button>
+        <a href="#opportunities" class="btn btn-outline-light btn-lg">
+          <i class="bi bi-search"></i> Explore Opportunities
+        </a>
+      </div>
+    </div>
+    
+    <!-- Features Grid -->
+    <div class="row text-center mb-5">
+      <div class="col-md-4 mb-4">
+        <div class="p-4 bg-white rounded-3 h-100">
+          <i class="bi bi-compass feature-icon floating"></i>
+          <h3>Find Your Direction</h3>
+          <p>Discover opportunities that align with your passions and goals</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="p-4 bg-white rounded-3 h-100">
+          <i class="bi bi-bell feature-icon floating"></i>
+          <h3>Never Miss Out</h3>
+          <p>Smart deadline reminders ensure you never miss an application</p>
+        </div>
+      </div>
+      <div class="col-md-4 mb-4">
+        <div class="p-4 bg-white rounded-3 h-100">
+          <i class="bi bi-globe feature-icon floating"></i>
+          <h3>Global Access</h3>
+          <p>Opportunities from around the world in one centralized platform</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <h3 class="mb-4" id="opportunities"><i class="bi bi-funnel"></i> Find Your Perfect Opportunity</h3>
+      
+      <div class="row">
+        <div class="col-md-3 filter-group">
+          <label for="filter-type">Type</label>
+          <select id="filter-type" class="form-select">
+            <option value="">All Types</option>
+            <option value="Internship">Internship</option>
+            <option value="Competition">Competition</option>
+            <option value="Summer Program">Summer Program</option>
+            <option value="Scholarship">Scholarship</option>
+            <option value="Volunteering">Volunteering</option>
+            <option value="Workshop">Workshop</option>
+          </select>
+        </div>
+        
+        <div class="col-md-3 filter-group">
+          <label for="filter-field">Field of Interest</label>
+          <select id="filter-field" class="form-select">
+            <option value="">All Fields</option>
+            <option value="STEM">STEM</option>
+            <option value="Business">Business</option>
+            <option value="Arts">Arts</option>
+            <option value="Humanities">Humanities</option>
+            <option value="Social Sciences">Social Sciences</option>
+            <option value="Leadership">Leadership</option>
+          </select>
+        </div>
+        
+        <div class="col-md-2 filter-group">
+          <label for="filter-format">Format</label>
+          <select id="filter-format" class="form-select">
+            <option value="">All Formats</option>
+            <option value="Remote">Remote</option>
+            <option value="In-person">In-person</option>
+            <option value="Hybrid">Hybrid</option>
+          </select>
+        </div>
+        
+        <div class="col-md-2 filter-group">
+          <label for="filter-cost">Cost</label>
+          <select id="filter-cost" class="form-select">
+            <option value="">All Costs</option>
+            <option value="Free">Free</option>
+            <option value="Paid">Paid</option>
+          </select>
+        </div>
+        
+        <div class="col-md-2 filter-group">
+          <label for="filter-impact">Impact Level</label>
+          <select id="filter-impact" class="form-select">
+            <option value="">All Levels</option>
+            <option value="high">High Impact</option>
+            <option value="medium">Medium Impact</option>
+            <option value="low">Low Impact</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="row mt-2">
+        <div class="col-12 d-flex justify-content-end">
+          <button id="applyFiltersBtn" class="btn btn-primary me-2" onclick="app.loadListings()">
+            <i class="bi bi-filter"></i> Apply Filters
+          </button>
+          <button id="clearFiltersBtn" class="btn btn-outline-secondary" onclick="app.clearFilters()">
+            <i class="bi bi-x-circle"></i> Clear
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Listings -->
+    <div id="listings" class="mt-4 row g-4"></div>
+
+    <!-- Auth Modal -->
+    <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="authModalLabel">Log In</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="app.handleLogin(event)">
+              <div class="mb-3">
+                <label for="loginEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="loginEmail" required>
+              </div>
+              <div class="mb-3">
+                <label for="loginPassword" class="form-label">Password</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="loginPassword" required>
+                  <button class="btn btn-outline-secondary" type="button" onclick="app.togglePasswordVisibility('loginPassword', 'toggleLoginPassword')">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">
+                <span id="loginBtnText">Log In</span>
+                <span id="loginSpinner" class="spinner-border spinner-border-sm ms-2 hide" role="status" aria-hidden="true"></span>
+              </button>
+              <div class="text-center mt-2">
+                <a href="#" onclick="app.showPasswordReset()">Forgot password?</a>
+              </div>
+            </form>
+            
+            <!-- Register Form -->
+            <form id="registerForm" class="mt-4 hide" onsubmit="app.handleRegister(event)">
+              <div class="mb-3">
+                <label for="registerEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="registerEmail" required>
+              </div>
+              <div class="mb-3">
+                <label for="registerPassword" class="form-label">Password (6+ characters)</label>
+                <div class="input-group">
+                  <input type="password" class="form-control" id="registerPassword" required minlength="6">
+                  <button class="btn btn-outline-secondary" type="button" onclick="app.togglePasswordVisibility('registerPassword', 'toggleRegisterPassword')">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+                <div class="form-text">Use at least 6 characters with a mix of letters and numbers</div>
+              </div>
+              <button type="submit" class="btn btn-success w-100">
+                <span id="registerBtnText">Register</span>
+                <span id="registerSpinner" class="spinner-border spinner-border-sm ms-2 hide" role="status" aria-hidden="true"></span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password Reset Modal -->
+    <div class="modal fade" id="passwordResetModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">Reset Password</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="passwordResetForm" onsubmit="app.handlePasswordReset(event)">
+              <div class="mb-3">
+                <label for="resetEmail" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="resetEmail" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">
+                <span id="resetBtnText">Send Reset Link</span>
+                <span id="resetSpinner" class="spinner-border spinner-border-sm ms-2 hide" role="status" aria-hidden="true"></span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Opportunity Details Modal -->
+    <div class="modal fade" id="opportunityModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="opportunityModalTitle">Opportunity Details</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="opportunityModalBody">
+            <!-- Content will be loaded dynamically -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <a href="#" class="btn btn-primary" id="opportunityApplyLink" target="_blank">Apply Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="me-auto" id="toastTitle">Notification</strong>
+        <button type="button" class="btn-close" onclick="app.hideToast()"></button>
+      </div>
+      <div class="toast-body" id="toastMessage"></div>
+    </div>
+  </div>
+
+  <script>
+    // Sample opportunities data
+    const sampleOpportunities = [
+      {
+        id: "1",
+        title: "Google STEP Internship",
+        description: "A 12-week internship for undergraduate students interested in computer science. Participants get to work on real Google projects with mentorship from experienced engineers.",
+        type: "Internship",
+        field: "STEM",
+        format: "Remote",
+        cost: "Paid",
+        impact_score: "high",
+        deadline_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).getTime(),
+        application_link: "https://careers.google.com/students/",
+        location: "Remote",
+        organization: "Google",
+        eligibility: "Undergraduate students in computer science or related fields",
+        duration: "12 weeks"
+      },
+      {
+        id: "2",
+        title: "NASA International Internship",
+        description: "International students can apply for research opportunities at NASA centers across the United States. Work on cutting-edge space technology and research projects.",
+        type: "Internship",
+        field: "STEM",
+        format: "In-person",
+        cost: "Paid",
+        impact_score: "high",
+        deadline_date: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).getTime(),
+        application_link: "https://intern.nasa.gov/",
+        location: "United States",
+        organization: "NASA",
+        eligibility: "Undergraduate and graduate students in STEM fields",
+        duration: "10-16 weeks"
+      },
+      {
+        id: "3",
+        title: "Mathematics Olympiad",
+        description: "Annual mathematics competition for high school students. Winners receive scholarships, international recognition, and opportunities to represent their country.",
+        type: "Competition",
+        field: "STEM",
+        format: "In-person",
+        cost: "Free",
+        impact_score: "high",
+        deadline_date: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).getTime(),
+        application_link: "https://www.imo-official.org/",
+        location: "Tashkent",
+        organization: "Ministry of Education",
+        eligibility: "High school students under 20 years old",
+        duration: "2 days"
+      },
+      {
+        id: "4",
+        title: "Youth Leadership Summit",
+        description: "A week-long leadership development program for young leaders across Uzbekistan. Develop critical leadership skills through workshops, networking, and practical exercises.",
+        type: "Workshop",
+        field: "Leadership",
+        format: "In-person",
+        cost: "Paid",
+        impact_score: "medium",
+        deadline_date: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).getTime(),
+        application_link: "https://example.com/leadership-summit",
+        location: "Tashkent",
+        organization: "Youth Affairs Agency",
+        eligibility: "Students aged 16-25 with leadership experience",
+        duration: "1 week"
+      },
+      {
+        id: "5",
+        title: "Creative Writing Scholarship",
+        description: "Scholarship for talented young writers to attend a summer writing program. Includes mentorship from published authors and publication opportunities.",
+        type: "Scholarship",
+        field: "Humanities",
+        format: "Hybrid",
+        cost: "Free",
+        impact_score: "medium",
+        deadline_date: new Date(Date.now() + 35 * 24 * 60 * 60 * 1000).getTime(),
+        application_link: "https://example.com/writing-scholarship",
+        location: "Samarkand",
+        organization: "National Writers Union",
+        eligibility: "High school and university students passionate about writing",
+        duration: "8 weeks"
+      },
+      {
+        id: "6",
+        title: "Environmental Science Volunteer Program",
+        description: "Volunteer to help with environmental conservation efforts in the Chatkal Mountains. Conduct field research and participate in conservation activities.",
+        type: "Volunteering",
+        field: "STEM",
+        format: "In-person",
+        cost: "Free",
+        impact_score: "low",
+        deadline_date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).getTime(),
+        application_link: "https://example.com/eco-volunteer",
+        location: "Chatkal Mountains",
+        organization: "Uzbekistan Environmental Society",
+        eligibility: "Anyone passionate about environmental conservation",
+        duration: "2-4 weeks"
+      },
+      {
+        id: "7",
+        title: "Business Innovation Challenge",
+        description: "Competition for young entrepreneurs to pitch their business ideas. Winners receive seed funding and mentorship from successful business leaders.",
+        type: "Competition",
+        field: "Business",
+        format: "Hybrid",
+        cost: "Free",
+        impact_score: "high",
+        deadline_date: new Date(Date.now() + 40 * 24 * 60 * 60 * 1000).getTime(),
+        application_link: "https://example.com/business-challenge",
+        location: "Online",
+        organization: "Youth Business International",
+        eligibility: "Ages 18-30 with a business idea",
+        duration: "3 months"
+      },
+      {
+        id: "8",
+        title: "AI Research Fellowship",
+        description: "Fellowship for students interested in artificial intelligence research. Work with leading AI researchers on cutting-edge projects.",
+        type: "Fellowship",
+        field: "STEM",
+        format: "Remote",
+        cost: "Paid",
+        impact_score: "high",
+        deadline_date: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000).getTime(),
+        application_link: "https://example.com/ai-fellowship",
+        location: "Remote",
+        organization: "AI Research Institute",
+        eligibility: "Graduate students in computer science",
+        duration: "6 months"
+      }
+    ];
+
+    // Main application object
+    const app = {
+      // Current state
+      currentFilter: "all",
+      savedOpportunities: [],
+      user: null,
+      isLoggedIn: false,
+
+      // Initialize the application
+      init: function() {
+        console.log("YouthAxis initialized");
+        
+        // Check if user was previously logged in (simulated)
+        const savedUser = localStorage.getItem('youthaxis_user');
+        if (savedUser) {
+          this.user = JSON.parse(savedUser);
+          this.isLoggedIn = true;
+          this.updateUI();
+        }
+        
+        // Load sample data
+        this.loadListings();
+      },
+
+      // Load listings with filters
+      loadListings: function() {
+        const typeFilter = document.getElementById("filter-type").value;
+        const fieldFilter = document.getElementById("filter-field").value;
+        const formatFilter = document.getElementById("filter-format").value;
+        const costFilter = document.getElementById("filter-cost").value;
+        const impactFilter = document.getElementById("filter-impact").value;
+
+        // Show loading state
+        document.getElementById("listings").innerHTML = `
+          <div class="col-12 spinner-container">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        `;
+
+        // Simulate loading delay
+        setTimeout(() => {
+          let filteredOpportunities = sampleOpportunities;
+          
+          // Apply filters
+          if (typeFilter) {
+            filteredOpportunities = filteredOpportunities.filter(opp => opp.type === typeFilter);
+          }
+          
+          if (fieldFilter) {
+            filteredOpportunities = filteredOpportunities.filter(opp => opp.field === fieldFilter);
+          }
+          
+          if (formatFilter) {
+            filteredOpportunities = filteredOpportunities.filter(opp => opp.format === formatFilter);
+          }
+          
+          if (costFilter) {
+            filteredOpportunities = filteredOpportunities.filter(opp => opp.cost === costFilter);
+          }
+          
+          if (impactFilter) {
+            filteredOpportunities = filteredOpportunities.filter(opp => opp.impact_score === impactFilter);
+          }
+          
+          // Apply saved filter if active
+          if (this.currentFilter === "saved") {
+            filteredOpportunities = filteredOpportunities.filter(opp => this.savedOpportunities.includes(opp.id));
+          }
+          
+          this.displayOpportunities(filteredOpportunities);
+        }, 500);
+      },
+
+      // Display opportunities in the UI
+      displayOpportunities: function(opportunities) {
+        const listingsContainer = document.getElementById("listings");
+        
+        if (opportunities.length === 0) {
+          listingsContainer.innerHTML = `
+            <div class="col-12">
+              <div class="text-center py-5">
+                <i class="bi bi-binoculars fs-1 text-muted mb-3"></i>
+                <h4>No opportunities found</h4>
+                <p class="text-muted">Try adjusting your filters or check back later</p>
+              </div>
+            </div>
+          `;
+          return;
+        }
+        
+        listingsContainer.innerHTML = opportunities.map(opportunity => {
+          const isSaved = this.savedOpportunities.includes(opportunity.id);
+          const deadlineDate = opportunity.deadline_date ? new Date(opportunity.deadline_date).toLocaleDateString() : 'Not specified';
+          const daysUntilDeadline = opportunity.deadline_date ? Math.ceil((opportunity.deadline_date - Date.now()) / (1000 * 60 * 60 * 24)) : null;
+          
+          // Determine impact class for styling
+          let impactClass = "";
+          if (opportunity.impact_score === "high") impactClass = "impact-high";
+          else if (opportunity.impact_score === "medium") impactClass = "impact-medium";
+          else if (opportunity.impact_score === "low") impactClass = "impact-low";
+          
+          return `
+            <div class="col-md-6 col-lg-4">
+              <div class="card h-100 opportunity-card ${impactClass}">
+                <div class="opportunity-header position-relative">
+                  ${this.isLoggedIn ? `
+                    <button class="btn btn-sm save-opportunity-btn ${isSaved ? 'btn-success' : 'btn-outline-secondary'}" 
+                            onclick="app.toggleSaveOpportunity('${opportunity.id}', this)" title="${isSaved ? 'Remove from saved' : 'Save for later'}">
+                      <i class="bi ${isSaved ? 'bi-bookmark-check-fill' : 'bi-bookmark'}"></i>
+                    </button>
+                  ` : ''}
+                  <h5 class="card-title">${opportunity.title}</h5>
+                  <div class="d-flex flex-wrap gap-2 my-2">
+                    <span class="category-badge ${opportunity.field.replace(' ', '-')}">${opportunity.field}</span>
+                    <span class="category-badge ${opportunity.type.replace(' ', '-')}">${opportunity.type}</span>
+                    ${opportunity.impact_score ? `<span class="badge bg-light text-dark impact-badge">${opportunity.impact_score} impact</span>` : ''}
+                  </div>
+                  <small class="text-muted">${opportunity.organization}</small>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">${opportunity.description}</p>
+                  ${opportunity.deadline_date ? `
+                    <div class="mb-2">
+                      <small class="text-muted">
+                        <i class="bi bi-calendar-event me-1"></i>
+                        Deadline: ${deadlineDate}
+                        ${daysUntilDeadline > 0 ? `<span class="badge bg-${daysUntilDeadline <= 7 ? 'danger' : 'warning'} ms-1">${daysUntilDeadline} days left</span>` : ''}
+                      </small>
+                    </div>
+                  ` : ''}
+                </div>
+                <div class="card-footer opportunity-footer">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="badge bg-light text-dark me-2">
+                        <i class="bi bi-geo-alt"></i> ${opportunity.location}
+                      </span>
+                      <span class="badge bg-light text-dark">
+                        <i class="bi bi-${opportunity.cost === 'Free' ? 'gift' : 'currency-dollar'}"></i> ${opportunity.cost}
+                      </span>
+                    </div>
+                    <button class="btn btn-outline-primary btn-sm" onclick="app.showOpportunityDetails('${opportunity.id}')">
+                      <i class="bi bi-eye"></i> Details
+                    </button>
+                  </div>
+                  ${opportunity.application_link ? `
+                    <div class="d-grid gap-2 mt-3">
+                      <a href="${opportunity.application_link}" target="_blank" class="btn btn-primary">
+                        <i class="bi bi-box-arrow-up-right"></i> Apply Now
+                      </a>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      },
+
+      // Show opportunity details
+      showOpportunityDetails: function(opportunityId) {
+        const opportunity = sampleOpportunities.find(opp => opp.id === opportunityId);
+        if (!opportunity) return;
+        
+        const deadlineDate = opportunity.deadline_date ? new Date(opportunity.deadline_date).toLocaleDateString() : 'Not specified';
+        const daysUntilDeadline = opportunity.deadline_date ? Math.ceil((opportunity.deadline_date - Date.now()) / (1000 * 60 * 60 * 24)) : null;
+        
+        document.getElementById("opportunityModalTitle").textContent = opportunity.title;
+        
+        document.getElementById("opportunityModalBody").innerHTML = `
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="category-badge ${opportunity.field.replace(' ', '-')}">${opportunity.field}</span>
+            <span class="category-badge ${opportunity.type.replace(' ', '-')}">${opportunity.type}</span>
+            ${opportunity.impact_score ? `<span class="badge bg-light text-dark impact-badge">${opportunity.impact_score} impact</span>` : ''}
+            <span class="badge bg-light text-dark">
+              <i class="bi bi-geo-alt"></i> ${opportunity.location}
+            </span>
+            <span class="badge bg-light text-dark">
+              <i class="bi bi-${opportunity.cost === 'Free' ? 'gift' : 'currency-dollar'}"></i> ${opportunity.cost}
+            </span>
+            <span class="badge bg-light text-dark">
+              <i class="bi bi-laptop"></i> ${opportunity.format}
+            </span>
+          </div>
+          
+          <h6>Description:</h6>
+          <p>${opportunity.description}</p>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <h6>Organization:</h6>
+              <p>${opportunity.organization}</p>
+            </div>
+            <div class="col-md-6">
+              <h6>Deadline:</h6>
+              <p>${deadlineDate} ${daysUntilDeadline > 0 ? `<span class="badge bg-${daysUntilDeadline <= 7 ? 'danger' : 'warning'}">${daysUntilDeadline} days left</span>` : ''}</p>
+            </div>
+          </div>
+          
+          ${opportunity.eligibility ? `
+            <div class="mt-3">
+              <h6>Eligibility:</h6>
+              <p>${opportunity.eligibility}</p>
+            </div>
+          ` : ''}
+          
+          ${opportunity.duration ? `
+            <div class="mt-3">
+              <h6>Duration:</h6>
+              <p>${opportunity.duration}</p>
+            </div>
+          ` : ''}
+        `;
+        
+        if (opportunity.application_link) {
+          document.getElementById("opportunityApplyLink").href = opportunity.application_link;
+          document.getElementById("opportunityApplyLink").classList.remove("hide");
+        } else {
+          document.getElementById("opportunityApplyLink").classList.add("hide");
+        }
+        
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById("opportunityModal"));
+        modal.show();
+      },
+
+      // Toggle saving an opportunity
+      toggleSaveOpportunity: function(opportunityId, btn) {
+        if (!this.isLoggedIn) {
+          this.showToast("Please log in to save opportunities", "warning");
+          this.showAuth('login');
+          return;
+        }
+
+        const isCurrentlySaved = this.savedOpportunities.includes(opportunityId);
+        
+        if (isCurrentlySaved) {
+          // Remove from saved
+          this.savedOpportunities = this.savedOpportunities.filter(id => id !== opportunityId);
+          btn.classList.remove('btn-success');
+          btn.classList.add('btn-outline-secondary');
+          btn.innerHTML = '<i class="bi bi-bookmark"></i>';
+          btn.title = 'Save for later';
+          this.showToast("Removed from saved opportunities", "info");
+        } else {
+          // Add to saved
+          this.savedOpportunities.push(opportunityId);
+          btn.classList.remove('btn-outline-secondary');
+          btn.classList.add('btn-success');
+          btn.innerHTML = '<i class="bi bi-bookmark-check-fill"></i>';
+          btn.title = 'Remove from saved';
+          this.showToast("Opportunity saved!", "success");
+          
+          // Schedule deadline notification
+          const opportunity = sampleOpportunities.find(opp => opp.id === opportunityId);
+          if (opportunity && opportunity.deadline_date) {
+            this.scheduleDeadlineNotification(opportunity);
+          }
+        }
+        
+        // Save to localStorage
+        localStorage.setItem('youthaxis_saved', JSON.stringify(this.savedOpportunities));
+      },
+
+      // Show saved opportunities
+      showSavedOpportunities: function() {
+        this.currentFilter = "saved";
+        this.loadListings();
+        this.showToast("Showing your saved opportunities", "info");
+      },
+
+      // Schedule deadline notification
+      scheduleDeadlineNotification: function(opportunity) {
+        console.log("Scheduling notification for:", opportunity.title);
+        this.showToast(`We'll remind you 7 days before the deadline for ${opportunity.title}`, "info");
+      },
+
+      // Clear all filters
+      clearFilters: function() {
+        document.getElementById("filter-type").value = "";
+        document.getElementById("filter-field").value = "";
+        document.getElementById("filter-format").value = "";
+        document.getElementById("filter-cost").value = "";
+        document.getElementById("filter-impact").value = "";
+        this.currentFilter = "all";
+        this.loadListings();
+        this.showToast("Filters cleared", "info");
+      },
+
+      // Show auth modal
+      showAuth: function(type) {
+        if (type === "login") {
+          document.getElementById("loginForm").classList.remove("hide");
+          document.getElementById("registerForm").classList.add("hide");
+          document.getElementById("authModalLabel").innerText = "Log In";
+        } else {
+          document.getElementById("loginForm").classList.add("hide");
+          document.getElementById("registerForm").classList.remove("hide");
+          document.getElementById("authModalLabel").innerText = "Register";
+        }
+        const modal = new bootstrap.Modal(document.getElementById("authModal"));
+        modal.show();
+      },
+
+      // Show password reset modal
+      showPasswordReset: function() {
+        const authModal = bootstrap.Modal.getInstance(document.getElementById("authModal"));
+        authModal.hide();
+        
+        const modal = new bootstrap.Modal(document.getElementById("passwordResetModal"));
+        modal.show();
+      },
+
+      // Toggle password visibility
+      togglePasswordVisibility: function(inputId) {
+        const input = document.getElementById(inputId);
+        const type = input.getAttribute("type") === "password" ? "text" : "password";
+        input.setAttribute("type", type);
+      },
+
+      // Handle login
+      handleLogin: function(e) {
+        e.preventDefault();
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+        
+        // Simulate login process
+        document.getElementById("loginBtnText").textContent = "Logging in...";
+        document.getElementById("loginSpinner").classList.remove("hide");
+        
+        setTimeout(() => {
+          // For demo purposes, just accept any login
+          this.user = { email: email, uid: "demo-user" };
+          this.isLoggedIn = true;
+          localStorage.setItem('youthaxis_user', JSON.stringify(this.user));
+          
+          // Load saved opportunities
+          const saved = localStorage.getItem('youthaxis_saved');
+          if (saved) {
+            this.savedOpportunities = JSON.parse(saved);
+          }
+          
+          bootstrap.Modal.getInstance(document.getElementById("authModal")).hide();
+          this.updateUI();
+          this.showToast("Logged in successfully", "success");
+          
+          document.getElementById("loginBtnText").textContent = "Log In";
+          document.getElementById("loginSpinner").classList.add("hide");
+        }, 1000);
+      },
+
+      // Handle registration
+      handleRegister: function(e) {
+        e.preventDefault();
+        const email = document.getElementById("registerEmail").value;
+        const password = document.getElementById("registerPassword").value;
+        
+        // Simulate registration process
+        document.getElementById("registerBtnText").textContent = "Registering...";
+        document.getElementById("registerSpinner").classList.remove("hide");
+        
+        setTimeout(() => {
+          // For demo purposes, just accept any registration
+          this.user = { email: email, uid: "demo-user" };
+          this.isLoggedIn = true;
+          localStorage.setItem('youthaxis_user', JSON.stringify(this.user));
+          
+          bootstrap.Modal.getInstance(document.getElementById("authModal")).hide();
+          this.updateUI();
+          this.showToast("Registered successfully!", "success");
+          
+          document.getElementById("registerBtnText").textContent = "Register";
+          document.getElementById("registerSpinner").classList.add("hide");
+        }, 1000);
+      },
+
+      // Handle password reset
+      handlePasswordReset: function(e) {
+        e.preventDefault();
+        const email = document.getElementById("resetEmail").value;
+        
+        // Simulate password reset process
+        document.getElementById("resetBtnText").textContent = "Sending...";
+        document.getElementById("resetSpinner").classList.remove("hide");
+        
+        setTimeout(() => {
+          bootstrap.Modal.getInstance(document.getElementById("passwordResetModal")).hide();
+          this.showToast("Password reset link sent to your email", "success");
+          
+          document.getElementById("resetBtnText").textContent = "Send Reset Link";
+          document.getElementById("resetSpinner").classList.add("hide");
+        }, 1000);
+      },
+
+      // Handle logout
+      handleLogout: function() {
+        this.user = null;
+        this.isLoggedIn = false;
+        localStorage.removeItem('youthaxis_user');
+        this.updateUI();
+        this.showToast("Logged out successfully", "info");
+      },
+
+      // Update UI based on auth state
+      updateUI: function() {
+        const authButtons = document.getElementById('authButtons');
+        const userControls = document.getElementById('userControls');
+        
+        if (this.isLoggedIn) {
+          authButtons.classList.add('hide');
+          userControls.classList.remove('hide');
+        } else {
+          authButtons.classList.remove('hide');
+          userControls.classList.add('hide');
+          this.currentFilter = "all";
+        }
+      },
+
+      // Show toast notification
+      showToast: function(message, type = "info") {
+        const toastEl = document.getElementById("toast");
+        const toastTitle = document.getElementById("toastTitle");
+        const toastMessage = document.getElementById("toastMessage");
+        
+        toastTitle.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+        toastMessage.textContent = message;
+        
+        // Remove previous type classes
+        toastEl.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info');
+        
+        // Add appropriate background class
+        if (type === 'success') toastEl.classList.add('bg-success');
+        else if (type === 'error') toastEl.classList.add('bg-danger');
+        else if (type === 'warning') toastEl.classList.add('bg-warning');
+        else toastEl.classList.add('bg-info');
+        
+        // Show the toast
+        toastEl.classList.remove('hide');
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+        
+        // Auto hide after 5 seconds
+        setTimeout(() => {
+          this.hideToast();
+        }, 5000);
+      },
+
+      // Hide toast
+      hideToast: function() {
+        document.getElementById("toast").classList.add("hide");
+      }
+    };
+
+    // Initialize the application when DOM is loaded
+    document.addEventListener("DOMContentLoaded", () => {
+      app.init();
+    });
+  </script>
+</body>
+</html>
