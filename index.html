@@ -193,6 +193,15 @@
             display: none;
         }
         
+        /* Main Content Sections */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+        
         /* Hero Section */
         .hero {
             background: linear-gradient(rgba(67, 97, 238, 0.9), rgba(58, 12, 163, 0.9)), url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
@@ -419,12 +428,7 @@
         }
         
         /* Dashboard */
-        .dashboard {
-            display: none;
-            margin: 2rem 0;
-        }
-        
-        .dashboard-tabs {
+        .dashboard-tab-container {
             display: flex;
             margin-bottom: 1.5rem;
             border-bottom: 1px solid var(--light-gray);
@@ -608,7 +612,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
         <div class="container header-content">
             <div class="logo">
@@ -618,9 +621,9 @@
             
             <nav>
                 <ul>
-                    <li><a href="#" class="nav-home">Home</a></li>
-                    <li><a href="#" class="nav-opportunities">Opportunities</a></li>
-                    <li><a href="#" class="nav-dashboard">Dashboard</a></li>
+                    <li><a href="#" class="nav-link active" data-page="home">Home</a></li>
+                    <li><a href="#" class="nav-link" data-page="opportunities">Opportunities</a></li>
+                    <li><a href="#" class="nav-link" data-page="dashboard" id="dashboard-link" style="display: none;">Dashboard</a></li>
                     <li><a href="#">Resources</a></li>
                     <li><a href="#">Contact</a></li>
                 </ul>
@@ -634,7 +637,6 @@
         </div>
     </header>
     
-    <!-- Auth Modal -->
     <div class="auth-modal" id="authModal">
         <div class="auth-content">
             <div class="auth-tabs">
@@ -660,7 +662,6 @@
         </div>
     </div>
     
-    <!-- Opportunity Details Modal -->
     <div class="details-modal" id="detailsModal">
         <div class="details-content">
             <button class="close-modal" id="closeDetails">&times;</button>
@@ -668,126 +669,124 @@
         </div>
     </div>
     
-    <!-- Hero Section -->
-    <section class="hero" id="heroSection">
-        <div class="container">
-            <h1>Find Your Next Challenge</h1>
-            <p>Discover internships, research opportunities, and summer programs to build your portfolio and boost your career</p>
-            
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search opportunities by keyword, field, or organization...">
-                <button id="searchBtn"><i class="fas fa-search"></i></button>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Main Content -->
     <main class="container">
-        <!-- Filters -->
-        <section class="filters" id="filtersSection">
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="field">Field of Interest</label>
-                    <select id="field">
-                        <option value="">All Fields</option>
-                        <option value="stem">STEM</option>
-                        <option value="business">Business & Finance</option>
-                        <option value="arts">Arts & Design</option>
-                        <option value="social">Social Sciences</option>
-                        <option value="health">Health & Medicine</option>
-                    </select>
+        <div class="content-section active" id="home-page">
+            <section class="hero">
+                <div class="container">
+                    <h1>Find Your Next Challenge</h1>
+                    <p>Discover internships, research opportunities, and summer programs to build your portfolio and boost your career</p>
+                    
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="Search opportunities by keyword, field, or organization...">
+                        <button id="searchBtn"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="content-section" id="opportunities-page">
+            <section class="filters" id="filtersSection">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="field">Field of Interest</label>
+                        <select id="field">
+                            <option value="">All Fields</option>
+                            <option value="stem">STEM</option>
+                            <option value="business">Business & Finance</option>
+                            <option value="arts">Arts & Design</option>
+                            <option value="social">Social Sciences</option>
+                            <option value="health">Health & Medicine</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="type">Opportunity Type</label>
+                        <select id="type">
+                            <option value="">All Types</option>
+                            <option value="internship">Internship</option>
+                            <option value="research">Research</option>
+                            <option value="summer">Summer Program</option>
+                            <option value="volunteer">Volunteer</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="compensation">Compensation</label>
+                        <select id="compensation">
+                            <option value="">Any</option>
+                            <option value="paid">Paid</option>
+                            <option value="unpaid">Unpaid</option>
+                            <option value="stipend">Stipend</option>
+                        </select>
+                    </div>
                 </div>
                 
-                <div class="filter-group">
-                    <label for="type">Opportunity Type</label>
-                    <select id="type">
-                        <option value="">All Types</option>
-                        <option value="internship">Internship</option>
-                        <option value="research">Research</option>
-                        <option value="summer">Summer Program</option>
-                        <option value="volunteer">Volunteer</option>
-                    </select>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="deadline">Deadline Within</label>
+                        <select id="deadline">
+                            <option value="">Any Time</option>
+                            <option value="week">1 Week</option>
+                            <option value="month">1 Month</option>
+                            <option value="3months">3 Months</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="impact">Impact Level</label>
+                        <select id="impact">
+                            <option value="">Any Impact</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="location">Location</label>
+                        <select id="location">
+                            <option value="">Any Location</option>
+                            <option value="remote">Remote</option>
+                            <option value="onsite">On-site</option>
+                            <option value="hybrid">Hybrid</option>
+                        </select>
+                    </div>
                 </div>
                 
-                <div class="filter-group">
-                    <label for="compensation">Compensation</label>
-                    <select id="compensation">
-                        <option value="">Any</option>
-                        <option value="paid">Paid</option>
-                        <option value="unpaid">Unpaid</option>
-                        <option value="stipend">Stipend</option>
-                    </select>
+                <div class="filter-actions">
+                    <button class="reset-btn" id="resetFilters">Reset Filters</button>
+                    <button class="apply-btn" id="applyFilters">Apply Filters</button>
                 </div>
+            </section>
+
+            <h2 id="opportunitiesTitle">All Opportunities</h2>
+            <div class="opportunities-grid" id="opportunitiesGrid">
+                <p>Loading opportunities...</p>
             </div>
-            
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="deadline">Deadline Within</label>
-                    <select id="deadline">
-                        <option value="">Any Time</option>
-                        <option value="week">1 Week</option>
-                        <option value="month">1 Month</option>
-                        <option value="3months">3 Months</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="impact">Impact Level</label>
-                    <select id="impact">
-                        <option value="">Any Impact</option>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="location">Location</label>
-                    <select id="location">
-                        <option value="">Any Location</option>
-                        <option value="remote">Remote</option>
-                        <option value="onsite">On-site</option>
-                        <option value="hybrid">Hybrid</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="filter-actions">
-                <button class="reset-btn" id="resetFilters">Reset Filters</button>
-                <button class="apply-btn" id="applyFilters">Apply Filters</button>
-            </div>
-        </section>
-        
-        <!-- Opportunities Grid -->
-        <h2 id="opportunitiesTitle">Featured Opportunities</h2>
-        <div class="opportunities-grid" id="opportunitiesGrid">
-            <!-- Opportunity cards will be dynamically inserted here -->
         </div>
         
-        <!-- Dashboard -->
-        <div class="dashboard" id="dashboard">
+        <div class="content-section" id="dashboard-page">
             <h2>My Dashboard</h2>
             
-            <div class="dashboard-tabs">
-                <div class="dashboard-tab active" data-tab="pending">Pending Opportunities</div>
+            <div class="dashboard-tab-container">
+                <div class="dashboard-tab active" data-tab="pending">Saved Opportunities</div>
                 <div class="dashboard-tab" data-tab="completed">Completed</div>
             </div>
             
             <div class="dashboard-content active" id="pendingContent">
-                <div class="dashboard-opportunities" id="pendingOpportunities">
+                <div class="opportunities-grid" id="savedOpportunitiesGrid">
                     <p>You haven't saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>
                 </div>
             </div>
             
             <div class="dashboard-content" id="completedContent">
-                <div class="dashboard-opportunities" id="completedOpportunities">
+                <div class="opportunities-grid" id="completedOpportunities">
                     <p>You haven't completed any opportunities yet.</p>
                 </div>
             </div>
         </div>
     </main>
     
-    <!-- Notification -->
     <div class="notification" id="notification">
         <i class="fas fa-bell"></i>
         <div class="notification-content">
@@ -796,7 +795,6 @@
         </div>
     </div>
     
-    <!-- Footer -->
     <footer>
         <div class="container footer-content">
             <div class="footer-section">
@@ -807,7 +805,7 @@
             <div class="footer-section">
                 <h3>Quick Links</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Browse Opportunities</a></li>
+                    <li><a href="#" class="nav-link" data-page="opportunities">Browse Opportunities</a></li>
                     <li><a href="#">Post an Opportunity</a></li>
                     <li><a href="#">Success Stories</a></li>
                     <li><a href="#">Upcoming Deadlines</a></li>
@@ -839,7 +837,6 @@
         </div>
     </footer>
 
-    <!-- Firebase App (core SDK is always required) -->
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
@@ -863,11 +860,11 @@
         const auth = getAuth(app);
         const database = getDatabase(app);
 
-        // DOM Elements
+        // --- DOM Elements ---
+        const authModal = document.getElementById('authModal');
         const loginBtn = document.getElementById('loginBtn');
         const signupBtn = document.getElementById('signupBtn');
         const logoutBtn = document.getElementById('logoutBtn');
-        const authModal = document.getElementById('authModal');
         const authTabs = document.querySelectorAll('.auth-tab');
         const loginForm = document.getElementById('loginForm');
         const signupForm = document.getElementById('signupForm');
@@ -875,797 +872,263 @@
         const doSignup = document.getElementById('doSignup');
         const loginError = document.getElementById('loginError');
         const signupError = document.getElementById('signupError');
-        const notification = document.getElementById('notification');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const contentSections = document.querySelectorAll('.content-section');
+        const dashboardLink = document.getElementById('dashboard-link');
         const opportunitiesGrid = document.getElementById('opportunitiesGrid');
-        const dashboard = document.getElementById('dashboard');
-        const navDashboard = document.querySelector('.nav-dashboard');
-        const navHome = document.querySelector('.nav-home');
-        const navOpportunities = document.querySelector('.nav-opportunities');
-        const heroSection = document.getElementById('heroSection');
-        const filtersSection = document.getElementById('filtersSection');
-        const opportunitiesTitle = document.getElementById('opportunitiesTitle');
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-        const applyFiltersBtn = document.getElementById('applyFilters');
-        const resetFiltersBtn = document.getElementById('resetFilters');
         const detailsModal = document.getElementById('detailsModal');
         const detailsContent = document.getElementById('detailsContent');
         const closeDetails = document.getElementById('closeDetails');
-        const pendingOpportunities = document.getElementById('pendingOpportunities');
-        const completedOpportunities = document.getElementById('completedOpportunities');
+        const savedOpportunitiesGrid = document.getElementById('savedOpportunitiesGrid');
         const dashboardTabs = document.querySelectorAll('.dashboard-tab');
+        const dashboardContents = document.querySelectorAll('.dashboard-content');
+        const notification = document.getElementById('notification');
 
-        // Sample opportunities data
-        const opportunities = [
-            {
-                id: 'opp1',
-                type: 'internship',
-                title: 'Software Development Intern',
-                organization: 'Tech Innovations Inc.',
-                paid: true,
-                rate: '$25/hr',
-                location: 'Remote',
-                deadline: '2023-06-15',
-                impact: 'High',
-                description: 'Gain real-world experience in software development while working with a talented team on cutting-edge projects.',
-                fullDescription: 'This internship offers hands-on experience in software development. You will work with our engineering team to develop new features, fix bugs, and participate in code reviews. Ideal for students interested in computer science, software engineering, or related fields.',
-                requirements: 'Basic knowledge of JavaScript, HTML, and CSS. Familiarity with React is a plus.',
-                duration: '3 months',
-                applyLink: 'https://techinnovations.com/careers/internships'
-            },
-            {
-                id: 'opp2',
-                type: 'research',
-                title: 'Environmental Science Research',
-                organization: 'University of Science',
-                paid: false,
-                stipend: '$2,000',
-                location: 'On-site',
-                deadline: '2023-05-30',
-                impact: 'Medium',
-                description: 'Join our research team studying climate change impacts on local ecosystems. Perfect for students interested in environmental science.',
-                fullDescription: 'This research opportunity allows you to work alongside professors and graduate students studying the effects of climate change on local ecosystems. You will participate in field work, data collection, and analysis.',
-                requirements: 'Interest in environmental science. Previous lab experience is beneficial but not required.',
-                duration: '2 months',
-                applyLink: 'https://universityscience.edu/research/opportunities'
-            },
-            {
-                id: 'opp3',
-                type: 'summer',
-                title: 'Business Leadership Academy',
-                organization: 'Global Business Institute',
-                paid: false,
-                location: 'Hybrid',
-                deadline: '2023-04-20',
-                impact: 'High',
-                description: 'Develop leadership skills and business acumen through this intensive 4-week summer program. Networking opportunities with industry leaders.',
-                fullDescription: 'The Business Leadership Academy is a selective program for high school students interested in business and leadership. Through workshops, case studies, and mentorship, you will develop essential skills for future success.',
-                requirements: 'Open to all high school students. Application includes essay and teacher recommendation.',
-                duration: '4 weeks',
-                applyLink: 'https://globalbusinessinstitute.org/leadership-academy'
-            },
-            {
-                id: 'opp4',
-                type: 'internship',
-                title: 'Graphic Design Intern',
-                organization: 'Creative Solutions Agency',
-                paid: true,
-                rate: '$20/hr',
-                location: 'Remote',
-                deadline: '2023-07-01',
-                impact: 'Medium',
-                description: 'Work with our design team to create visual content for clients. Build your portfolio with real-world projects.',
-                fullDescription: 'As a Graphic Design Intern, you will collaborate with our creative team to develop visual content for various clients. You will gain experience in branding, social media graphics, and marketing materials.',
-                requirements: 'Proficiency in Adobe Creative Suite. Portfolio of design work required.',
-                duration: '3 months',
-                applyLink: 'https://creativesolutionsagency.com/internships'
-            },
-            {
-                id: 'opp5',
-                type: 'research',
-                title: 'Neuroscience Research Assistant',
-                organization: 'City Medical Center',
-                paid: false,
-                stipend: '$1,500',
-                location: 'On-site',
-                deadline: '2023-06-05',
-                impact: 'High',
-                description: 'Assist with cutting-edge neuroscience research. Ideal for students interested in medicine, psychology, or biology.',
-                fullDescription: 'This research assistant position involves supporting our neuroscience team with ongoing studies. Responsibilities may include literature reviews, data entry, and assisting with experiments.',
-                requirements: 'Background in biology or psychology preferred. Must be detail-oriented and organized.',
-                duration: '2 months',
-                applyLink: 'https://citymedicalcenter.org/research/opportunities'
-            },
-            {
-                id: 'opp6',
-                type: 'summer',
-                title: 'Computer Science Summer Institute',
-                organization: 'Tech Education Foundation',
-                paid: false,
-                scholarship: true,
-                location: 'On-site',
-                deadline: '2023-05-15',
-                impact: 'High',
-                description: 'Intensive 4-week program focused on coding, algorithms, and software development. No prior experience required.',
-                fullDescription: 'Our Computer Science Summer Institute introduces students to programming fundamentals, algorithms, and web development. Through hands-on projects, you will build a portfolio of work to showcase your skills.',
-                requirements: 'No prior experience required. Open to all high school students.',
-                duration: '4 weeks',
-                applyLink: 'https://techeducationfoundation.org/summer-institute'
+        let allOpportunities = [];
+        let savedOpportunityIds = [];
+
+        // --- View Management ---
+        function showPage(pageId) {
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${pageId}-page`).classList.add('active');
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navLinks.forEach(nav => nav.classList.remove('active'));
+                link.classList.add('active');
+                showPage(link.dataset.page);
+            });
+        });
+
+        // --- Authentication ---
+        loginBtn.addEventListener('click', () => {
+            authModal.style.display = 'flex';
+            document.querySelector('.auth-tab[data-tab="login"]').click();
+        });
+
+        signupBtn.addEventListener('click', () => {
+            authModal.style.display = 'flex';
+            document.querySelector('.auth-tab[data-tab="signup"]').click();
+        });
+
+        authModal.addEventListener('click', (e) => {
+            if (e.target.id === 'authModal') {
+                authModal.style.display = 'none';
+                loginError.style.display = 'none';
+                signupError.style.display = 'none';
             }
-        ];
+        });
 
-        // Current filtered opportunities
-        let filteredOpportunities = [...opportunities];
-        // User's saved opportunities
-        let userOpportunities = {
-            pending: [],
-            completed: []
-        };
-
-        // Event Listeners
-        loginBtn.addEventListener('click', () => showAuthModal('login'));
-        signupBtn.addEventListener('click', () => showAuthModal('signup'));
-        logoutBtn.addEventListener('click', handleLogout);
-        
         authTabs.forEach(tab => {
             tab.addEventListener('click', () => {
-                const tabName = tab.getAttribute('data-tab');
-                switchAuthTab(tabName);
-            });
-        });
-        
-        doLogin.addEventListener('click', handleLogin);
-        doSignup.addEventListener('click', handleSignup);
-        
-        navDashboard.addEventListener('click', (e) => {
-            e.preventDefault();
-            showDashboard();
-        });
-        
-        navHome.addEventListener('click', (e) => {
-            e.preventDefault();
-            showHome();
-        });
-        
-        navOpportunities.addEventListener('click', (e) => {
-            e.preventDefault();
-            showOpportunities();
-        });
-
-        searchBtn.addEventListener('click', applySearchFilter);
-        searchInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') applySearchFilter();
-        });
-
-        applyFiltersBtn.addEventListener('click', applyFilters);
-        resetFiltersBtn.addEventListener('click', resetFilters);
-
-        closeDetails.addEventListener('click', () => {
-            detailsModal.style.display = 'none';
-        });
-
-        dashboardTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabName = tab.getAttribute('data-tab');
-                switchDashboardTab(tabName);
+                authTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+                document.getElementById(tab.dataset.tab + 'Form').classList.add('active');
             });
         });
 
-        // Close modal when clicking outside
-        window.addEventListener('click', (e) => {
-            if (e.target === authModal) {
-                authModal.style.display = 'none';
-            }
-            if (e.target === detailsModal) {
-                detailsModal.style.display = 'none';
-            }
-        });
-
-        // Check auth state
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in
-                loginBtn.style.display = 'none';
-                signupBtn.style.display = 'none';
-                logoutBtn.style.display = 'block';
-                
-                // Load user's saved opportunities
-                loadUserOpportunities(user.uid);
-            } else {
-                // User is signed out
-                loginBtn.style.display = 'block';
-                signupBtn.style.display = 'block';
-                logoutBtn.style.display = 'none';
-                
-                // Hide dashboard if user is not logged in
-                dashboard.style.display = 'none';
-            }
-        });
-
-        // Initialize the app
-        function initApp() {
-            renderOpportunities();
-            checkDeadlines();
-        }
-
-        // Render opportunities to the grid
-        function renderOpportunities() {
-            opportunitiesGrid.innerHTML = '';
-            
-            if (filteredOpportunities.length === 0) {
-                opportunitiesGrid.innerHTML = '<p class="no-results">No opportunities match your filters. Try adjusting your search criteria.</p>';
-                return;
-            }
-            
-            filteredOpportunities.forEach(opp => {
-                const isSaved = userOpportunities.pending.some(item => item.id === opp.id) || 
-                               userOpportunities.completed.some(item => item.id === opp.id);
-                
-                const opportunityCard = document.createElement('div');
-                opportunityCard.className = 'opportunity-card';
-                opportunityCard.innerHTML = `
-                    <div class="card-header">
-                        <span class="opportunity-type ${opp.type}">${getOpportunityTypeText(opp.type)}</span>
-                        <h3>${opp.title}</h3>
-                        <p class="organization">${opp.organization}</p>
-                    </div>
-                    
-                    <div class="card-body">
-                        <div class="detail">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <span>${getCompensationText(opp)}</span>
-                        </div>
-                        <div class="detail">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>${opp.location}</span>
-                        </div>
-                        <div class="detail">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span class="deadline">Deadline: ${formatDate(opp.deadline)}</span>
-                        </div>
-                        <div class="detail">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Impact: ${opp.impact}</span>
-                        </div>
-                        <p>${opp.description}</p>
-                    </div>
-                    
-                    <div class="card-footer">
-                        <button class="save-btn ${isSaved ? 'saved' : ''}" data-id="${opp.id}" title="Save to dashboard">
-                            <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i>
-                        </button>
-                        <a href="#" class="apply-link" data-id="${opp.id}">View Details & Apply</a>
-                    </div>
-                `;
-                
-                opportunitiesGrid.appendChild(opportunityCard);
-            });
-            
-            // Add event listeners to save buttons
-            const saveButtons = document.querySelectorAll('.save-btn');
-            saveButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const user = auth.currentUser;
-                    if (user) {
-                        const oppId = this.getAttribute('data-id');
-                        const opportunity = opportunities.find(opp => opp.id === oppId);
-                        if (this.classList.contains('saved')) {
-                            removeOpportunity(user.uid, opportunity);
-                        } else {
-                            saveOpportunity(user.uid, opportunity);
-                        }
-                    } else {
-                        showAuthModal('login');
-                        showNotification('Please sign in to save opportunities');
-                    }
-                });
-            });
-            
-            // Add event listeners to detail buttons
-            const detailButtons = document.querySelectorAll('.apply-link');
-            detailButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const oppId = this.getAttribute('data-id');
-                    const opportunity = opportunities.find(opp => opp.id === oppId);
-                    showOpportunityDetails(opportunity);
-                });
-            });
-        }
-
-        // Show opportunity details
-        function showOpportunityDetails(opportunity) {
-            detailsContent.innerHTML = `
-                <h2>${opportunity.title}</h2>
-                <p class="organization">${opportunity.organization}</p>
-                <div class="detail">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <span>${getCompensationText(opportunity)}</span>
-                </div>
-                <div class="detail">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>${opportunity.location}</span>
-                </div>
-                <div class="detail">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span class="deadline">Deadline: ${formatDate(opportunity.deadline)}</span>
-                </div>
-                <div class="detail">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Impact: ${opportunity.impact}</span>
-                </div>
-                <h3>Description</h3>
-                <p>${opportunity.fullDescription}</p>
-                <h3>Requirements</h3>
-                <p>${opportunity.requirements}</p>
-                <h3>Duration</h3>
-                <p>${opportunity.duration}</p>
-                <div style="margin-top: 2rem; text-align: center;">
-                    <a href="${opportunity.applyLink}" target="_blank" class="btn" style="display: inline-block;">Apply Now</a>
-                </div>
-            `;
-            detailsModal.style.display = 'flex';
-        }
-
-        // Get opportunity type text
-        function getOpportunityTypeText(type) {
-            switch(type) {
-                case 'internship': return 'Internship';
-                case 'research': return 'Research';
-                case 'summer': return 'Summer Program';
-                default: return type;
-            }
-        }
-
-        // Get compensation text
-        function getCompensationText(opp) {
-            if (opp.paid) return `Paid - ${opp.rate}`;
-            if (opp.stipend) return `Stipend - ${opp.stipend}`;
-            if (opp.scholarship) return 'Scholarship Available';
-            return 'Unpaid';
-        }
-
-        // Format date
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString(undefined, options);
-        }
-
-        // Show auth modal
-        function showAuthModal(tab) {
-            authModal.style.display = 'flex';
-            switchAuthTab(tab);
-        }
-
-        // Switch auth tab
-        function switchAuthTab(tabName) {
-            // Update tabs
-            authTabs.forEach(tab => {
-                if (tab.getAttribute('data-tab') === tabName) {
-                    tab.classList.add('active');
-                } else {
-                    tab.classList.remove('active');
-                }
-            });
-            
-            // Update forms
-            if (tabName === 'login') {
-                loginForm.classList.add('active');
-                signupForm.classList.remove('active');
-            } else {
-                loginForm.classList.remove('active');
-                signupForm.classList.add('active');
-            }
-            
-            // Clear errors
-            loginError.style.display = 'none';
-            signupError.style.display = 'none';
-        }
-
-        // Handle login
-        function handleLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
+        doLogin.addEventListener('click', () => {
+            const email = loginEmail.value;
+            const password = loginPassword.value;
             signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Signed in 
-                    authModal.style.display = 'none';
-                    showNotification('Successfully logged in!');
-                })
                 .catch((error) => {
                     loginError.textContent = error.message;
                     loginError.style.display = 'block';
                 });
-        }
+        });
 
-        // Handle signup
-        function handleSignup() {
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const confirm = document.getElementById('signupConfirm').value;
-            
-            // Basic validation
-            if (password !== confirm) {
-                signupError.textContent = 'Passwords do not match';
+        doSignup.addEventListener('click', () => {
+            const email = signupEmail.value;
+            const password = signupPassword.value;
+            const confirmPassword = signupConfirm.value;
+            if (password !== confirmPassword) {
+                signupError.textContent = "Passwords do not match.";
                 signupError.style.display = 'block';
                 return;
             }
-            
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    // Signed up 
                     const user = userCredential.user;
-                    
-                    // Save user profile
                     set(ref(database, 'users/' + user.uid), {
-                        name: name,
-                        email: email,
-                        createdAt: new Date().toISOString()
+                        email: user.email,
+                        name: signupName.value
                     });
-                    
-                    authModal.style.display = 'none';
-                    showNotification('Account created successfully!');
                 })
                 .catch((error) => {
                     signupError.textContent = error.message;
                     signupError.style.display = 'block';
                 });
-        }
+        });
 
-        // Handle logout
-        function handleLogout() {
-            signOut(auth)
-                .then(() => {
-                    showNotification('Successfully logged out');
-                })
-                .catch((error) => {
-                    console.error('Logout error:', error);
-                });
-        }
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth);
+        });
 
-        // Save opportunity to user's dashboard
-        function saveOpportunity(userId, opportunity) {
-            const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-            
-            set(userOppRef, {
-                ...opportunity,
-                savedAt: new Date().toISOString(),
-                status: 'pending'
-            })
-            .then(() => {
-                showNotification('Opportunity saved to your dashboard!');
-                userOpportunities.pending.push(opportunity);
-                renderOpportunities();
-                renderDashboardOpportunities();
-            })
-            .catch((error) => {
-                console.error('Error saving opportunity:', error);
-            });
-        }
-
-        // Remove opportunity from user's dashboard
-        function removeOpportunity(userId, opportunity) {
-            const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-            
-            remove(userOppRef)
-            .then(() => {
-                showNotification('Opportunity removed from your dashboard');
-                userOpportunities.pending = userOpportunities.pending.filter(opp => opp.id !== opportunity.id);
-                userOpportunities.completed = userOpportunities.completed.filter(opp => opp.id !== opportunity.id);
-                renderOpportunities();
-                renderDashboardOpportunities();
-            })
-            .catch((error) => {
-                console.error('Error removing opportunity:', error);
-            });
-        }
-
-        // Load user's saved opportunities
-        function loadUserOpportunities(userId) {
-            const userOppRef = ref(database, `userOpportunities/${userId}`);
-            
-            onValue(userOppRef, (snapshot) => {
-                const data = snapshot.val();
-                userOpportunities.pending = [];
-                userOpportunities.completed = [];
-                
-                if (data) {
-                    for (const key in data) {
-                        if (data[key].status === 'completed') {
-                            userOpportunities.completed.push(data[key]);
-                        } else {
-                            userOpportunities.pending.push(data[key]);
-                        }
-                    }
-                }
-                
-                renderOpportunities();
-                renderDashboardOpportunities();
-            });
-        }
-
-        // Render dashboard opportunities
-        function renderDashboardOpportunities() {
-            // Render pending opportunities
-            if (userOpportunities.pending.length === 0) {
-                pendingOpportunities.innerHTML = '<p>You haven\'t saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>';
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loginBtn.style.display = 'none';
+                signupBtn.style.display = 'none';
+                logoutBtn.style.display = 'block';
+                dashboardLink.style.display = 'block';
+                fetchUserSavedOpportunities(user.uid);
             } else {
-                pendingOpportunities.innerHTML = '';
-                userOpportunities.pending.forEach(opp => {
-                    const oppElement = createDashboardOpportunityElement(opp, 'pending');
-                    pendingOpportunities.appendChild(oppElement);
-                });
+                loginBtn.style.display = 'block';
+                signupBtn.style.display = 'block';
+                logoutBtn.style.display = 'none';
+                dashboardLink.style.display = 'none';
+                savedOpportunityIds = [];
+                renderSavedOpportunities();
+                showPage('home');
             }
-            
-            // Render completed opportunities
-            if (userOpportunities.completed.length === 0) {
-                completedOpportunities.innerHTML = '<p>You haven\'t completed any opportunities yet.</p>';
-            } else {
-                completedOpportunities.innerHTML = '';
-                userOpportunities.completed.forEach(opp => {
-                    const oppElement = createDashboardOpportunityElement(opp, 'completed');
-                    completedOpportunities.appendChild(oppElement);
-                });
-            }
-        }
+        });
 
-        // Create dashboard opportunity element
-        function createDashboardOpportunityElement(opportunity, status) {
-            const element = document.createElement('div');
-            element.className = 'opportunity-card';
-            element.innerHTML = `
+        // --- Opportunity Management ---
+        function renderOpportunityCard(opp, container, isSaved) {
+            const card = document.createElement('div');
+            card.className = 'opportunity-card';
+            const saveIconClass = isSaved ? 'fas' : 'far';
+            
+            card.innerHTML = `
                 <div class="card-header">
-                    <span class="opportunity-type ${opportunity.type}">${getOpportunityTypeText(opportunity.type)}</span>
-                    <h3>${opportunity.title}</h3>
-                    <p class="organization">${opportunity.organization}</p>
+                    <span class="opportunity-type ${opp.type}">${opp.type}</span>
+                    <h3>${opp.title}</h3>
+                    <p class="organization">${opp.organization}</p>
                 </div>
-                
                 <div class="card-body">
-                    <div class="detail">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <span>${getCompensationText(opportunity)}</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${opportunity.location}</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="deadline">Deadline: ${formatDate(opportunity.deadline)}</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Impact: ${opportunity.impact}</span>
-                    </div>
-                    <p>${opportunity.description}</p>
+                    <div class="detail"><i class="fas fa-money-bill-alt"></i><span>${opp.compensation}</span></div>
+                    <div class="detail"><i class="fas fa-map-marker-alt"></i><span>${opp.location}</span></div>
+                    <div class="detail"><i class="fas fa-calendar-alt"></i><span class="deadline">Deadline: ${opp.deadline}</span></div>
                 </div>
-                
                 <div class="card-footer">
-                    <button class="save-btn saved" data-id="${opportunity.id}" title="Remove from dashboard">
-                        <i class="fas fa-bookmark"></i>
-                    </button>
-                    ${status === 'pending' ? 
-                    `<button class="apply-link complete-btn" data-id="${opportunity.id}">Mark as Complete</button>` : 
-                    `<span class="completed-badge">Completed</span>`}
+                    <button class="save-btn ${isSaved ? 'saved' : ''}" data-id="${opp.id}"><i class="${saveIconClass} fa-heart"></i></button>
+                    <a href="#" class="apply-link" data-id="${opp.id}">View Details</a>
                 </div>
             `;
-            
-            // Add event listener to remove button
-            const removeBtn = element.querySelector('.save-btn');
-            removeBtn.addEventListener('click', function() {
+            container.appendChild(card);
+        }
+
+        function renderAllOpportunities() {
+            opportunitiesGrid.innerHTML = '';
+            if (allOpportunities.length === 0) {
+                opportunitiesGrid.innerHTML = '<p>No opportunities found.</p>';
+                return;
+            }
+            allOpportunities.forEach(opp => {
+                const isSaved = savedOpportunityIds.includes(opp.id);
+                renderOpportunityCard(opp, opportunitiesGrid, isSaved);
+            });
+        }
+
+        function renderSavedOpportunities() {
+            savedOpportunitiesGrid.innerHTML = '';
+            if (savedOpportunityIds.length === 0) {
+                savedOpportunitiesGrid.innerHTML = '<p>You haven\'t saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>';
+                return;
+            }
+            const savedOpps = allOpportunities.filter(opp => savedOpportunityIds.includes(opp.id));
+            savedOpps.forEach(opp => {
+                renderOpportunityCard(opp, savedOpportunitiesGrid, true);
+            });
+        }
+
+        // Fetch all opportunities from Firebase
+        const opportunitiesRef = ref(database, 'opportunities');
+        onValue(opportunitiesRef, (snapshot) => {
+            const data = snapshot.val();
+            allOpportunities = data ? Object.keys(data).map(key => ({
+                id: key,
+                ...data[key]
+            })) : [];
+            renderAllOpportunities();
+            // Re-render saved opportunities in case data changes
+            renderSavedOpportunities();
+        });
+
+        // Fetch user's saved opportunities
+        function fetchUserSavedOpportunities(userId) {
+            const userSavedRef = ref(database, `users/${userId}/savedOpportunities`);
+            onValue(userSavedRef, (snapshot) => {
+                const savedData = snapshot.val();
+                savedOpportunityIds = savedData ? Object.keys(savedData) : [];
+                renderAllOpportunities(); // Update heart icons on all pages
+                renderSavedOpportunities();
+            });
+        }
+
+        // Save/Unsave functionality
+        document.addEventListener('click', (e) => {
+            const saveBtn = e.target.closest('.save-btn');
+            if (saveBtn) {
                 const user = auth.currentUser;
-                if (user) {
-                    removeOpportunity(user.uid, opportunity);
+                if (!user) {
+                    alert('Please log in to save opportunities.');
+                    return;
                 }
-            });
-            
-            // Add event listener to complete button
-            if (status === 'pending') {
-                const completeBtn = element.querySelector('.complete-btn');
-                completeBtn.addEventListener('click', function() {
-                    const user = auth.currentUser;
-                    if (user) {
-                        markAsComplete(user.uid, opportunity);
-                    }
-                });
-            }
-            
-            return element;
-        }
-
-        // Mark opportunity as complete
-        function markAsComplete(userId, opportunity) {
-            const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-            
-            update(userOppRef, {
-                status: 'completed',
-                completedAt: new Date().toISOString()
-            })
-            .then(() => {
-                showNotification('Opportunity marked as complete!');
-                // Move from pending to completed
-                userOpportunities.pending = userOpportunities.pending.filter(opp => opp.id !== opportunity.id);
-                userOpportunities.completed.push({...opportunity, status: 'completed'});
-                renderDashboardOpportunities();
-            })
-            .catch((error) => {
-                console.error('Error updating opportunity:', error);
-            });
-        }
-
-        // Apply filters
-        function applyFilters() {
-            const fieldFilter = document.getElementById('field').value;
-            const typeFilter = document.getElementById('type').value;
-            const compensationFilter = document.getElementById('compensation').value;
-            const deadlineFilter = document.getElementById('deadline').value;
-            const impactFilter = document.getElementById('impact').value;
-            const locationFilter = document.getElementById('location').value;
-            
-            filteredOpportunities = opportunities.filter(opp => {
-                // Field filter
-                if (fieldFilter && opp.field !== fieldFilter) return false;
+                const oppId = saveBtn.dataset.id;
+                const userSavedRef = ref(database, `users/${user.uid}/savedOpportunities/${oppId}`);
                 
-                // Type filter
-                if (typeFilter && opp.type !== typeFilter) return false;
-                
-                // Compensation filter
-                if (compensationFilter === 'paid' && !opp.paid) return false;
-                if (compensationFilter === 'unpaid' && (opp.paid || opp.stipend || opp.scholarship)) return false;
-                if (compensationFilter === 'stipend' && !opp.stipend) return false;
-                
-                // Impact filter
-                if (impactFilter && opp.impact.toLowerCase() !== impactFilter.toLowerCase()) return false;
-                
-                // Location filter
-                if (locationFilter && opp.location.toLowerCase() !== locationFilter.toLowerCase()) return false;
-                
-                // Deadline filter (simplified for demo)
-                if (deadlineFilter) {
-                    const today = new Date();
-                    const oppDeadline = new Date(opp.deadline);
-                    const diffTime = Math.abs(oppDeadline - today);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    if (deadlineFilter === 'week' && diffDays > 7) return false;
-                    if (deadlineFilter === 'month' && diffDays > 30) return false;
-                    if (deadlineFilter === '3months' && diffDays > 90) return false;
-                }
-                
-                return true;
-            });
-            
-            renderOpportunities();
-            showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
-        }
-
-        // Apply search filter
-        function applySearchFilter() {
-            const searchTerm = searchInput.value.toLowerCase();
-            
-            if (!searchTerm) {
-                filteredOpportunities = [...opportunities];
-            } else {
-                filteredOpportunities = opportunities.filter(opp => {
-                    return (
-                        opp.title.toLowerCase().includes(searchTerm) ||
-                        opp.organization.toLowerCase().includes(searchTerm) ||
-                        opp.description.toLowerCase().includes(searchTerm) ||
-                        opp.type.toLowerCase().includes(searchTerm)
-                    );
-                });
-            }
-            
-            renderOpportunities();
-        }
-
-        // Reset filters
-        function resetFilters() {
-            document.getElementById('field').value = '';
-            document.getElementById('type').value = '';
-            document.getElementById('compensation').value = '';
-            document.getElementById('deadline').value = '';
-            document.getElementById('impact').value = '';
-            document.getElementById('location').value = '';
-            searchInput.value = '';
-            
-            filteredOpportunities = [...opportunities];
-            renderOpportunities();
-            showNotification('Filters reset');
-        }
-
-        // Check for approaching deadlines
-        function checkDeadlines() {
-            // This would check the user's saved opportunities for deadlines
-            // and show notifications for approaching deadlines
-            
-            // For demo purposes, we'll just show a notification after 2 seconds
-            setTimeout(() => {
-                showNotification('You have 3 opportunities with deadlines in the next week.');
-            }, 2000);
-        }
-
-        // Show notification
-        function showNotification(message) {
-            if (message) {
-                const notificationContent = notification.querySelector('.notification-content');
-                notificationContent.innerHTML = `
-                    <h4>Notification</h4>
-                    <p>${message}</p>
-                `;
-            }
-            
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        // Show dashboard
-        function showDashboard() {
-            const user = auth.currentUser;
-            if (user) {
-                heroSection.style.display = 'none';
-                filtersSection.style.display = 'none';
-                opportunitiesTitle.style.display = 'none';
-                opportunitiesGrid.style.display = 'none';
-                dashboard.style.display = 'block';
-            } else {
-                showAuthModal('login');
-                showNotification('Please sign in to view your dashboard');
-            }
-        }
-
-        // Show home page
-        function showHome() {
-            heroSection.style.display = 'block';
-            filtersSection.style.display = 'block';
-            opportunitiesTitle.style.display = 'block';
-            opportunitiesGrid.style.display = 'grid';
-            dashboard.style.display = 'none';
-        }
-
-        // Show opportunities page
-        function showOpportunities() {
-            heroSection.style.display = 'none';
-            filtersSection.style.display = 'block';
-            opportunitiesTitle.style.display = 'block';
-            opportunitiesGrid.style.display = 'grid';
-            dashboard.style.display = 'none';
-            
-            // Scroll to opportunities
-            window.scrollTo({
-                top: filtersSection.offsetTop - 100,
-                behavior: 'smooth'
-            });
-        }
-
-        // Switch dashboard tab
-        function switchDashboardTab(tabName) {
-            // Update tabs
-            dashboardTabs.forEach(tab => {
-                if (tab.getAttribute('data-tab') === tabName) {
-                    tab.classList.add('active');
+                if (saveBtn.classList.contains('saved')) {
+                    // Unsave
+                    remove(userSavedRef);
+                    saveBtn.classList.remove('saved');
+                    saveBtn.querySelector('i').classList.replace('fas', 'far');
                 } else {
-                    tab.classList.remove('active');
+                    // Save
+                    set(userSavedRef, true);
+                    saveBtn.classList.add('saved');
+                    saveBtn.querySelector('i').classList.replace('far', 'fas');
                 }
-            });
-            
-            // Update content
-            if (tabName === 'pending') {
-                document.getElementById('pendingContent').classList.add('active');
-                document.getElementById('completedContent').classList.remove('active');
-            } else {
-                document.getElementById('pendingContent').classList.remove('active');
-                document.getElementById('completedContent').classList.add('active');
             }
-        }
+        });
 
-        // Initialize the app
-        initApp();
+        // View Details Modal
+        document.addEventListener('click', (e) => {
+            const detailsLink = e.target.closest('.apply-link');
+            if (detailsLink) {
+                e.preventDefault();
+                const oppId = detailsLink.dataset.id;
+                const opportunity = allOpportunities.find(o => o.id === oppId);
+                if (opportunity) {
+                    detailsContent.innerHTML = `
+                        <h2>${opportunity.title}</h2>
+                        <p><strong>Organization:</strong> ${opportunity.organization}</p>
+                        <p><strong>Type:</strong> ${opportunity.type}</p>
+                        <p><strong>Compensation:</strong> ${opportunity.compensation}</p>
+                        <p><strong>Location:</strong> ${opportunity.location}</p>
+                        <p><strong>Deadline:</strong> ${opportunity.deadline}</p>
+                        <hr>
+                        <h4>Description</h4>
+                        <p>${opportunity.description}</p>
+                        <h4>Requirements</h4>
+                        <p>${opportunity.requirements || 'No specific requirements listed.'}</p>
+                        <h4>Duration</h4>
+                        <p>${opportunity.duration}</p>
+                        <a href="${opportunity.applyLink}" target="_blank" class="apply-link" style="margin-top: 20px; display: inline-block;">Apply Now</a>
+                    `;
+                    detailsModal.style.display = 'flex';
+                }
+            }
+        });
+
+        closeDetails.addEventListener('click', () => {
+            detailsModal.style.display = 'none';
+        });
+
+        // Dashboard Tabs
+        dashboardTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                dashboardTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                dashboardContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(tab.dataset.tab + 'Content').classList.add('active');
+            });
+        });
+
     </script>
 </body>
 </html>
