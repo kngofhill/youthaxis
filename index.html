@@ -407,6 +407,15 @@
             color: var(--primary);
             font-weight: 600;
             text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            background-color: rgba(67, 97, 238, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .apply-link:hover {
+            background-color: var(--primary);
+            color: white;
         }
         
         /* Dashboard */
@@ -438,6 +447,49 @@
         
         .dashboard-content.active {
             display: block;
+        }
+        
+        .dashboard-opportunities {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        /* Opportunity Details Modal */
+        .details-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .details-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
         }
         
         /* Notification */
@@ -608,15 +660,23 @@
         </div>
     </div>
     
+    <!-- Opportunity Details Modal -->
+    <div class="details-modal" id="detailsModal">
+        <div class="details-content">
+            <button class="close-modal" id="closeDetails">&times;</button>
+            <div id="detailsContent"></div>
+        </div>
+    </div>
+    
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="heroSection">
         <div class="container">
             <h1>Find Your Next Challenge</h1>
             <p>Discover internships, research opportunities, and summer programs to build your portfolio and boost your career</p>
             
             <div class="search-bar">
-                <input type="text" placeholder="Search opportunities by keyword, field, or organization...">
-                <button><i class="fas fa-search"></i></button>
+                <input type="text" id="searchInput" placeholder="Search opportunities by keyword, field, or organization...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
             </div>
         </div>
     </section>
@@ -624,7 +684,7 @@
     <!-- Main Content -->
     <main class="container">
         <!-- Filters -->
-        <section class="filters">
+        <section class="filters" id="filtersSection">
             <div class="filter-row">
                 <div class="filter-group">
                     <label for="field">Field of Interest</label>
@@ -693,13 +753,13 @@
             </div>
             
             <div class="filter-actions">
-                <button class="reset-btn">Reset Filters</button>
-                <button class="apply-btn">Apply Filters</button>
+                <button class="reset-btn" id="resetFilters">Reset Filters</button>
+                <button class="apply-btn" id="applyFilters">Apply Filters</button>
             </div>
         </section>
         
         <!-- Opportunities Grid -->
-        <h2>Featured Opportunities</h2>
+        <h2 id="opportunitiesTitle">Featured Opportunities</h2>
         <div class="opportunities-grid" id="opportunitiesGrid">
             <!-- Opportunity cards will be dynamically inserted here -->
         </div>
@@ -714,11 +774,15 @@
             </div>
             
             <div class="dashboard-content active" id="pendingContent">
-                <p>You haven't saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>
+                <div class="dashboard-opportunities" id="pendingOpportunities">
+                    <p>You haven't saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>
+                </div>
             </div>
             
             <div class="dashboard-content" id="completedContent">
-                <p>You haven't completed any opportunities yet.</p>
+                <div class="dashboard-opportunities" id="completedOpportunities">
+                    <p>You haven't completed any opportunities yet.</p>
+                </div>
             </div>
         </div>
     </main>
@@ -817,6 +881,19 @@
         const navDashboard = document.querySelector('.nav-dashboard');
         const navHome = document.querySelector('.nav-home');
         const navOpportunities = document.querySelector('.nav-opportunities');
+        const heroSection = document.getElementById('heroSection');
+        const filtersSection = document.getElementById('filtersSection');
+        const opportunitiesTitle = document.getElementById('opportunitiesTitle');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const applyFiltersBtn = document.getElementById('applyFilters');
+        const resetFiltersBtn = document.getElementById('resetFilters');
+        const detailsModal = document.getElementById('detailsModal');
+        const detailsContent = document.getElementById('detailsContent');
+        const closeDetails = document.getElementById('closeDetails');
+        const pendingOpportunities = document.getElementById('pendingOpportunities');
+        const completedOpportunities = document.getElementById('completedOpportunities');
+        const dashboardTabs = document.querySelectorAll('.dashboard-tab');
 
         // Sample opportunities data
         const opportunities = [
@@ -830,7 +907,11 @@
                 location: 'Remote',
                 deadline: '2023-06-15',
                 impact: 'High',
-                description: 'Gain real-world experience in software development while working with a talented team on cutting-edge projects.'
+                description: 'Gain real-world experience in software development while working with a talented team on cutting-edge projects.',
+                fullDescription: 'This internship offers hands-on experience in software development. You will work with our engineering team to develop new features, fix bugs, and participate in code reviews. Ideal for students interested in computer science, software engineering, or related fields.',
+                requirements: 'Basic knowledge of JavaScript, HTML, and CSS. Familiarity with React is a plus.',
+                duration: '3 months',
+                applyLink: 'https://techinnovations.com/careers/internships'
             },
             {
                 id: 'opp2',
@@ -842,7 +923,11 @@
                 location: 'On-site',
                 deadline: '2023-05-30',
                 impact: 'Medium',
-                description: 'Join our research team studying climate change impacts on local ecosystems. Perfect for students interested in environmental science.'
+                description: 'Join our research team studying climate change impacts on local ecosystems. Perfect for students interested in environmental science.',
+                fullDescription: 'This research opportunity allows you to work alongside professors and graduate students studying the effects of climate change on local ecosystems. You will participate in field work, data collection, and analysis.',
+                requirements: 'Interest in environmental science. Previous lab experience is beneficial but not required.',
+                duration: '2 months',
+                applyLink: 'https://universityscience.edu/research/opportunities'
             },
             {
                 id: 'opp3',
@@ -853,7 +938,11 @@
                 location: 'Hybrid',
                 deadline: '2023-04-20',
                 impact: 'High',
-                description: 'Develop leadership skills and business acumen through this intensive 4-week summer program. Networking opportunities with industry leaders.'
+                description: 'Develop leadership skills and business acumen through this intensive 4-week summer program. Networking opportunities with industry leaders.',
+                fullDescription: 'The Business Leadership Academy is a selective program for high school students interested in business and leadership. Through workshops, case studies, and mentorship, you will develop essential skills for future success.',
+                requirements: 'Open to all high school students. Application includes essay and teacher recommendation.',
+                duration: '4 weeks',
+                applyLink: 'https://globalbusinessinstitute.org/leadership-academy'
             },
             {
                 id: 'opp4',
@@ -865,7 +954,11 @@
                 location: 'Remote',
                 deadline: '2023-07-01',
                 impact: 'Medium',
-                description: 'Work with our design team to create visual content for clients. Build your portfolio with real-world projects.'
+                description: 'Work with our design team to create visual content for clients. Build your portfolio with real-world projects.',
+                fullDescription: 'As a Graphic Design Intern, you will collaborate with our creative team to develop visual content for various clients. You will gain experience in branding, social media graphics, and marketing materials.',
+                requirements: 'Proficiency in Adobe Creative Suite. Portfolio of design work required.',
+                duration: '3 months',
+                applyLink: 'https://creativesolutionsagency.com/internships'
             },
             {
                 id: 'opp5',
@@ -877,7 +970,11 @@
                 location: 'On-site',
                 deadline: '2023-06-05',
                 impact: 'High',
-                description: 'Assist with cutting-edge neuroscience research. Ideal for students interested in medicine, psychology, or biology.'
+                description: 'Assist with cutting-edge neuroscience research. Ideal for students interested in medicine, psychology, or biology.',
+                fullDescription: 'This research assistant position involves supporting our neuroscience team with ongoing studies. Responsibilities may include literature reviews, data entry, and assisting with experiments.',
+                requirements: 'Background in biology or psychology preferred. Must be detail-oriented and organized.',
+                duration: '2 months',
+                applyLink: 'https://citymedicalcenter.org/research/opportunities'
             },
             {
                 id: 'opp6',
@@ -889,9 +986,21 @@
                 location: 'On-site',
                 deadline: '2023-05-15',
                 impact: 'High',
-                description: 'Intensive 4-week program focused on coding, algorithms, and software development. No prior experience required.'
+                description: 'Intensive 4-week program focused on coding, algorithms, and software development. No prior experience required.',
+                fullDescription: 'Our Computer Science Summer Institute introduces students to programming fundamentals, algorithms, and web development. Through hands-on projects, you will build a portfolio of work to showcase your skills.',
+                requirements: 'No prior experience required. Open to all high school students.',
+                duration: '4 weeks',
+                applyLink: 'https://techeducationfoundation.org/summer-institute'
             }
         ];
+
+        // Current filtered opportunities
+        let filteredOpportunities = [...opportunities];
+        // User's saved opportunities
+        let userOpportunities = {
+            pending: [],
+            completed: []
+        };
 
         // Event Listeners
         loginBtn.addEventListener('click', () => showAuthModal('login'));
@@ -923,10 +1032,32 @@
             showOpportunities();
         });
 
+        searchBtn.addEventListener('click', applySearchFilter);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') applySearchFilter();
+        });
+
+        applyFiltersBtn.addEventListener('click', applyFilters);
+        resetFiltersBtn.addEventListener('click', resetFilters);
+
+        closeDetails.addEventListener('click', () => {
+            detailsModal.style.display = 'none';
+        });
+
+        dashboardTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                switchDashboardTab(tabName);
+            });
+        });
+
         // Close modal when clicking outside
         window.addEventListener('click', (e) => {
             if (e.target === authModal) {
                 authModal.style.display = 'none';
+            }
+            if (e.target === detailsModal) {
+                detailsModal.style.display = 'none';
             }
         });
 
@@ -961,7 +1092,15 @@
         function renderOpportunities() {
             opportunitiesGrid.innerHTML = '';
             
-            opportunities.forEach(opp => {
+            if (filteredOpportunities.length === 0) {
+                opportunitiesGrid.innerHTML = '<p class="no-results">No opportunities match your filters. Try adjusting your search criteria.</p>';
+                return;
+            }
+            
+            filteredOpportunities.forEach(opp => {
+                const isSaved = userOpportunities.pending.some(item => item.id === opp.id) || 
+                               userOpportunities.completed.some(item => item.id === opp.id);
+                
                 const opportunityCard = document.createElement('div');
                 opportunityCard.className = 'opportunity-card';
                 opportunityCard.innerHTML = `
@@ -992,8 +1131,10 @@
                     </div>
                     
                     <div class="card-footer">
-                        <button class="save-btn" data-id="${opp.id}" title="Save to dashboard"><i class="far fa-bookmark"></i></button>
-                        <a href="#" class="apply-link">View Details & Apply</a>
+                        <button class="save-btn ${isSaved ? 'saved' : ''}" data-id="${opp.id}" title="Save to dashboard">
+                            <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i>
+                        </button>
+                        <a href="#" class="apply-link" data-id="${opp.id}">View Details & Apply</a>
                     </div>
                 `;
                 
@@ -1008,13 +1149,62 @@
                     if (user) {
                         const oppId = this.getAttribute('data-id');
                         const opportunity = opportunities.find(opp => opp.id === oppId);
-                        saveOpportunity(user.uid, opportunity);
+                        if (this.classList.contains('saved')) {
+                            removeOpportunity(user.uid, opportunity);
+                        } else {
+                            saveOpportunity(user.uid, opportunity);
+                        }
                     } else {
                         showAuthModal('login');
                         showNotification('Please sign in to save opportunities');
                     }
                 });
             });
+            
+            // Add event listeners to detail buttons
+            const detailButtons = document.querySelectorAll('.apply-link');
+            detailButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const oppId = this.getAttribute('data-id');
+                    const opportunity = opportunities.find(opp => opp.id === oppId);
+                    showOpportunityDetails(opportunity);
+                });
+            });
+        }
+
+        // Show opportunity details
+        function showOpportunityDetails(opportunity) {
+            detailsContent.innerHTML = `
+                <h2>${opportunity.title}</h2>
+                <p class="organization">${opportunity.organization}</p>
+                <div class="detail">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>${getCompensationText(opportunity)}</span>
+                </div>
+                <div class="detail">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>${opportunity.location}</span>
+                </div>
+                <div class="detail">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span class="deadline">Deadline: ${formatDate(opportunity.deadline)}</span>
+                </div>
+                <div class="detail">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Impact: ${opportunity.impact}</span>
+                </div>
+                <h3>Description</h3>
+                <p>${opportunity.fullDescription}</p>
+                <h3>Requirements</h3>
+                <p>${opportunity.requirements}</p>
+                <h3>Duration</h3>
+                <p>${opportunity.duration}</p>
+                <div style="margin-top: 2rem; text-align: center;">
+                    <a href="${opportunity.applyLink}" target="_blank" class="btn" style="display: inline-block;">Apply Now</a>
+                </div>
+            `;
+            detailsModal.style.display = 'flex';
         }
 
         // Get opportunity type text
@@ -1146,9 +1336,29 @@
             })
             .then(() => {
                 showNotification('Opportunity saved to your dashboard!');
+                userOpportunities.pending.push(opportunity);
+                renderOpportunities();
+                renderDashboardOpportunities();
             })
             .catch((error) => {
                 console.error('Error saving opportunity:', error);
+            });
+        }
+
+        // Remove opportunity from user's dashboard
+        function removeOpportunity(userId, opportunity) {
+            const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+            
+            remove(userOppRef)
+            .then(() => {
+                showNotification('Opportunity removed from your dashboard');
+                userOpportunities.pending = userOpportunities.pending.filter(opp => opp.id !== opportunity.id);
+                userOpportunities.completed = userOpportunities.completed.filter(opp => opp.id !== opportunity.id);
+                renderOpportunities();
+                renderDashboardOpportunities();
+            })
+            .catch((error) => {
+                console.error('Error removing opportunity:', error);
             });
         }
 
@@ -1158,8 +1368,212 @@
             
             onValue(userOppRef, (snapshot) => {
                 const data = snapshot.val();
-                // You would update the dashboard UI here with the saved opportunities
+                userOpportunities.pending = [];
+                userOpportunities.completed = [];
+                
+                if (data) {
+                    for (const key in data) {
+                        if (data[key].status === 'completed') {
+                            userOpportunities.completed.push(data[key]);
+                        } else {
+                            userOpportunities.pending.push(data[key]);
+                        }
+                    }
+                }
+                
+                renderOpportunities();
+                renderDashboardOpportunities();
             });
+        }
+
+        // Render dashboard opportunities
+        function renderDashboardOpportunities() {
+            // Render pending opportunities
+            if (userOpportunities.pending.length === 0) {
+                pendingOpportunities.innerHTML = '<p>You haven\'t saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>';
+            } else {
+                pendingOpportunities.innerHTML = '';
+                userOpportunities.pending.forEach(opp => {
+                    const oppElement = createDashboardOpportunityElement(opp, 'pending');
+                    pendingOpportunities.appendChild(oppElement);
+                });
+            }
+            
+            // Render completed opportunities
+            if (userOpportunities.completed.length === 0) {
+                completedOpportunities.innerHTML = '<p>You haven\'t completed any opportunities yet.</p>';
+            } else {
+                completedOpportunities.innerHTML = '';
+                userOpportunities.completed.forEach(opp => {
+                    const oppElement = createDashboardOpportunityElement(opp, 'completed');
+                    completedOpportunities.appendChild(oppElement);
+                });
+            }
+        }
+
+        // Create dashboard opportunity element
+        function createDashboardOpportunityElement(opportunity, status) {
+            const element = document.createElement('div');
+            element.className = 'opportunity-card';
+            element.innerHTML = `
+                <div class="card-header">
+                    <span class="opportunity-type ${opportunity.type}">${getOpportunityTypeText(opportunity.type)}</span>
+                    <h3>${opportunity.title}</h3>
+                    <p class="organization">${opportunity.organization}</p>
+                </div>
+                
+                <div class="card-body">
+                    <div class="detail">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>${getCompensationText(opportunity)}</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>${opportunity.location}</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span class="deadline">Deadline: ${formatDate(opportunity.deadline)}</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Impact: ${opportunity.impact}</span>
+                    </div>
+                    <p>${opportunity.description}</p>
+                </div>
+                
+                <div class="card-footer">
+                    <button class="save-btn saved" data-id="${opportunity.id}" title="Remove from dashboard">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                    ${status === 'pending' ? 
+                    `<button class="apply-link complete-btn" data-id="${opportunity.id}">Mark as Complete</button>` : 
+                    `<span class="completed-badge">Completed</span>`}
+                </div>
+            `;
+            
+            // Add event listener to remove button
+            const removeBtn = element.querySelector('.save-btn');
+            removeBtn.addEventListener('click', function() {
+                const user = auth.currentUser;
+                if (user) {
+                    removeOpportunity(user.uid, opportunity);
+                }
+            });
+            
+            // Add event listener to complete button
+            if (status === 'pending') {
+                const completeBtn = element.querySelector('.complete-btn');
+                completeBtn.addEventListener('click', function() {
+                    const user = auth.currentUser;
+                    if (user) {
+                        markAsComplete(user.uid, opportunity);
+                    }
+                });
+            }
+            
+            return element;
+        }
+
+        // Mark opportunity as complete
+        function markAsComplete(userId, opportunity) {
+            const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+            
+            update(userOppRef, {
+                status: 'completed',
+                completedAt: new Date().toISOString()
+            })
+            .then(() => {
+                showNotification('Opportunity marked as complete!');
+                // Move from pending to completed
+                userOpportunities.pending = userOpportunities.pending.filter(opp => opp.id !== opportunity.id);
+                userOpportunities.completed.push({...opportunity, status: 'completed'});
+                renderDashboardOpportunities();
+            })
+            .catch((error) => {
+                console.error('Error updating opportunity:', error);
+            });
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const fieldFilter = document.getElementById('field').value;
+            const typeFilter = document.getElementById('type').value;
+            const compensationFilter = document.getElementById('compensation').value;
+            const deadlineFilter = document.getElementById('deadline').value;
+            const impactFilter = document.getElementById('impact').value;
+            const locationFilter = document.getElementById('location').value;
+            
+            filteredOpportunities = opportunities.filter(opp => {
+                // Field filter
+                if (fieldFilter && opp.field !== fieldFilter) return false;
+                
+                // Type filter
+                if (typeFilter && opp.type !== typeFilter) return false;
+                
+                // Compensation filter
+                if (compensationFilter === 'paid' && !opp.paid) return false;
+                if (compensationFilter === 'unpaid' && (opp.paid || opp.stipend || opp.scholarship)) return false;
+                if (compensationFilter === 'stipend' && !opp.stipend) return false;
+                
+                // Impact filter
+                if (impactFilter && opp.impact.toLowerCase() !== impactFilter.toLowerCase()) return false;
+                
+                // Location filter
+                if (locationFilter && opp.location.toLowerCase() !== locationFilter.toLowerCase()) return false;
+                
+                // Deadline filter (simplified for demo)
+                if (deadlineFilter) {
+                    const today = new Date();
+                    const oppDeadline = new Date(opp.deadline);
+                    const diffTime = Math.abs(oppDeadline - today);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (deadlineFilter === 'week' && diffDays > 7) return false;
+                    if (deadlineFilter === 'month' && diffDays > 30) return false;
+                    if (deadlineFilter === '3months' && diffDays > 90) return false;
+                }
+                
+                return true;
+            });
+            
+            renderOpportunities();
+            showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
+        }
+
+        // Apply search filter
+        function applySearchFilter() {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            if (!searchTerm) {
+                filteredOpportunities = [...opportunities];
+            } else {
+                filteredOpportunities = opportunities.filter(opp => {
+                    return (
+                        opp.title.toLowerCase().includes(searchTerm) ||
+                        opp.organization.toLowerCase().includes(searchTerm) ||
+                        opp.description.toLowerCase().includes(searchTerm) ||
+                        opp.type.toLowerCase().includes(searchTerm)
+                    );
+                });
+            }
+            
+            renderOpportunities();
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('field').value = '';
+            document.getElementById('type').value = '';
+            document.getElementById('compensation').value = '';
+            document.getElementById('deadline').value = '';
+            document.getElementById('impact').value = '';
+            document.getElementById('location').value = '';
+            searchInput.value = '';
+            
+            filteredOpportunities = [...opportunities];
+            renderOpportunities();
+            showNotification('Filters reset');
         }
 
         // Check for approaching deadlines
@@ -1194,10 +1608,10 @@
         function showDashboard() {
             const user = auth.currentUser;
             if (user) {
-                document.querySelector('.hero').style.display = 'none';
-                document.querySelector('.filters').style.display = 'none';
-                document.querySelector('#opportunitiesGrid').style.display = 'none';
-                document.querySelector('main h2').style.display = 'none';
+                heroSection.style.display = 'none';
+                filtersSection.style.display = 'none';
+                opportunitiesTitle.style.display = 'none';
+                opportunitiesGrid.style.display = 'none';
                 dashboard.style.display = 'block';
             } else {
                 showAuthModal('login');
@@ -1207,17 +1621,47 @@
 
         // Show home page
         function showHome() {
-            document.querySelector('.hero').style.display = 'block';
-            document.querySelector('.filters').style.display = 'block';
-            document.querySelector('#opportunitiesGrid').style.display = 'grid';
-            document.querySelector('main h2').style.display = 'block';
+            heroSection.style.display = 'block';
+            filtersSection.style.display = 'block';
+            opportunitiesTitle.style.display = 'block';
+            opportunitiesGrid.style.display = 'grid';
             dashboard.style.display = 'none';
         }
 
         // Show opportunities page
         function showOpportunities() {
-            showHome();
-            // Additional logic for opportunities page could go here
+            heroSection.style.display = 'none';
+            filtersSection.style.display = 'block';
+            opportunitiesTitle.style.display = 'block';
+            opportunitiesGrid.style.display = 'grid';
+            dashboard.style.display = 'none';
+            
+            // Scroll to opportunities
+            window.scrollTo({
+                top: filtersSection.offsetTop - 100,
+                behavior: 'smooth'
+            });
+        }
+
+        // Switch dashboard tab
+        function switchDashboardTab(tabName) {
+            // Update tabs
+            dashboardTabs.forEach(tab => {
+                if (tab.getAttribute('data-tab') === tabName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Update content
+            if (tabName === 'pending') {
+                document.getElementById('pendingContent').classList.add('active');
+                document.getElementById('completedContent').classList.remove('active');
+            } else {
+                document.getElementById('pendingContent').classList.remove('active');
+                document.getElementById('completedContent').classList.add('active');
+            }
         }
 
         // Initialize the app
