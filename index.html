@@ -154,6 +154,7 @@
         
         .auth-form {
             display: none;
+            animation: fadeIn 0.3s ease;
         }
         
         .auth-form.active {
@@ -267,6 +268,7 @@
             margin-bottom: 8px;
             font-weight: 500;
             color: var(--dark);
+            animation: slideIn 0.5s ease;
         }
         
         .filter-group select, .filter-group input {
@@ -275,6 +277,13 @@
             border: 1px solid var(--light-gray);
             border-radius: 4px;
             background-color: var(--light);
+            transition: all 0.3s ease;
+        }
+        
+        .filter-group select:focus, .filter-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
         
         .filter-actions {
@@ -289,6 +298,7 @@
             border-radius: 4px;
             font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         
         .apply-btn {
@@ -296,9 +306,17 @@
             color: white;
         }
         
+        .apply-btn:hover {
+            background-color: var(--secondary);
+        }
+        
         .reset-btn {
             background-color: var(--light-gray);
             color: var(--dark);
+        }
+        
+        .reset-btn:hover {
+            background-color: #dde1e7;
         }
         
         /* Opportunities Grid */
@@ -315,6 +333,7 @@
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 0.5s ease;
         }
         
         .opportunity-card:hover {
@@ -351,6 +370,11 @@
             color: #cc4400;
         }
         
+        .volunteer {
+            background-color: #e6f7ed;
+            color: #007a41;
+        }
+        
         .card-header h3 {
             font-size: 1.3rem;
             margin-bottom: 10px;
@@ -382,6 +406,10 @@
             font-weight: 600;
         }
         
+        .deadline.urgent {
+            animation: pulse 2s infinite;
+        }
+        
         .card-footer {
             padding: 1rem 1.5rem;
             background-color: var(--light);
@@ -407,12 +435,22 @@
             color: var(--primary);
             font-weight: 600;
             text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            background-color: rgba(67, 97, 238, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .apply-link:hover {
+            background-color: var(--primary);
+            color: white;
         }
         
         /* Dashboard */
         .dashboard {
             display: none;
             margin: 2rem 0;
+            animation: fadeIn 0.5s ease;
         }
         
         .dashboard-tabs {
@@ -425,6 +463,11 @@
             padding: 1rem 1.5rem;
             cursor: pointer;
             font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-tab:hover {
+            color: var(--primary);
         }
         
         .dashboard-tab.active {
@@ -434,10 +477,17 @@
         
         .dashboard-content {
             display: none;
+            animation: fadeIn 0.5s ease;
         }
         
         .dashboard-content.active {
             display: block;
+        }
+        
+        .dashboard-opportunities {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
         }
         
         /* Admin Panel */
@@ -449,12 +499,44 @@
             margin: 2rem auto;
             max-width: 800px;
             display: none;
+            animation: fadeIn 0.5s ease;
         }
         
         .admin-panel h2 {
             color: var(--primary);
             margin-bottom: 1.5rem;
             text-align: center;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .admin-tab {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-tab:hover {
+            color: var(--primary);
+        }
+        
+        .admin-tab.active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .admin-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .admin-content.active {
+            display: block;
         }
         
         .admin-form {
@@ -486,6 +568,15 @@
             border: 1px solid var(--light-gray);
             border-radius: 4px;
             font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
         
         .form-group textarea {
@@ -507,6 +598,7 @@
             border-radius: 4px;
             font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         
         .admin-submit {
@@ -514,9 +606,93 @@
             color: white;
         }
         
+        .admin-submit:hover {
+            background-color: var(--secondary);
+        }
+        
         .admin-reset {
             background-color: var(--light-gray);
             color: var(--dark);
+        }
+        
+        .admin-reset:hover {
+            background-color: #dde1e7;
+        }
+        
+        .admin-delete {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .admin-delete:hover {
+            background-color: #d91a46;
+        }
+        
+        /* Opportunities List */
+        .opportunities-list {
+            margin-top: 2rem;
+        }
+        
+        .opportunity-item {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease;
+        }
+        
+        .opportunity-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .opportunity-info h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .opportunity-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .opportunity-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-btn {
+            background-color: var(--warning);
+            color: var(--dark);
+        }
+        
+        .edit-btn:hover {
+            background-color: #ffc53d;
+        }
+        
+        .delete-btn {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background-color: #d91a46;
         }
         
         /* Notification */
@@ -534,6 +710,7 @@
             transform: translateX(150%);
             transition: transform 0.3s ease;
             z-index: 1000;
+            animation: slideInRight 0.3s ease;
         }
         
         .notification.show {
@@ -552,6 +729,14 @@
         
         .notification.error i {
             color: var(--danger);
+        }
+        
+        .notification.warning {
+            border-left-color: var(--warning);
+        }
+        
+        .notification.warning i {
+            color: var(--warning);
         }
         
         /* Footer */
@@ -612,6 +797,28 @@
             font-size: 0.9rem;
         }
         
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { color: var(--danger); }
+            50% { color: #ff8fa3; }
+            100% { color: var(--danger); }
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .header-content {
@@ -642,6 +849,16 @@
             
             .admin-form {
                 grid-template-columns: 1fr;
+            }
+            
+            .opportunity-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .opportunity-actions {
+                align-self: flex-end;
             }
         }
     </style>
@@ -701,14 +918,14 @@
     </div>
     
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="heroSection">
         <div class="container">
             <h1>Find Your Next Challenge</h1>
             <p>Discover internships, research opportunities, and summer programs to build your portfolio and boost your career</p>
             
             <div class="search-bar">
-                <input type="text" placeholder="Search opportunities by keyword, field, or organization...">
-                <button><i class="fas fa-search"></i></button>
+                <input type="text" id="searchInput" placeholder="Search opportunities by keyword, field, or organization...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
             </div>
         </div>
     </section>
@@ -716,7 +933,7 @@
     <!-- Main Content -->
     <main class="container">
         <!-- Filters -->
-        <section class="filters">
+        <section class="filters" id="filtersSection">
             <div class="filter-row">
                 <div class="filter-group">
                     <label for="field">Field of Interest</label>
@@ -785,15 +1002,15 @@
             </div>
             
             <div class="filter-actions">
-                <button class="reset-btn">Reset Filters</button>
-                <button class="apply-btn">Apply Filters</button>
+                <button class="reset-btn" id="resetFilters">Reset Filters</button>
+                <button class="apply-btn" id="applyFilters">Apply Filters</button>
             </div>
         </section>
         
         <!-- Opportunities Grid -->
-        <h2>Featured Opportunities</h2>
+        <h2 id="opportunitiesTitle">Featured Opportunities</h2>
         <div class="opportunities-grid" id="opportunitiesGrid">
-            <!-- Opportunity cards will be dynamically inserted here -->
+            <!-- Opportunities will be loaded here -->
         </div>
         
         <!-- Dashboard -->
@@ -806,122 +1023,140 @@
             </div>
             
             <div class="dashboard-content active" id="pendingContent">
-                <p>You haven't saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>
+                <div class="dashboard-opportunities" id="pendingOpportunities">
+                    <p>You haven't saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>
+                </div>
             </div>
             
             <div class="dashboard-content" id="completedContent">
-                <p>You haven't completed any opportunities yet.</p>
+                <div class="dashboard-opportunities" id="completedOpportunities">
+                    <p>You haven't completed any opportunities yet.</p>
+                </div>
             </div>
         </div>
         
         <!-- Admin Panel -->
         <section class="admin-panel" id="adminPanel">
-            <h2>Admin Panel - Add New Opportunity</h2>
-            <form id="opportunityForm" class="admin-form">
-                <div class="form-group full-width">
-                    <label for="oppTitle">Opportunity Title *</label>
-                    <input type="text" id="oppTitle" required>
+            <h2>Admin Management Panel</h2>
+            
+            <div class="admin-tabs">
+                <div class="admin-tab active" data-tab="add">Add New Opportunity</div>
+                <div class="admin-tab" data-tab="manage">Manage Opportunities</div>
+            </div>
+            
+            <div class="admin-content active" id="addContent">
+                <form id="opportunityForm" class="admin-form">
+                    <div class="form-group full-width">
+                        <label for="oppTitle">Opportunity Title *</label>
+                        <input type="text" id="oppTitle" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="oppOrganization">Organization *</label>
+                        <input type="text" id="oppOrganization" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="oppType">Type *</label>
+                        <select id="oppType" required>
+                            <option value="">Select Type</option>
+                            <option value="internship">Internship</option>
+                            <option value="research">Research</option>
+                            <option value="summer">Summer Program</option>
+                            <option value="volunteer">Volunteer</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="oppField">Field *</label>
+                        <select id="oppField" required>
+                            <option value="">Select Field</option>
+                            <option value="stem">STEM</option>
+                            <option value="business">Business & Finance</option>
+                            <option value="arts">Arts & Design</option>
+                            <option value="social">Social Sciences</option>
+                            <option value="health">Health & Medicine</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="oppCompensation">Compensation *</label>
+                        <select id="oppCompensation" required>
+                            <option value="">Select Compensation</option>
+                            <option value="unpaid">Unpaid</option>
+                            <option value="paid">Paid</option>
+                            <option value="stipend">Stipend</option>
+                            <option value="scholarship">Scholarship</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="amountField" style="display: none;">
+                        <label for="oppAmount">Amount</label>
+                        <input type="text" id="oppAmount" placeholder="$20/hr or $2,000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="oppLocation">Location *</label>
+                        <select id="oppLocation" required>
+                            <option value="">Select Location</option>
+                            <option value="remote">Remote</option>
+                            <option value="onsite">On-site</option>
+                            <option value="hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="oppDeadline">Deadline *</label>
+                        <input type="date" id="oppDeadline" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="oppImpact">Impact Level *</label>
+                        <select id="oppImpact" required>
+                            <option value="">Select Impact Level</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="oppDescription">Short Description *</label>
+                        <textarea id="oppDescription" required placeholder="Brief description that appears on cards"></textarea>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="oppFullDescription">Full Description</label>
+                        <textarea id="oppFullDescription" placeholder="Detailed description that appears in the details modal"></textarea>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="oppRequirements">Requirements</label>
+                        <textarea id="oppRequirements" placeholder="List of requirements"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="oppDuration">Duration</label>
+                        <input type="text" id="oppDuration" placeholder="e.g., 3 months, 4 weeks">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="oppApplyLink">Application Link *</label>
+                        <input type="url" id="oppApplyLink" required placeholder="https://...">
+                    </div>
+                    
+                    <div class="admin-actions">
+                        <button type="button" class="admin-btn admin-reset" id="adminReset">Reset</button>
+                        <button type="submit" class="admin-btn admin-submit">Add Opportunity</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="admin-content" id="manageContent">
+                <div class="opportunities-list" id="opportunitiesList">
+                    <p>Loading opportunities...</p>
                 </div>
-                
-                <div class="form-group">
-                    <label for="oppOrganization">Organization *</label>
-                    <input type="text" id="oppOrganization" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="oppType">Type *</label>
-                    <select id="oppType" required>
-                        <option value="">Select Type</option>
-                        <option value="internship">Internship</option>
-                        <option value="research">Research</option>
-                        <option value="summer">Summer Program</option>
-                        <option value="volunteer">Volunteer</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="oppField">Field *</label>
-                    <select id="oppField" required>
-                        <option value="">Select Field</option>
-                        <option value="stem">STEM</option>
-                        <option value="business">Business & Finance</option>
-                        <option value="arts">Arts & Design</option>
-                        <option value="social">Social Sciences</option>
-                        <option value="health">Health & Medicine</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="oppCompensation">Compensation *</label>
-                    <select id="oppCompensation" required>
-                        <option value="">Select Compensation</option>
-                        <option value="unpaid">Unpaid</option>
-                        <option value="paid">Paid</option>
-                        <option value="stipend">Stipend</option>
-                        <option value="scholarship">Scholarship</option>
-                    </select>
-                </div>
-                
-                <div class="form-group" id="amountField" style="display: none;">
-                    <label for="oppAmount">Amount</label>
-                    <input type="text" id="oppAmount" placeholder="$20/hr or $2,000">
-                </div>
-                
-                <div class="form-group">
-                    <label for="oppLocation">Location *</label>
-                    <select id="oppLocation" required>
-                        <option value="">Select Location</option>
-                        <option value="remote">Remote</option>
-                        <option value="onsite">On-site</option>
-                        <option value="hybrid">Hybrid</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="oppDeadline">Deadline *</label>
-                    <input type="date" id="oppDeadline" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="oppImpact">Impact Level *</label>
-                    <select id="oppImpact" required>
-                        <option value="">Select Impact Level</option>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                </div>
-                
-                <div class="form-group full-width">
-                    <label for="oppDescription">Short Description *</label>
-                    <textarea id="oppDescription" required placeholder="Brief description that appears on cards"></textarea>
-                </div>
-                
-                <div class="form-group full-width">
-                    <label for="oppFullDescription">Full Description</label>
-                    <textarea id="oppFullDescription" placeholder="Detailed description that appears in the details modal"></textarea>
-                </div>
-                
-                <div class="form-group full-width">
-                    <label for="oppRequirements">Requirements</label>
-                    <textarea id="oppRequirements" placeholder="List of requirements"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="oppDuration">Duration</label>
-                    <input type="text" id="oppDuration" placeholder="e.g., 3 months, 4 weeks">
-                </div>
-                
-                <div class="form-group">
-                    <label for="oppApplyLink">Application Link *</label>
-                    <input type="url" id="oppApplyLink" required placeholder="https://...">
-                </div>
-                
-                <div class="admin-actions">
-                    <button type="button" class="admin-btn admin-reset" id="adminReset">Reset</button>
-                    <button type="submit" class="admin-btn admin-submit">Add Opportunity</button>
-                </div>
-            </form>
+            </div>
         </section>
     </main>
     
@@ -1020,56 +1255,30 @@
         const navHome = document.querySelector('.nav-home');
         const navOpportunities = document.querySelector('.nav-opportunities');
         const navAdmin = document.querySelector('.nav-admin');
+        const heroSection = document.getElementById('heroSection');
+        const filtersSection = document.getElementById('filtersSection');
+        const opportunitiesTitle = document.getElementById('opportunitiesTitle');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const applyFiltersBtn = document.getElementById('applyFilters');
+        const resetFiltersBtn = document.getElementById('resetFilters');
         const adminPanel = document.getElementById('adminPanel');
         const opportunityForm = document.getElementById('opportunityForm');
         const adminReset = document.getElementById('adminReset');
         const compensationSelect = document.getElementById('oppCompensation');
         const amountField = document.getElementById('amountField');
+        const adminTabs = document.querySelectorAll('.admin-tab');
+        const addContent = document.getElementById('addContent');
+        const manageContent = document.getElementById('manageContent');
+        const opportunitiesList = document.getElementById('opportunitiesList');
 
         // Admin emails (replace with your actual admin emails)
-        const adminEmails = ['admin@opportunityhub.com', 'ibaymirzayev@gmail.com'];
-
-        // Sample opportunities data (will be replaced with data from Firebase)
-        const opportunities = [
-            {
-                id: 'opp1',
-                type: 'internship',
-                title: 'Software Development Intern',
-                organization: 'Tech Innovations Inc.',
-                paid: true,
-                rate: '$25/hr',
-                location: 'Remote',
-                deadline: '2023-06-15',
-                impact: 'High',
-                description: 'Gain real-world experience in software development while working with a talented team on cutting-edge projects.'
-            },
-            {
-                id: 'opp2',
-                type: 'research',
-                title: 'Environmental Science Research',
-                organization: 'University of Science',
-                paid: false,
-                stipend: '$2,000',
-                location: 'On-site',
-                deadline: '2023-05-30',
-                impact: 'Medium',
-                description: 'Join our research team studying climate change impacts on local ecosystems. Perfect for students interested in environmental science.'
-            },
-            {
-                id: 'opp3',
-                type: 'summer',
-                title: 'Business Leadership Academy',
-                organization: 'Global Business Institute',
-                paid: false,
-                location: 'Hybrid',
-                deadline: '2023-04-20',
-                impact: 'High',
-                description: 'Develop leadership skills and business acumen through this intensive 4-week summer program. Networking opportunities with industry leaders.'
-            }
-        ];
+        const adminEmails = ['admin@opportunityhub.com', 'your-email@example.com'];
 
         // Current filtered opportunities
-        let filteredOpportunities = [...opportunities];
+        let filteredOpportunities = [];
+        // All opportunities from Firebase
+        let allOpportunities = [];
         // User's saved opportunities
         let userOpportunities = {
             pending: [],
@@ -1111,6 +1320,14 @@
             showAdminPanel();
         });
 
+        searchBtn.addEventListener('click', applySearchFilter);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') applySearchFilter();
+        });
+
+        applyFiltersBtn.addEventListener('click', applyFilters);
+        resetFiltersBtn.addEventListener('click', resetFilters);
+
         opportunityForm.addEventListener('submit', handleAddOpportunity);
         adminReset.addEventListener('click', resetForm);
 
@@ -1120,6 +1337,17 @@
             } else {
                 amountField.style.display = 'none';
             }
+        });
+
+        adminTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.getAttribute('data-tab');
+                switchAdminTab(tabName);
+                
+                if (tabName === 'manage') {
+                    loadOpportunitiesForManagement();
+                }
+            });
         });
 
         // Close modal when clicking outside
@@ -1140,10 +1368,6 @@
                 // Check if user is admin
                 if (adminEmails.includes(user.email)) {
                     navAdmin.style.display = 'list-item';
-                    adminPanel.style.display = 'block';
-                } else {
-                    navAdmin.style.display = 'none';
-                    adminPanel.style.display = 'none';
                 }
                 
                 // Load user's saved opportunities
@@ -1154,29 +1378,63 @@
                 signupBtn.style.display = 'block';
                 logoutBtn.style.display = 'none';
                 navAdmin.style.display = 'none';
-                adminPanel.style.display = 'none';
                 
                 // Hide dashboard if user is not logged in
                 dashboard.style.display = 'none';
+                adminPanel.style.display = 'none';
             }
         });
 
         // Initialize the app
         function initApp() {
-            renderOpportunities();
+            loadOpportunitiesFromFirebase();
             checkDeadlines();
+        }
+
+        // Load opportunities from Firebase
+        function loadOpportunitiesFromFirebase() {
+            const opportunitiesRef = ref(database, 'opportunities');
+            
+            onValue(opportunitiesRef, (snapshot) => {
+                const data = snapshot.val();
+                allOpportunities = [];
+                
+                if (data) {
+                    for (const key in data) {
+                        allOpportunities.push({
+                            id: key,
+                            ...data[key]
+                        });
+                    }
+                }
+                
+                // Apply current filters
+                applyFilters();
+            }, {
+                // This allows unauthenticated users to read the data
+                // In a real app, you would set up Firebase rules to allow public read access
+                onlyOnce: true
+            });
         }
 
         // Render opportunities to the grid
         function renderOpportunities() {
             opportunitiesGrid.innerHTML = '';
             
+            if (filteredOpportunities.length === 0) {
+                opportunitiesGrid.innerHTML = '<p class="no-results">No opportunities match your filters. Try adjusting your search criteria.</p>';
+                return;
+            }
+            
             filteredOpportunities.forEach(opp => {
                 const isSaved = userOpportunities.pending.some(item => item.id === opp.id) || 
                                userOpportunities.completed.some(item => item.id === opp.id);
                 
+                const isExpired = isOpportunityExpired(opp.deadline);
+                const isUrgent = isDeadlineUrgent(opp.deadline);
+                
                 const opportunityCard = document.createElement('div');
-                opportunityCard.className = 'opportunity-card';
+                opportunityCard.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
                 opportunityCard.innerHTML = `
                     <div class="card-header">
                         <span class="opportunity-type ${opp.type}">${getOpportunityTypeText(opp.type)}</span>
@@ -1195,7 +1453,7 @@
                         </div>
                         <div class="detail">
                             <i class="fas fa-calendar-alt"></i>
-                            <span class="deadline">Deadline: ${formatDate(opp.deadline)}</span>
+                            <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.deadline)}</span>
                         </div>
                         <div class="detail">
                             <i class="fas fa-chart-line"></i>
@@ -1205,22 +1463,22 @@
                     </div>
                     
                     <div class="card-footer">
-                        <button class="save-btn ${isSaved ? 'saved' : ''}" data-id="${opp.id}" title="Save to dashboard"><i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i></button>
-                        <a href="#" class="apply-link">View Details & Apply</a>
+                        <button class="save-btn ${isSaved ? 'saved' : ''}" data-id="${opp.id}" title="${isSaved ? 'Remove from dashboard' : 'Save to dashboard'}">
+                            <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i>
+                        </button>
+                        <a href="${opp.applyLink}" target="_blank" class="apply-link">Apply Now</a>
                     </div>
                 `;
                 
                 opportunitiesGrid.appendChild(opportunityCard);
-            });
-            
-            // Add event listeners to save buttons
-            const saveButtons = document.querySelectorAll('.save-btn');
-            saveButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                
+                // Add event listeners to save buttons
+                const saveButton = opportunityCard.querySelector('.save-btn');
+                saveButton.addEventListener('click', function() {
                     const user = auth.currentUser;
                     if (user) {
                         const oppId = this.getAttribute('data-id');
-                        const opportunity = opportunities.find(opp => opp.id === oppId);
+                        const opportunity = allOpportunities.find(opp => opp.id === oppId);
                         if (this.classList.contains('saved')) {
                             removeOpportunity(user.uid, opportunity);
                         } else {
@@ -1228,10 +1486,26 @@
                         }
                     } else {
                         showAuthModal('login');
-                        showNotification('Please sign in to save opportunities');
+                        showNotification('Please sign in to save opportunities', 'warning');
                     }
                 });
             });
+        }
+
+        // Check if opportunity is expired
+        function isOpportunityExpired(deadline) {
+            const today = new Date();
+            const deadlineDate = new Date(deadline);
+            return deadlineDate < today;
+        }
+
+        // Check if deadline is urgent (within 7 days)
+        function isDeadlineUrgent(deadline) {
+            const today = new Date();
+            const deadlineDate = new Date(deadline);
+            const diffTime = deadlineDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays <= 7 && diffDays >= 0;
         }
 
         // Get opportunity type text
@@ -1240,14 +1514,15 @@
                 case 'internship': return 'Internship';
                 case 'research': return 'Research';
                 case 'summer': return 'Summer Program';
+                case 'volunteer': return 'Volunteer';
                 default: return type;
             }
         }
 
         // Get compensation text
         function getCompensationText(opp) {
-            if (opp.paid) return `Paid - ${opp.rate}`;
-            if (opp.stipend) return `Stipend - ${opp.stipend}`;
+            if (opp.paid && opp.amount) return `Paid - ${opp.amount}`;
+            if (opp.stipend && opp.amount) return `Stipend - ${opp.amount}`;
             if (opp.scholarship) return 'Scholarship Available';
             return 'Unpaid';
         }
@@ -1365,6 +1640,7 @@
                 showNotification('Opportunity saved to your dashboard!');
                 userOpportunities.pending.push(opportunity);
                 renderOpportunities();
+                renderDashboardOpportunities();
             })
             .catch((error) => {
                 console.error('Error saving opportunity:', error);
@@ -1381,6 +1657,7 @@
                 userOpportunities.pending = userOpportunities.pending.filter(opp => opp.id !== opportunity.id);
                 userOpportunities.completed = userOpportunities.completed.filter(opp => opp.id !== opportunity.id);
                 renderOpportunities();
+                renderDashboardOpportunities();
             })
             .catch((error) => {
                 console.error('Error removing opportunity:', error);
@@ -1413,8 +1690,190 @@
 
         // Render dashboard opportunities
         function renderDashboardOpportunities() {
-            // This would update the dashboard with the user's saved opportunities
-            // Implementation would depend on your specific dashboard design
+            // Render pending opportunities
+            if (userOpportunities.pending.length === 0) {
+                pendingOpportunities.innerHTML = '<p>You haven\'t saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>';
+            } else {
+                pendingOpportunities.innerHTML = '';
+                userOpportunities.pending.forEach(opp => {
+                    const oppElement = createDashboardOpportunityElement(opp, 'pending');
+                    pendingOpportunities.appendChild(oppElement);
+                });
+            }
+            
+            // Render completed opportunities
+            if (userOpportunities.completed.length === 0) {
+                completedOpportunities.innerHTML = '<p>You haven\'t completed any opportunities yet.</p>';
+            } else {
+                completedOpportunities.innerHTML = '';
+                userOpportunities.completed.forEach(opp => {
+                    const oppElement = createDashboardOpportunityElement(opp, 'completed');
+                    completedOpportunities.appendChild(oppElement);
+                });
+            }
+        }
+
+        // Create dashboard opportunity element
+        function createDashboardOpportunityElement(opportunity, status) {
+            const isExpired = isOpportunityExpired(opportunity.deadline);
+            const isUrgent = isDeadlineUrgent(opportunity.deadline);
+            
+            const element = document.createElement('div');
+            element.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
+            element.innerHTML = `
+                <div class="card-header">
+                    <span class="opportunity-type ${opportunity.type}">${getOpportunityTypeText(opportunity.type)}</span>
+                    <h3>${opportunity.title}</h3>
+                    <p class="organization">${opportunity.organization}</p>
+                </div>
+                
+                <div class="card-body">
+                    <div class="detail">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>${getCompensationText(opportunity)}</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>${opportunity.location}</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opportunity.deadline)}</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Impact: ${opportunity.impact}</span>
+                    </div>
+                    <p>${opportunity.description}</p>
+                </div>
+                
+                <div class="card-footer">
+                    <button class="save-btn saved" data-id="${opportunity.id}" title="Remove from dashboard">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                    <a href="${opportunity.applyLink}" target="_blank" class="apply-link">Apply Now</a>
+                    ${status === 'pending' ? 
+                    `<button class="apply-link complete-btn" data-id="${opportunity.id}">Mark as Complete</button>` : 
+                    `<span class="completed-badge">Completed</span>`}
+                </div>
+            `;
+            
+            // Add event listener to remove button
+            const removeBtn = element.querySelector('.save-btn');
+            removeBtn.addEventListener('click', function() {
+                const user = auth.currentUser;
+                if (user) {
+                    removeOpportunity(user.uid, opportunity);
+                }
+            });
+            
+            // Add event listener to complete button
+            if (status === 'pending') {
+                const completeBtn = element.querySelector('.complete-btn');
+                completeBtn.addEventListener('click', function() {
+                    const user = auth.currentUser;
+                    if (user) {
+                        markAsComplete(user.uid, opportunity);
+                    }
+                });
+            }
+            
+            return element;
+        }
+
+        // Mark opportunity as complete
+        function markAsComplete(userId, opportunity) {
+            const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+            
+            update(userOppRef, {
+                status: 'completed',
+                completedAt: new Date().toISOString()
+            })
+            .then(() => {
+                showNotification('Opportunity marked as complete!');
+                // Move from pending to completed
+                userOpportunities.pending = userOpportunities.pending.filter(opp => opp.id !== opportunity.id);
+                userOpportunities.completed.push({...opportunity, status: 'completed'});
+                renderDashboardOpportunities();
+            })
+            .catch((error) => {
+                console.error('Error updating opportunity:', error);
+            });
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const fieldFilter = document.getElementById('field').value;
+            const typeFilter = document.getElementById('type').value;
+            const compensationFilter = document.getElementById('compensation').value;
+            const deadlineFilter = document.getElementById('deadline').value;
+            const impactFilter = document.getElementById('impact').value;
+            const locationFilter = document.getElementById('location').value;
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            filteredOpportunities = allOpportunities.filter(opp => {
+                // Field filter
+                if (fieldFilter && opp.field !== fieldFilter) return false;
+                
+                // Type filter
+                if (typeFilter && opp.type !== typeFilter) return false;
+                
+                // Compensation filter
+                if (compensationFilter === 'paid' && !opp.paid) return false;
+                if (compensationFilter === 'unpaid' && (opp.paid || opp.stipend || opp.scholarship)) return false;
+                if (compensationFilter === 'stipend' && !opp.stipend) return false;
+                
+                // Impact filter
+                if (impactFilter && opp.impact.toLowerCase() !== impactFilter.toLowerCase()) return false;
+                
+                // Location filter
+                if (locationFilter && opp.location.toLowerCase() !== locationFilter.toLowerCase()) return false;
+                
+                // Search term filter
+                if (searchTerm && !(
+                    opp.title.toLowerCase().includes(searchTerm) ||
+                    opp.organization.toLowerCase().includes(searchTerm) ||
+                    opp.description.toLowerCase().includes(searchTerm) ||
+                    (opp.field && opp.field.toLowerCase().includes(searchTerm))
+                )) return false;
+                
+                // Deadline filter (simplified for demo)
+                if (deadlineFilter && !isOpportunityExpired(opp.deadline)) {
+                    const today = new Date();
+                    const oppDeadline = new Date(opp.deadline);
+                    const diffTime = Math.abs(oppDeadline - today);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (deadlineFilter === 'week' && diffDays > 7) return false;
+                    if (deadlineFilter === 'month' && diffDays > 30) return false;
+                    if (deadlineFilter === '3months' && diffDays > 90) return false;
+                }
+                
+                return true;
+            });
+            
+            renderOpportunities();
+            showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
+        }
+
+        // Apply search filter
+        function applySearchFilter() {
+            applyFilters();
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('field').value = '';
+            document.getElementById('type').value = '';
+            document.getElementById('compensation').value = '';
+            document.getElementById('deadline').value = '';
+            document.getElementById('impact').value = '';
+            document.getElementById('location').value = '';
+            searchInput.value = '';
+            
+            filteredOpportunities = [...allOpportunities];
+            renderOpportunities();
+            showNotification('Filters reset');
         }
 
         // Handle adding new opportunity
@@ -1482,6 +1941,42 @@
                 });
         }
 
+        // Load opportunities for management
+        function loadOpportunitiesForManagement() {
+            const opportunitiesRef = ref(database, 'opportunities');
+            
+            onValue(opportunitiesRef, (snapshot) => {
+                const data = snapshot.val();
+                opportunitiesList.innerHTML = '';
+                
+                if (data) {
+                    for (const key in data) {
+                        const opportunity = data[key];
+                        const opportunityItem = document.createElement('div');
+                        opportunityItem.className = 'opportunity-item';
+                        opportunityItem.innerHTML = `
+                            <div class="opportunity-info">
+                                <h3>${opportunity.title}</h3>
+                                <div class="opportunity-meta">
+                                    <span>${opportunity.organization}</span>
+                                    <span>${getOpportunityTypeText(opportunity.type)}</span>
+                                    <span>${formatDate(opportunity.deadline)}</span>
+                                </div>
+                            </div>
+                            <div class="opportunity-actions">
+                                <button class="action-btn edit-btn" data-id="${key}">Edit</button>
+                                <button class="action-btn delete-btn" data-id="${key}">Delete</button>
+                            </div>
+                        `;
+                        
+                        opportunitiesList.appendChild(opportunityItem);
+                    }
+                } else {
+                    opportunitiesList.innerHTML = '<p>No opportunities found. Add your first opportunity!</p>';
+                }
+            });
+        }
+
         // Reset form
         function resetForm() {
             document.getElementById('opportunityForm').reset();
@@ -1495,7 +1990,7 @@
             
             // For demo purposes, we'll just show a notification after 2 seconds
             setTimeout(() => {
-                showNotification('You have 3 opportunities with deadlines in the next week.');
+                showNotification('You have 3 opportunities with deadlines in the next week.', 'warning');
             }, 2000);
         }
 
@@ -1507,11 +2002,13 @@
             notification.className = 'notification';
             if (type === 'error') {
                 notification.classList.add('error');
+            } else if (type === 'warning') {
+                notification.classList.add('warning');
             }
             
             if (message) {
                 notificationContent.innerHTML = `
-                    <h4>${type === 'error' ? 'Error' : 'Notification'}</h4>
+                    <h4>${type === 'error' ? 'Error' : type === 'warning' ? 'Warning' : 'Success'}</h4>
                     <p>${message}</p>
                 `;
             }
@@ -1527,24 +2024,24 @@
         function showDashboard() {
             const user = auth.currentUser;
             if (user) {
-                document.querySelector('.hero').style.display = 'none';
-                document.querySelector('.filters').style.display = 'none';
-                document.querySelector('#opportunitiesGrid').style.display = 'none';
-                document.querySelector('main h2').style.display = 'none';
+                heroSection.style.display = 'none';
+                filtersSection.style.display = 'none';
+                opportunitiesTitle.style.display = 'none';
+                opportunitiesGrid.style.display = 'none';
                 adminPanel.style.display = 'none';
                 dashboard.style.display = 'block';
             } else {
                 showAuthModal('login');
-                showNotification('Please sign in to view your dashboard');
+                showNotification('Please sign in to view your dashboard', 'warning');
             }
         }
 
         // Show home page
         function showHome() {
-            document.querySelector('.hero').style.display = 'block';
-            document.querySelector('.filters').style.display = 'block';
-            document.querySelector('#opportunitiesGrid').style.display = 'grid';
-            document.querySelector('main h2').style.display = 'block';
+            heroSection.style.display = 'block';
+            filtersSection.style.display = 'block';
+            opportunitiesTitle.style.display = 'block';
+            opportunitiesGrid.style.display = 'grid';
             dashboard.style.display = 'none';
             adminPanel.style.display = 'none';
         }
@@ -1559,12 +2056,35 @@
         function showAdminPanel() {
             const user = auth.currentUser;
             if (user && adminEmails.includes(user.email)) {
-                document.querySelector('.hero').style.display = 'none';
-                document.querySelector('.filters').style.display = 'none';
-                document.querySelector('#opportunitiesGrid').style.display = 'none';
-                document.querySelector('main h2').style.display = 'none';
+                heroSection.style.display = 'none';
+                filtersSection.style.display = 'none';
+                opportunitiesTitle.style.display = 'none';
+                opportunitiesGrid.style.display = 'none';
                 dashboard.style.display = 'none';
                 adminPanel.style.display = 'block';
+            } else {
+                showNotification('You do not have admin privileges', 'error');
+            }
+        }
+
+        // Switch admin tab
+        function switchAdminTab(tabName) {
+            // Update tabs
+            adminTabs.forEach(tab => {
+                if (tab.getAttribute('data-tab') === tabName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Update content
+            if (tabName === 'add') {
+                addContent.classList.add('active');
+                manageContent.classList.remove('active');
+            } else {
+                addContent.classList.remove('active');
+                manageContent.classList.add('active');
             }
         }
 
