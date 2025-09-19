@@ -1107,7 +1107,7 @@
             const today = new Date();
             const deadlineDate = new Date(deadline);
             const diffTime = deadlineDate - today;
-            const diffDays = Math.ceil(diffTime / (100极速3d0 * 60 * 60 * 24));
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             return diffDays <= 7 && diffDays >= 0;
         }
 
