@@ -201,14 +201,6 @@
             color: white;
             padding: 4rem 0;
             text-align: center;
-            transition: opacity 0.5s ease;
-        }
-        
-        .hero.hidden {
-            opacity: 0;
-            height: 0;
-            padding: 0;
-            overflow: hidden;
         }
         
         .hero h1 {
@@ -246,71 +238,16 @@
             font-size: 1.2rem;
         }
         
-        /* Admin Panel */
-        .admin-panel {
-            background-color: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            margin: 2rem auto;
-            max-width: 1000px;
-            display: none;
-        }
-        
-        .admin-panel h2 {
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-        }
-        
-        .admin-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-        
-        .admin-form .full-width {
-            grid-column: 1 / -1;
-        }
-        
-        .admin-form input,
-        .admin-form select,
-        .admin-form textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--light-gray);
-            border-radius: 4px;
-        }
-        
-        .admin-form textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        
-        .admin-actions {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
         /* Filters Section */
         .filters {
             background-color: white;
             padding: 1.5rem;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            margin: 0 auto 30px;
+            margin: -30px auto 30px;
+            position: relative;
             max-width: 1000px;
-            transition: all 0.5s ease;
-        }
-        
-        .filters.hidden {
-            opacity: 0;
-            height: 0;
-            padding: 0;
-            overflow: hidden;
-            margin: 0;
+            z-index: 10;
         }
         
         .filter-row {
@@ -323,7 +260,6 @@
         .filter-group {
             flex: 1;
             min-width: 200px;
-            transition: all 0.3s ease;
         }
         
         .filter-group label {
@@ -371,14 +307,6 @@
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
             margin: 2rem 0;
-            transition: all 0.5s ease;
-        }
-        
-        .opportunities-grid.hidden {
-            opacity: 0;
-            height: 0;
-            overflow: hidden;
-            margin: 0;
         }
         
         .opportunity-card {
@@ -387,24 +315,6 @@
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-        }
-        
-        .opportunity-card.expired {
-            opacity: 0.7;
-        }
-        
-        .opportunity-card.expired::after {
-            content: 'Expired';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: var(--danger);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
         }
         
         .opportunity-card:hover {
@@ -472,16 +382,6 @@
             font-weight: 600;
         }
         
-        .deadline.urgent {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { color: var(--danger); }
-            50% { color: #ff8fa3; }
-            100% { color: var(--danger); }
-        }
-        
         .card-footer {
             padding: 1rem 1.5rem;
             background-color: var(--light);
@@ -507,22 +407,12 @@
             color: var(--primary);
             font-weight: 600;
             text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            background-color: rgba(67, 97, 238, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .apply-link:hover {
-            background-color: var(--primary);
-            color: white;
         }
         
         /* Dashboard */
         .dashboard {
             display: none;
             margin: 2rem 0;
-            transition: all 0.5s ease;
         }
         
         .dashboard-tabs {
@@ -550,47 +440,83 @@
             display: block;
         }
         
-        .dashboard-opportunities {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        
-        /* Opportunity Details Modal */
-        .details-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .details-content {
+        /* Admin Panel */
+        .admin-panel {
             background-color: white;
             padding: 2rem;
             border-radius: 8px;
-            width: 100%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin: 2rem auto;
+            max-width: 800px;
+            display: none;
         }
         
-        .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
+        .admin-panel h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .admin-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .admin-form .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .admin-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .admin-btn {
+            padding: 10px 20px;
             border: none;
-            font-size: 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
             cursor: pointer;
-            color: var(--gray);
+        }
+        
+        .admin-submit {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .admin-reset {
+            background-color: var(--light-gray);
+            color: var(--dark);
         }
         
         /* Notification */
@@ -620,19 +546,11 @@
             margin-right: 10px;
         }
         
-        .notification.warning {
-            border-left-color: var(--warning);
-        }
-        
-        .notification.warning i {
-            color: var(--warning);
-        }
-        
-        .notification.danger {
+        .notification.error {
             border-left-color: var(--danger);
         }
         
-        .notification.danger i {
+        .notification.error i {
             color: var(--danger);
         }
         
@@ -782,116 +700,15 @@
         </div>
     </div>
     
-    <!-- Opportunity Details Modal -->
-    <div class="details-modal" id="detailsModal">
-        <div class="details-content">
-            <button class="close-modal" id="closeDetails">&times;</button>
-            <div id="detailsContent"></div>
-        </div>
-    </div>
-    
     <!-- Hero Section -->
-    <section class="hero" id="heroSection">
+    <section class="hero">
         <div class="container">
             <h1>Find Your Next Challenge</h1>
             <p>Discover internships, research opportunities, and summer programs to build your portfolio and boost your career</p>
             
             <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search opportunities by keyword, field, or organization...">
-                <button id="searchBtn"><i class="fas fa-search"></i></button>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Admin Panel -->
-    <section class="admin-panel" id="adminPanel">
-        <div class="container">
-            <h2>Admin Panel - Add New Opportunity</h2>
-            <div class="admin-form">
-                <div class="filter-group">
-                    <label for="adminTitle">Title</label>
-                    <input type="text" id="adminTitle" placeholder="Opportunity Title">
-                </div>
-                <div class="filter-group">
-                    <label for="adminOrganization">Organization</label>
-                    <input type="text" id="adminOrganization" placeholder="Organization Name">
-                </div>
-                <div class="filter-group">
-                    <label for="adminType">Type</label>
-                    <select id="adminType">
-                        <option value="internship">Internship</option>
-                        <option value="research">Research</option>
-                        <option value="summer">Summer Program</option>
-                        <option value="volunteer">Volunteer</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="adminField">Field</label>
-                    <select id="adminField">
-                        <option value="stem">STEM</option>
-                        <option value="business">Business & Finance</option>
-                        <option value="arts">Arts & Design</option>
-                        <option value="social">Social Sciences</option>
-                        <option value="health">Health & Medicine</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="adminCompensation">Compensation</label>
-                    <select id="adminCompensation">
-                        <option value="unpaid">Unpaid</option>
-                        <option value="paid">Paid</option>
-                        <option value="stipend">Stipend</option>
-                        <option value="scholarship">Scholarship</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="adminAmount">Amount (if paid/stipend)</label>
-                    <input type="text" id="adminAmount" placeholder="$20/hr or $2,000">
-                </div>
-                <div class="filter-group">
-                    <label for="adminLocation">Location</label>
-                    <select id="adminLocation">
-                        <option value="remote">Remote</option>
-                        <option value="onsite">On-site</option>
-                        <option value="hybrid">Hybrid</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="adminDeadline">Deadline</label>
-                    <input type="date" id="adminDeadline">
-                </div>
-                <div class="filter-group">
-                    <label for="adminImpact">Impact Level</label>
-                    <select id="adminImpact">
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                </div>
-                <div class="filter-group full-width">
-                    <label for="adminDescription">Short Description</label>
-                    <textarea id="adminDescription" placeholder="Brief description that appears on cards"></textarea>
-                </div>
-                <div class="filter-group full-width">
-                    <label for="adminFullDescription">Full Description</label>
-                    <textarea id="adminFullDescription" placeholder="Detailed description that appears in the details modal"></textarea>
-                </div>
-                <div class="filter-group full-width">
-                    <label for="adminRequirements">Requirements</label>
-                    <textarea id="adminRequirements" placeholder="List of requirements"></textarea>
-                </div>
-                <div class="filter-group full-width">
-                    <label for="adminDuration">Duration</label>
-                    <input type="text" id="adminDuration" placeholder="e.g., 3 months, 4 weeks">
-                </div>
-                <div class="filter-group full-width">
-                    <label for="adminApplyLink">Application Link</label>
-                    <input type="url" id="adminApplyLink" placeholder="https://...">
-                </div>
-                <div class="admin-actions">
-                    <button class="reset-btn" id="adminReset">Reset</button>
-                    <button class="apply-btn" id="adminSubmit">Add Opportunity</button>
-                </div>
+                <input type="text" placeholder="Search opportunities by keyword, field, or organization...">
+                <button><i class="fas fa-search"></i></button>
             </div>
         </div>
     </section>
@@ -899,7 +716,7 @@
     <!-- Main Content -->
     <main class="container">
         <!-- Filters -->
-        <section class="filters" id="filtersSection">
+        <section class="filters">
             <div class="filter-row">
                 <div class="filter-group">
                     <label for="field">Field of Interest</label>
@@ -968,13 +785,13 @@
             </div>
             
             <div class="filter-actions">
-                <button class="reset-btn" id="resetFilters">Reset Filters</button>
-                <button class="apply-btn" id="applyFilters">Apply Filters</button>
+                <button class="reset-btn">Reset Filters</button>
+                <button class="apply-btn">Apply Filters</button>
             </div>
         </section>
         
         <!-- Opportunities Grid -->
-        <h2 id="opportunitiesTitle">Featured Opportunities</h2>
+        <h2>Featured Opportunities</h2>
         <div class="opportunities-grid" id="opportunitiesGrid">
             <!-- Opportunity cards will be dynamically inserted here -->
         </div>
@@ -989,25 +806,131 @@
             </div>
             
             <div class="dashboard-content active" id="pendingContent">
-                <div class="dashboard-opportunities" id="pendingOpportunities">
-                    <p>You haven't saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>
-                </div>
+                <p>You haven't saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>
             </div>
             
             <div class="dashboard-content" id="completedContent">
-                <div class="dashboard-opportunities" id="completedOpportunities">
-                    <p>You haven't completed any opportunities yet.</p>
-                </div>
+                <p>You haven't completed any opportunities yet.</p>
             </div>
         </div>
+        
+        <!-- Admin Panel -->
+        <section class="admin-panel" id="adminPanel">
+            <h2>Admin Panel - Add New Opportunity</h2>
+            <form id="opportunityForm" class="admin-form">
+                <div class="form-group full-width">
+                    <label for="oppTitle">Opportunity Title *</label>
+                    <input type="text" id="oppTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="oppOrganization">Organization *</label>
+                    <input type="text" id="oppOrganization" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="oppType">Type *</label>
+                    <select id="oppType" required>
+                        <option value="">Select Type</option>
+                        <option value="internship">Internship</option>
+                        <option value="research">Research</option>
+                        <option value="summer">Summer Program</option>
+                        <option value="volunteer">Volunteer</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="oppField">Field *</label>
+                    <select id="oppField" required>
+                        <option value="">Select Field</option>
+                        <option value="stem">STEM</option>
+                        <option value="business">Business & Finance</option>
+                        <option value="arts">Arts & Design</option>
+                        <option value="social">Social Sciences</option>
+                        <option value="health">Health & Medicine</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="oppCompensation">Compensation *</label>
+                    <select id="oppCompensation" required>
+                        <option value="">Select Compensation</option>
+                        <option value="unpaid">Unpaid</option>
+                        <option value="paid">Paid</option>
+                        <option value="stipend">Stipend</option>
+                        <option value="scholarship">Scholarship</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="amountField" style="display: none;">
+                    <label for="oppAmount">Amount</label>
+                    <input type="text" id="oppAmount" placeholder="$20/hr or $2,000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="oppLocation">Location *</label>
+                    <select id="oppLocation" required>
+                        <option value="">Select Location</option>
+                        <option value="remote">Remote</option>
+                        <option value="onsite">On-site</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="oppDeadline">Deadline *</label>
+                    <input type="date" id="oppDeadline" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="oppImpact">Impact Level *</label>
+                    <select id="oppImpact" required>
+                        <option value="">Select Impact Level</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="oppDescription">Short Description *</label>
+                    <textarea id="oppDescription" required placeholder="Brief description that appears on cards"></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="oppFullDescription">Full Description</label>
+                    <textarea id="oppFullDescription" placeholder="Detailed description that appears in the details modal"></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="oppRequirements">Requirements</label>
+                    <textarea id="oppRequirements" placeholder="List of requirements"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="oppDuration">Duration</label>
+                    <input type="text" id="oppDuration" placeholder="e.g., 3 months, 4 weeks">
+                </div>
+                
+                <div class="form-group">
+                    <label for="oppApplyLink">Application Link *</label>
+                    <input type="url" id="oppApplyLink" required placeholder="https://...">
+                </div>
+                
+                <div class="admin-actions">
+                    <button type="button" class="admin-btn admin-reset" id="adminReset">Reset</button>
+                    <button type="submit" class="admin-btn admin-submit">Add Opportunity</button>
+                </div>
+            </form>
+        </section>
     </main>
     
     <!-- Notification -->
     <div class="notification" id="notification">
         <i class="fas fa-bell"></i>
         <div class="notification-content">
-            <h4>Deadline Approaching</h4>
-            <p>You have 3 opportunities with deadlines in the next week.</p>
+            <h4>Notification</h4>
+            <p>Operation completed successfully!</p>
         </div>
     </div>
     
@@ -1097,35 +1020,61 @@
         const navHome = document.querySelector('.nav-home');
         const navOpportunities = document.querySelector('.nav-opportunities');
         const navAdmin = document.querySelector('.nav-admin');
-        const heroSection = document.getElementById('heroSection');
-        const filtersSection = document.getElementById('filtersSection');
-        const opportunitiesTitle = document.getElementById('opportunitiesTitle');
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-        const applyFiltersBtn = document.getElementById('applyFilters');
-        const resetFiltersBtn = document.getElementById('resetFilters');
-        const detailsModal = document.getElementById('detailsModal');
-        const detailsContent = document.getElementById('detailsContent');
-        const closeDetails = document.getElementById('closeDetails');
-        const pendingOpportunities = document.getElementById('pendingOpportunities');
-        const completedOpportunities = document.getElementById('completedOpportunities');
-        const dashboardTabs = document.querySelectorAll('.dashboard-tab');
         const adminPanel = document.getElementById('adminPanel');
-        const adminSubmit = document.getElementById('adminSubmit');
+        const opportunityForm = document.getElementById('opportunityForm');
         const adminReset = document.getElementById('adminReset');
+        const compensationSelect = document.getElementById('oppCompensation');
+        const amountField = document.getElementById('amountField');
+
+        // Admin emails (replace with your actual admin emails)
+        const adminEmails = ['admin@opportunityhub.com', 'your-email@example.com'];
+
+        // Sample opportunities data (will be replaced with data from Firebase)
+        const opportunities = [
+            {
+                id: 'opp1',
+                type: 'internship',
+                title: 'Software Development Intern',
+                organization: 'Tech Innovations Inc.',
+                paid: true,
+                rate: '$25/hr',
+                location: 'Remote',
+                deadline: '2023-06-15',
+                impact: 'High',
+                description: 'Gain real-world experience in software development while working with a talented team on cutting-edge projects.'
+            },
+            {
+                id: 'opp2',
+                type: 'research',
+                title: 'Environmental Science Research',
+                organization: 'University of Science',
+                paid: false,
+                stipend: '$2,000',
+                location: 'On-site',
+                deadline: '2023-05-30',
+                impact: 'Medium',
+                description: 'Join our research team studying climate change impacts on local ecosystems. Perfect for students interested in environmental science.'
+            },
+            {
+                id: 'opp3',
+                type: 'summer',
+                title: 'Business Leadership Academy',
+                organization: 'Global Business Institute',
+                paid: false,
+                location: 'Hybrid',
+                deadline: '2023-04-20',
+                impact: 'High',
+                description: 'Develop leadership skills and business acumen through this intensive 4-week summer program. Networking opportunities with industry leaders.'
+            }
+        ];
 
         // Current filtered opportunities
-        let filteredOpportunities = [];
-        // All opportunities from Firebase
-        let allOpportunities = [];
+        let filteredOpportunities = [...opportunities];
         // User's saved opportunities
         let userOpportunities = {
             pending: [],
             completed: []
         };
-
-        // Admin user emails (you can add more)
-        const adminUsers = ['admin@opportunityhub.com'];
 
         // Event Listeners
         loginBtn.addEventListener('click', () => showAuthModal('login'));
@@ -1162,35 +1111,21 @@
             showAdminPanel();
         });
 
-        searchBtn.addEventListener('click', applySearchFilter);
-        searchInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') applySearchFilter();
+        opportunityForm.addEventListener('submit', handleAddOpportunity);
+        adminReset.addEventListener('click', resetForm);
+
+        compensationSelect.addEventListener('change', () => {
+            if (compensationSelect.value === 'paid' || compensationSelect.value === 'stipend') {
+                amountField.style.display = 'block';
+            } else {
+                amountField.style.display = 'none';
+            }
         });
-
-        applyFiltersBtn.addEventListener('click', applyFilters);
-        resetFiltersBtn.addEventListener('click', resetFilters);
-
-        closeDetails.addEventListener('click', () => {
-            detailsModal.style.display = 'none';
-        });
-
-        dashboardTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const tabName = tab.getAttribute('data-tab');
-                switchDashboardTab(tabName);
-            });
-        });
-
-        adminSubmit.addEventListener('click', addNewOpportunity);
-        adminReset.addEventListener('click', resetAdminForm);
 
         // Close modal when clicking outside
         window.addEventListener('click', (e) => {
             if (e.target === authModal) {
                 authModal.style.display = 'none';
-            }
-            if (e.target === detailsModal) {
-                detailsModal.style.display = 'none';
             }
         });
 
@@ -1203,8 +1138,12 @@
                 logoutBtn.style.display = 'block';
                 
                 // Check if user is admin
-                if (adminUsers.includes(user.email)) {
+                if (adminEmails.includes(user.email)) {
                     navAdmin.style.display = 'list-item';
+                    adminPanel.style.display = 'block';
+                } else {
+                    navAdmin.style.display = 'none';
+                    adminPanel.style.display = 'none';
                 }
                 
                 // Load user's saved opportunities
@@ -1215,6 +1154,7 @@
                 signupBtn.style.display = 'block';
                 logoutBtn.style.display = 'none';
                 navAdmin.style.display = 'none';
+                adminPanel.style.display = 'none';
                 
                 // Hide dashboard if user is not logged in
                 dashboard.style.display = 'none';
@@ -1223,59 +1163,20 @@
 
         // Initialize the app
         function initApp() {
-            loadOpportunitiesFromFirebase();
+            renderOpportunities();
             checkDeadlines();
-            
-            // Check for expired opportunities every hour
-            setInterval(checkExpiredOpportunities, 60 * 60 * 1000);
-            
-            // Check for deadline notifications every 6 hours
-            setInterval(checkDeadlineNotifications, 6 * 60 * 60 * 1000);
-        }
-
-        // Load opportunities from Firebase
-        function loadOpportunitiesFromFirebase() {
-            const opportunitiesRef = ref(database, 'opportunities');
-            
-            onValue(opportunitiesRef, (snapshot) => {
-                const data = snapshot.val();
-                allOpportunities = [];
-                
-                if (data) {
-                    for (const key in data) {
-                        allOpportunities.push({
-                            id: key,
-                            ...data[key]
-                        });
-                    }
-                }
-                
-                // Check for expired opportunities
-                checkExpiredOpportunities();
-                
-                // Apply current filters
-                applyFilters();
-            });
         }
 
         // Render opportunities to the grid
         function renderOpportunities() {
             opportunitiesGrid.innerHTML = '';
             
-            if (filteredOpportunities.length === 0) {
-                opportunitiesGrid.innerHTML = '<p class="no-results">No opportunities match your filters. Try adjusting your search criteria.</p>';
-                return;
-            }
-            
             filteredOpportunities.forEach(opp => {
                 const isSaved = userOpportunities.pending.some(item => item.id === opp.id) || 
                                userOpportunities.completed.some(item => item.id === opp.id);
                 
-                const isExpired = isOpportunityExpired(opp.deadline);
-                const isUrgent = isDeadlineUrgent(opp.deadline);
-                
                 const opportunityCard = document.createElement('div');
-                opportunityCard.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
+                opportunityCard.className = 'opportunity-card';
                 opportunityCard.innerHTML = `
                     <div class="card-header">
                         <span class="opportunity-type ${opp.type}">${getOpportunityTypeText(opp.type)}</span>
@@ -1294,7 +1195,7 @@
                         </div>
                         <div class="detail">
                             <i class="fas fa-calendar-alt"></i>
-                            <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.deadline)}</span>
+                            <span class="deadline">Deadline: ${formatDate(opp.deadline)}</span>
                         </div>
                         <div class="detail">
                             <i class="fas fa-chart-line"></i>
@@ -1304,10 +1205,8 @@
                     </div>
                     
                     <div class="card-footer">
-                        <button class="save-btn ${isSaved ? 'saved' : ''}" data-id="${opp.id}" title="${isSaved ? 'Remove from dashboard' : 'Save to dashboard'}">
-                            <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i>
-                        </button>
-                        <a href="#" class="apply-link" data-id="${opp.id}">View Details & Apply</a>
+                        <button class="save-btn ${isSaved ? 'saved' : ''}" data-id="${opp.id}" title="Save to dashboard"><i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i></button>
+                        <a href="#" class="apply-link">View Details & Apply</a>
                     </div>
                 `;
                 
@@ -1321,7 +1220,7 @@
                     const user = auth.currentUser;
                     if (user) {
                         const oppId = this.getAttribute('data-id');
-                        const opportunity = allOpportunities.find(opp => opp.id === oppId);
+                        const opportunity = opportunities.find(opp => opp.id === oppId);
                         if (this.classList.contains('saved')) {
                             removeOpportunity(user.uid, opportunity);
                         } else {
@@ -1333,142 +1232,6 @@
                     }
                 });
             });
-            
-            // Add event listeners to detail buttons
-            const detailButtons = document.querySelectorAll('.apply-link');
-            detailButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const oppId = this.getAttribute('data-id');
-                    const opportunity = allOpportunities.find(opp => opp.id === oppId);
-                    showOpportunityDetails(opportunity);
-                });
-            });
-        }
-
-        // Show opportunity details
-        function showOpportunityDetails(opportunity) {
-            const isExpired = isOpportunityExpired(opportunity.deadline);
-            
-            detailsContent.innerHTML = `
-                <h2>${opportunity.title}</h2>
-                <p class="organization">${opportunity.organization}</p>
-                ${isExpired ? '<p class="deadline" style="margin: 10px 0;">This opportunity has expired</p>' : ''}
-                <div class="detail">
-                    <i class="fas fa-money-bill-wave"></i>
-                    <span>${getCompensationText(opportunity)}</span>
-                </div>
-                <div class="detail">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>${opportunity.location}</span>
-                </div>
-                <div class="detail">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span class="deadline">Deadline: ${formatDate(opportunity.deadline)}</span>
-                </div>
-                <div class="detail">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Impact: ${opportunity.impact}</span>
-                </div>
-                <h3>Description</h3>
-                <p>${opportunity.fullDescription || opportunity.description}</p>
-                <h3>Requirements</h3>
-                <p>${opportunity.requirements || 'No specific requirements listed.'}</p>
-                <h3>Duration</h3>
-                <p>${opportunity.duration || 'Not specified'}</p>
-                <div style="margin-top: 2rem; text-align: center;">
-                    <a href="${opportunity.applyLink}" target="_blank" class="btn" style="display: inline-block; ${isExpired ? 'opacity: 0.7; pointer-events: none;' : ''}">Apply Now</a>
-                </div>
-            `;
-            detailsModal.style.display = 'flex';
-        }
-
-        // Check if opportunity is expired
-        function isOpportunityExpired(deadline) {
-            const today = new Date();
-            const deadlineDate = new Date(deadline);
-            return deadlineDate < today;
-        }
-
-        // Check if deadline is urgent (within 7 days)
-        function isDeadlineUrgent(deadline) {
-            const today = new Date();
-            const deadlineDate = new Date(deadline);
-            const diffTime = deadlineDate - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays <= 7 && diffDays >= 0;
-        }
-
-        // Check for expired opportunities and remove them
-        function checkExpiredOpportunities() {
-            const today = new Date();
-            const opportunitiesRef = ref(database, 'opportunities');
-            
-            get(opportunitiesRef).then((snapshot) => {
-                if (snapshot.exists()) {
-                    const opportunities = snapshot.val();
-                    let hasExpired = false;
-                    
-                    for (const key in opportunities) {
-                        const opportunity = opportunities[key];
-                        const deadlineDate = new Date(opportunity.deadline);
-                        
-                        if (deadlineDate < today) {
-                            // Remove expired opportunity
-                            remove(ref(database, `opportunities/${key}`));
-                            hasExpired = true;
-                        }
-                    }
-                    
-                    if (hasExpired) {
-                        showNotification('Expired opportunities have been removed', 'info');
-                    }
-                }
-            });
-        }
-
-        // Check for deadline notifications
-        function checkDeadlineNotifications() {
-            const user = auth.currentUser;
-            if (!user) return;
-            
-            const userOppRef = ref(database, `userOpportunities/${user.uid}`);
-            
-            get(userOppRef).then((snapshot) => {
-                if (snapshot.exists()) {
-                    const userOpportunities = snapshot.val();
-                    const today = new Date();
-                    let upcomingDeadlines = [];
-                    
-                    for (const key in userOpportunities) {
-                        const opportunity = userOpportunities[key];
-                        if (opportunity.status === 'pending') {
-                            const deadlineDate = new Date(opportunity.deadline);
-                            const diffTime = deadlineDate - today;
-                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                            
-                            if (diffDays <= 7 && diffDays >= 0) {
-                                upcomingDeadlines.push({
-                                    title: opportunity.title,
-                                    days: diffDays
-                                });
-                            }
-                        }
-                    }
-                    
-                    if (upcomingDeadlines.length > 0) {
-                        // Show browser notification if supported
-                        if ('Notification' in window && Notification.permission === 'granted') {
-                            new Notification('OpportunityHub Deadline Alert', {
-                                body: `You have ${upcomingDeadlines.length} opportunities with approaching deadlines.`
-                            });
-                        }
-                        
-                        // Show in-app notification
-                        showNotification(`You have ${upcomingDeadlines.length} opportunities with deadlines in the next week. Check your dashboard for details.`, 'warning');
-                    }
-                }
-            });
         }
 
         // Get opportunity type text
@@ -1477,15 +1240,14 @@
                 case 'internship': return 'Internship';
                 case 'research': return 'Research';
                 case 'summer': return 'Summer Program';
-                case 'volunteer': return 'Volunteer';
                 default: return type;
             }
         }
 
         // Get compensation text
         function getCompensationText(opp) {
-            if (opp.paid && opp.amount) return `Paid - ${opp.amount}`;
-            if (opp.stipend && opp.amount) return `Stipend - ${opp.amount}`;
+            if (opp.paid) return `Paid - ${opp.rate}`;
+            if (opp.stipend) return `Stipend - ${opp.stipend}`;
             if (opp.scholarship) return 'Scholarship Available';
             return 'Unpaid';
         }
@@ -1603,7 +1365,6 @@
                 showNotification('Opportunity saved to your dashboard!');
                 userOpportunities.pending.push(opportunity);
                 renderOpportunities();
-                renderDashboardOpportunities();
             })
             .catch((error) => {
                 console.error('Error saving opportunity:', error);
@@ -1620,7 +1381,6 @@
                 userOpportunities.pending = userOpportunities.pending.filter(opp => opp.id !== opportunity.id);
                 userOpportunities.completed = userOpportunities.completed.filter(opp => opp.id !== opportunity.id);
                 renderOpportunities();
-                renderDashboardOpportunities();
             })
             .catch((error) => {
                 console.error('Error removing opportunity:', error);
@@ -1648,230 +1408,42 @@
                 
                 renderOpportunities();
                 renderDashboardOpportunities();
-                
-                // Check for deadline notifications when user loads their dashboard
-                checkDeadlineNotifications();
             });
         }
 
         // Render dashboard opportunities
         function renderDashboardOpportunities() {
-            // Render pending opportunities
-            if (userOpportunities.pending.length === 0) {
-                pendingOpportunities.innerHTML = '<p>You haven\'t saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>';
-            } else {
-                pendingOpportunities.innerHTML = '';
-                userOpportunities.pending.forEach(opp => {
-                    const oppElement = createDashboardOpportunityElement(opp, 'pending');
-                    pendingOpportunities.appendChild(oppElement);
-                });
-            }
-            
-            // Render completed opportunities
-            if (userOpportunities.completed.length === 0) {
-                completedOpportunities.innerHTML = '<p>You haven\'t completed any opportunities yet.</p>';
-            } else {
-                completedOpportunities.innerHTML = '';
-                userOpportunities.completed.forEach(opp => {
-                    const oppElement = createDashboardOpportunityElement(opp, 'completed');
-                    completedOpportunities.appendChild(oppElement);
-                });
-            }
+            // This would update the dashboard with the user's saved opportunities
+            // Implementation would depend on your specific dashboard design
         }
 
-        // Create dashboard opportunity element
-        function createDashboardOpportunityElement(opportunity, status) {
-            const isExpired = isOpportunityExpired(opportunity.deadline);
-            const isUrgent = isDeadlineUrgent(opportunity.deadline);
+        // Handle adding new opportunity
+        function handleAddOpportunity(e) {
+            e.preventDefault();
             
-            const element = document.createElement('div');
-            element.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
-            element.innerHTML = `
-                <div class="card-header">
-                    <span class="opportunity-type ${opportunity.type}">${getOpportunityTypeText(opportunity.type)}</span>
-                    <h3>${opportunity.title}</h3>
-                    <p class="organization">${opportunity.organization}</p>
-                </div>
-                
-                <div class="card-body">
-                    <div class="detail">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <span>${getCompensationText(opportunity)}</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${opportunity.location}</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opportunity.deadline)}</span>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Impact: ${opportunity.impact}</span>
-                    </div>
-                    <p>${opportunity.description}</p>
-                </div>
-                
-                <div class="card-footer">
-                    <button class="save-btn saved" data-id="${opportunity.id}" title="Remove from dashboard">
-                        <i class="fas fa-bookmark"></i>
-                    </button>
-                    <a href="#" class="apply-link" data-id="${opportunity.id}">View Details & Apply</a>
-                    ${status === 'pending' ? 
-                    `<button class="apply-link complete-btn" data-id="${opportunity.id}">Mark as Complete</button>` : 
-                    `<span class="completed-badge">Completed</span>`}
-                </div>
-            `;
+            const title = document.getElementById('oppTitle').value;
+            const organization = document.getElementById('oppOrganization').value;
+            const type = document.getElementById('oppType').value;
+            const field = document.getElementById('oppField').value;
+            const compensation = document.getElementById('oppCompensation').value;
+            const amount = document.getElementById('oppAmount').value;
+            const location = document.getElementById('oppLocation').value;
+            const deadline = document.getElementById('oppDeadline').value;
+            const impact = document.getElementById('oppImpact').value;
+            const description = document.getElementById('oppDescription').value;
+            const fullDescription = document.getElementById('oppFullDescription').value;
+            const requirements = document.getElementById('oppRequirements').value;
+            const duration = document.getElementById('oppDuration').value;
+            const applyLink = document.getElementById('oppApplyLink').value;
             
-            // Add event listener to remove button
-            const removeBtn = element.querySelector('.save-btn');
-            removeBtn.addEventListener('click', function() {
-                const user = auth.currentUser;
-                if (user) {
-                    removeOpportunity(user.uid, opportunity);
-                }
-            });
-            
-            // Add event listener to detail button
-            const detailBtn = element.querySelector('.apply-link');
-            detailBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                showOpportunityDetails(opportunity);
-            });
-            
-            // Add event listener to complete button
-            if (status === 'pending') {
-                const completeBtn = element.querySelector('.complete-btn');
-                completeBtn.addEventListener('click', function() {
-                    const user = auth.currentUser;
-                    if (user) {
-                        markAsComplete(user.uid, opportunity);
-                    }
-                });
-            }
-            
-            return element;
-        }
-
-        // Mark opportunity as complete
-        function markAsComplete(userId, opportunity) {
-            const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-            
-            update(userOppRef, {
-                status: 'completed',
-                completedAt: new Date().toISOString()
-            })
-            .then(() => {
-                showNotification('Opportunity marked as complete!');
-                // Move from pending to completed
-                userOpportunities.pending = userOpportunities.pending.filter(opp => opp.id !== opportunity.id);
-                userOpportunities.completed.push({...opportunity, status: 'completed'});
-                renderDashboardOpportunities();
-            })
-            .catch((error) => {
-                console.error('Error updating opportunity:', error);
-            });
-        }
-
-        // Apply filters
-        function applyFilters() {
-            const fieldFilter = document.getElementById('field').value;
-            const typeFilter = document.getElementById('type').value;
-            const compensationFilter = document.getElementById('compensation').value;
-            const deadlineFilter = document.getElementById('deadline').value;
-            const impactFilter = document.getElementById('impact').value;
-            const locationFilter = document.getElementById('location').value;
-            const searchTerm = searchInput.value.toLowerCase();
-            
-            filteredOpportunities = allOpportunities.filter(opp => {
-                // Field filter
-                if (fieldFilter && opp.field !== fieldFilter) return false;
-                
-                // Type filter
-                if (typeFilter && opp.type !== typeFilter) return false;
-                
-                // Compensation filter
-                if (compensationFilter === 'paid' && !opp.paid) return false;
-                if (compensationFilter === 'unpaid' && (opp.paid || opp.stipend || opp.scholarship)) return false;
-                if (compensationFilter === 'stipend' && !opp.stipend) return false;
-                
-                // Impact filter
-                if (impactFilter && opp.impact.toLowerCase() !== impactFilter.toLowerCase()) return false;
-                
-                // Location filter
-                if (locationFilter && opp.location.toLowerCase() !== locationFilter.toLowerCase()) return false;
-                
-                // Search term filter
-                if (searchTerm && !(
-                    opp.title.toLowerCase().includes(searchTerm) ||
-                    opp.organization.toLowerCase().includes(searchTerm) ||
-                    opp.description.toLowerCase().includes(searchTerm) ||
-                    (opp.field && opp.field.toLowerCase().includes(searchTerm))
-                )) return false;
-                
-                // Deadline filter (simplified for demo)
-                if (deadlineFilter && !isOpportunityExpired(opp.deadline)) {
-                    const today = new Date();
-                    const oppDeadline = new Date(opp.deadline);
-                    const diffTime = Math.abs(oppDeadline - today);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    if (deadlineFilter === 'week' && diffDays > 7) return false;
-                    if (deadlineFilter === 'month' && diffDays > 30) return false;
-                    if (deadlineFilter === '3months' && diffDays > 90) return false;
-                }
-                
-                return true;
-            });
-            
-            renderOpportunities();
-            showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
-        }
-
-        // Apply search filter
-        function applySearchFilter() {
-            applyFilters();
-        }
-
-        // Reset filters
-        function resetFilters() {
-            document.getElementById('field').value = '';
-            document.getElementById('type').value = '';
-            document.getElementById('compensation').value = '';
-            document.getElementById('deadline').value = '';
-            document.getElementById('impact').value = '';
-            document.getElementById('location').value = '';
-            searchInput.value = '';
-            
-            filteredOpportunities = [...allOpportunities];
-            renderOpportunities();
-            showNotification('Filters reset');
-        }
-
-        // Add new opportunity (admin function)
-        function addNewOpportunity() {
-            const title = document.getElementById('adminTitle').value;
-            const organization = document.getElementById('adminOrganization').value;
-            const type = document.getElementById('adminType').value;
-            const field = document.getElementById('adminField').value;
-            const compensation = document.getElementById('adminCompensation').value;
-            const amount = document.getElementById('adminAmount').value;
-            const location = document.getElementById('adminLocation').value;
-            const deadline = document.getElementById('adminDeadline').value;
-            const impact = document.getElementById('adminImpact').value;
-            const description = document.getElementById('adminDescription').value;
-            const fullDescription = document.getElementById('adminFullDescription').value;
-            const requirements = document.getElementById('adminRequirements').value;
-            const duration = document.getElementById('adminDuration').value;
-            const applyLink = document.getElementById('adminApplyLink').value;
-            
-            if (!title || !organization || !deadline) {
-                showNotification('Please fill in all required fields', 'danger');
+            // Basic validation
+            if (!title || !organization || !type || !field || !compensation || !location || !deadline || !impact || !description || !applyLink) {
+                showNotification('Please fill in all required fields', 'error');
                 return;
             }
             
-            const newOpportunity = {
+            // Create opportunity object
+            const opportunity = {
                 title,
                 organization,
                 type,
@@ -1887,40 +1459,33 @@
                 createdAt: new Date().toISOString()
             };
             
-            // Set compensation fields based on selection
+            // Add compensation details
             if (compensation === 'paid') {
-                newOpportunity.paid = true;
-                newOpportunity.amount = amount;
+                opportunity.paid = true;
+                opportunity.amount = amount;
             } else if (compensation === 'stipend') {
-                newOpportunity.stipend = true;
-                newOpportunity.amount = amount;
+                opportunity.stipend = true;
+                opportunity.amount = amount;
             } else if (compensation === 'scholarship') {
-                newOpportunity.scholarship = true;
+                opportunity.scholarship = true;
             }
             
             // Push to Firebase
-            const newOppRef = push(ref(database, 'opportunities'));
-            set(newOppRef, newOpportunity)
+            const newOpportunityRef = push(ref(database, 'opportunities'));
+            set(newOpportunityRef, opportunity)
                 .then(() => {
                     showNotification('Opportunity added successfully!');
-                    resetAdminForm();
+                    resetForm();
                 })
                 .catch((error) => {
-                    showNotification('Error adding opportunity: ' + error.message, 'danger');
+                    showNotification('Error adding opportunity: ' + error.message, 'error');
                 });
         }
 
-        // Reset admin form
-        function resetAdminForm() {
-            document.getElementById('adminTitle').value = '';
-            document.getElementById('adminOrganization').value = '';
-            document.getElementById('adminAmount').value = '';
-            document.getElementById('adminDeadline').value = '';
-            document.getElementById('adminDescription').value = '';
-            document.getElementById('adminFullDescription').value = '';
-            document.getElementById('adminRequirements').value = '';
-            document.getElementById('adminDuration').value = '';
-            document.getElementById('adminApplyLink').value = '';
+        // Reset form
+        function resetForm() {
+            document.getElementById('opportunityForm').reset();
+            amountField.style.display = 'none';
         }
 
         // Check for approaching deadlines
@@ -1930,27 +1495,23 @@
             
             // For demo purposes, we'll just show a notification after 2 seconds
             setTimeout(() => {
-                showNotification('You have 3 opportunities with deadlines in the next week.', 'warning');
+                showNotification('You have 3 opportunities with deadlines in the next week.');
             }, 2000);
         }
 
         // Show notification
         function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
             const notificationContent = notification.querySelector('.notification-content');
             
+            // Update notification style based on type
             notification.className = 'notification';
-            if (type === 'warning') {
-                notification.classList.add('warning');
-            } else if (type === 'danger') {
-                notification.classList.add('danger');
-            } else if (type === 'info') {
-                notification.classList.add('info');
+            if (type === 'error') {
+                notification.classList.add('error');
             }
             
             if (message) {
                 notificationContent.innerHTML = `
-                    <h4>Notification</h4>
+                    <h4>${type === 'error' ? 'Error' : 'Notification'}</h4>
                     <p>${message}</p>
                 `;
             }
@@ -1959,25 +1520,19 @@
             
             setTimeout(() => {
                 notification.classList.remove('show');
-            }, 5000);
+            }, 3000);
         }
 
         // Show dashboard
         function showDashboard() {
             const user = auth.currentUser;
             if (user) {
-                heroSection.classList.add('hidden');
-                filtersSection.classList.add('hidden');
-                opportunitiesTitle.classList.add('hidden');
-                opportunitiesGrid.classList.add('hidden');
+                document.querySelector('.hero').style.display = 'none';
+                document.querySelector('.filters').style.display = 'none';
+                document.querySelector('#opportunitiesGrid').style.display = 'none';
+                document.querySelector('main h2').style.display = 'none';
                 adminPanel.style.display = 'none';
                 dashboard.style.display = 'block';
-                
-                // Smooth scroll to top
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
             } else {
                 showAuthModal('login');
                 showNotification('Please sign in to view your dashboard');
@@ -1986,88 +1541,35 @@
 
         // Show home page
         function showHome() {
-            heroSection.classList.remove('hidden');
-            filtersSection.classList.add('hidden');
-            opportunitiesTitle.classList.add('hidden');
-            opportunitiesGrid.classList.add('hidden');
+            document.querySelector('.hero').style.display = 'block';
+            document.querySelector('.filters').style.display = 'block';
+            document.querySelector('#opportunitiesGrid').style.display = 'grid';
+            document.querySelector('main h2').style.display = 'block';
             dashboard.style.display = 'none';
             adminPanel.style.display = 'none';
-            
-            // Smooth scroll to top
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
         }
 
         // Show opportunities page
         function showOpportunities() {
-            heroSection.classList.add('hidden');
-            filtersSection.classList.remove('hidden');
-            opportunitiesTitle.classList.remove('hidden');
-            opportunitiesGrid.classList.remove('hidden');
-            dashboard.style.display = 'none';
-            adminPanel.style.display = 'none';
-            
-            // Smooth scroll to opportunities
-            setTimeout(() => {
-                window.scrollTo({
-                    top: filtersSection.offsetTop - 100,
-                    behavior: 'smooth'
-                });
-            }, 100);
+            showHome();
+            // Additional logic for opportunities page could go here
         }
 
         // Show admin panel
         function showAdminPanel() {
             const user = auth.currentUser;
-            if (user && adminUsers.includes(user.email)) {
-                heroSection.classList.add('hidden');
-                filtersSection.classList.add('hidden');
-                opportunitiesTitle.classList.add('hidden');
-                opportunitiesGrid.classList.add('hidden');
+            if (user && adminEmails.includes(user.email)) {
+                document.querySelector('.hero').style.display = 'none';
+                document.querySelector('.filters').style.display = 'none';
+                document.querySelector('#opportunitiesGrid').style.display = 'none';
+                document.querySelector('main h2').style.display = 'none';
                 dashboard.style.display = 'none';
                 adminPanel.style.display = 'block';
-                
-                // Smooth scroll to top
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            }
-        }
-
-        // Switch dashboard tab
-        function switchDashboardTab(tabName) {
-            // Update tabs
-            dashboardTabs.forEach(tab => {
-                if (tab.getAttribute('data-tab') === tabName) {
-                    tab.classList.add('active');
-                } else {
-                    tab.classList.remove('active');
-                }
-            });
-            
-            // Update content
-            if (tabName === 'pending') {
-                document.getElementById('pendingContent').classList.add('active');
-                document.getElementById('completedContent').classList.remove('active');
-            } else {
-                document.getElementById('pendingContent').classList.remove('active');
-                document.getElementById('completedContent').classList.add('active');
-            }
-        }
-
-        // Request notification permission
-        function requestNotificationPermission() {
-            if ('Notification' in window) {
-                Notification.requestPermission();
             }
         }
 
         // Initialize the app
         initApp();
-        requestNotificationPermission();
     </script>
 </body>
 </html>
