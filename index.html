@@ -154,7 +154,6 @@
         
         .auth-form {
             display: none;
-            animation: fadeIn 0.3s ease;
         }
         
         .auth-form.active {
@@ -268,7 +267,6 @@
             margin-bottom: 8px;
             font-weight: 500;
             color: var(--dark);
-            animation: slideIn 0.5s ease;
         }
         
         .filter-group select, .filter-group input {
@@ -277,13 +275,6 @@
             border: 1px solid var(--light-gray);
             border-radius: 4px;
             background-color: var(--light);
-            transition: all 0.3s ease;
-        }
-        
-        .filter-group select:focus, .filter-group input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
         }
         
         .filter-actions {
@@ -298,7 +289,6 @@
             border-radius: 4px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
         
         .apply-btn {
@@ -306,17 +296,9 @@
             color: white;
         }
         
-        .apply-btn:hover {
-            background-color: var(--secondary);
-        }
-        
         .reset-btn {
             background-color: var(--light-gray);
             color: var(--dark);
-        }
-        
-        .reset-btn:hover {
-            background-color: #dde1e7;
         }
         
         /* Opportunities Grid */
@@ -333,7 +315,6 @@
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            animation: fadeIn 0.5s ease;
         }
         
         .opportunity-card:hover {
@@ -410,6 +391,12 @@
             animation: pulse 2s infinite;
         }
         
+        @keyframes pulse {
+            0% { color: var(--danger); }
+            50% { color: #ff8fa3; }
+            100% { color: var(--danger); }
+        }
+        
         .card-footer {
             padding: 1rem 1.5rem;
             background-color: var(--light);
@@ -450,7 +437,6 @@
         .dashboard {
             display: none;
             margin: 2rem 0;
-            animation: fadeIn 0.5s ease;
         }
         
         .dashboard-tabs {
@@ -463,11 +449,6 @@
             padding: 1rem 1.5rem;
             cursor: pointer;
             font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .dashboard-tab:hover {
-            color: var(--primary);
         }
         
         .dashboard-tab.active {
@@ -477,7 +458,6 @@
         
         .dashboard-content {
             display: none;
-            animation: fadeIn 0.5s ease;
         }
         
         .dashboard-content.active {
@@ -490,209 +470,16 @@
             gap: 20px;
         }
         
-        /* Admin Panel */
-        .admin-panel {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            margin: 2rem auto;
-            max-width: 800px;
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .admin-panel h2 {
-            color: var(--primary);
-            margin-bottom: 1.5rem;
+        .empty-state {
             text-align: center;
-        }
-        
-        .admin-tabs {
-            display: flex;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--light-gray);
-        }
-        
-        .admin-tab {
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .admin-tab:hover {
-            color: var(--primary);
-        }
-        
-        .admin-tab.active {
-            border-bottom: 2px solid var(--primary);
-            color: var(--primary);
-        }
-        
-        .admin-content {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .admin-content.active {
-            display: block;
-        }
-        
-        .admin-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-        
-        .admin-form .full-width {
-            grid-column: 1 / -1;
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--dark);
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--light-gray);
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-        }
-        
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        
-        .admin-actions {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .admin-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .admin-submit {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        .admin-submit:hover {
-            background-color: var(--secondary);
-        }
-        
-        .admin-reset {
-            background-color: var(--light-gray);
-            color: var(--dark);
-        }
-        
-        .admin-reset:hover {
-            background-color: #dde1e7;
-        }
-        
-        .admin-delete {
-            background-color: var(--danger);
-            color: white;
-        }
-        
-        .admin-delete:hover {
-            background-color: #d91a46;
-        }
-        
-        /* Opportunities List */
-        .opportunities-list {
-            margin-top: 2rem;
-        }
-        
-        .opportunity-item {
-            background-color: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-            animation: slideIn 0.5s ease;
-        }
-        
-        .opportunity-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .opportunity-info h3 {
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-        }
-        
-        .opportunity-meta {
-            display: flex;
-            gap: 1rem;
+            padding: 2rem;
             color: var(--gray);
-            font-size: 0.9rem;
         }
         
-        .opportunity-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .action-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-        
-        .edit-btn {
-            background-color: var(--warning);
-            color: var(--dark);
-        }
-        
-        .edit-btn:hover {
-            background-color: #ffc53d;
-        }
-        
-        .delete-btn {
-            background-color: var(--danger);
-            color: white;
-        }
-        
-        .delete-btn:hover {
-            background-color: #d91a46;
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--light-gray);
         }
         
         /* Notification */
@@ -710,7 +497,6 @@
             transform: translateX(150%);
             transition: transform 0.3s ease;
             z-index: 1000;
-            animation: slideInRight 0.3s ease;
         }
         
         .notification.show {
@@ -797,28 +583,6 @@
             font-size: 0.9rem;
         }
         
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes slideInRight {
-            from { transform: translateX(100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        @keyframes pulse {
-            0% { color: var(--danger); }
-            50% { color: #ff8fa3; }
-            100% { color: var(--danger); }
-        }
-        
         /* Responsive Design */
         @media (max-width: 768px) {
             .header-content {
@@ -845,20 +609,6 @@
             
             .filter-row {
                 flex-direction: column;
-            }
-            
-            .admin-form {
-                grid-template-columns: 1fr;
-            }
-            
-            .opportunity-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .opportunity-actions {
-                align-self: flex-end;
             }
         }
     </style>
@@ -918,7 +668,7 @@
     </div>
     
     <!-- Hero Section -->
-    <section class="hero" id="heroSection">
+    <section class="hero">
         <div class="container">
             <h1>Find Your Next Challenge</h1>
             <p>Discover internships, research opportunities, and summer programs to build your portfolio and boost your career</p>
@@ -933,7 +683,7 @@
     <!-- Main Content -->
     <main class="container">
         <!-- Filters -->
-        <section class="filters" id="filtersSection">
+        <section class="filters">
             <div class="filter-row">
                 <div class="filter-group">
                     <label for="field">Field of Interest</label>
@@ -1010,7 +760,7 @@
         <!-- Opportunities Grid -->
         <h2 id="opportunitiesTitle">Featured Opportunities</h2>
         <div class="opportunities-grid" id="opportunitiesGrid">
-            <!-- Opportunities will be loaded here -->
+            <!-- Opportunities will be loaded from Firebase -->
         </div>
         
         <!-- Dashboard -->
@@ -1024,140 +774,24 @@
             
             <div class="dashboard-content active" id="pendingContent">
                 <div class="dashboard-opportunities" id="pendingOpportunities">
-                    <p>You haven't saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>
+                    <div class="empty-state">
+                        <i class="far fa-bookmark"></i>
+                        <h3>No pending opportunities</h3>
+                        <p>Save opportunities to your dashboard to track them here</p>
+                    </div>
                 </div>
             </div>
             
             <div class="dashboard-content" id="completedContent">
                 <div class="dashboard-opportunities" id="completedOpportunities">
-                    <p>You haven't completed any opportunities yet.</p>
+                    <div class="empty-state">
+                        <i class="far fa-check-circle"></i>
+                        <h3>No completed opportunities</h3>
+                        <p>Mark opportunities as complete to track your achievements</p>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Admin Panel -->
-        <section class="admin-panel" id="adminPanel">
-            <h2>Admin Management Panel</h2>
-            
-            <div class="admin-tabs">
-                <div class="admin-tab active" data-tab="add">Add New Opportunity</div>
-                <div class="admin-tab" data-tab="manage">Manage Opportunities</div>
-            </div>
-            
-            <div class="admin-content active" id="addContent">
-                <form id="opportunityForm" class="admin-form">
-                    <div class="form-group full-width">
-                        <label for="oppTitle">Opportunity Title *</label>
-                        <input type="text" id="oppTitle" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="oppOrganization">Organization *</label>
-                        <input type="text" id="oppOrganization" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="oppType">Type *</label>
-                        <select id="oppType" required>
-                            <option value="">Select Type</option>
-                            <option value="internship">Internship</option>
-                            <option value="research">Research</option>
-                            <option value="summer">Summer Program</option>
-                            <option value="volunteer">Volunteer</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="oppField">Field *</label>
-                        <select id="oppField" required>
-                            <option value="">Select Field</option>
-                            <option value="stem">STEM</option>
-                            <option value="business">Business & Finance</option>
-                            <option value="arts">Arts & Design</option>
-                            <option value="social">Social Sciences</option>
-                            <option value="health">Health & Medicine</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="oppCompensation">Compensation *</label>
-                        <select id="oppCompensation" required>
-                            <option value="">Select Compensation</option>
-                            <option value="unpaid">Unpaid</option>
-                            <option value="paid">Paid</option>
-                            <option value="stipend">Stipend</option>
-                            <option value="scholarship">Scholarship</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group" id="amountField" style="display: none;">
-                        <label for="oppAmount">Amount</label>
-                        <input type="text" id="oppAmount" placeholder="$20/hr or $2,000">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="oppLocation">Location *</label>
-                        <select id="oppLocation" required>
-                            <option value="">Select Location</option>
-                            <option value="remote">Remote</option>
-                            <option value="onsite">On-site</option>
-                            <option value="hybrid">Hybrid</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="oppDeadline">Deadline *</label>
-                        <input type="date" id="oppDeadline" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="oppImpact">Impact Level *</label>
-                        <select id="oppImpact" required>
-                            <option value="">Select Impact Level</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group full-width">
-                        <label for="oppDescription">Short Description *</label>
-                        <textarea id="oppDescription" required placeholder="Brief description that appears on cards"></textarea>
-                    </div>
-                    
-                    <div class="form-group full-width">
-                        <label for="oppFullDescription">Full Description</label>
-                        <textarea id="oppFullDescription" placeholder="Detailed description that appears in the details modal"></textarea>
-                    </div>
-                    
-                    <div class="form-group full-width">
-                        <label for="oppRequirements">Requirements</label>
-                        <textarea id="oppRequirements" placeholder="List of requirements"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="oppDuration">Duration</label>
-                        <input type="text" id="oppDuration" placeholder="e.g., 3 months, 4 weeks">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="oppApplyLink">Application Link *</label>
-                        <input type="url" id="oppApplyLink" required placeholder="https://...">
-                    </div>
-                    
-                    <div class="admin-actions">
-                        <button type="button" class="admin-btn admin-reset" id="adminReset">Reset</button>
-                        <button type="submit" class="admin-btn admin-submit">Add Opportunity</button>
-                    </div>
-                </form>
-            </div>
-            
-            <div class="admin-content" id="manageContent">
-                <div class="opportunities-list" id="opportunitiesList">
-                    <p>Loading opportunities...</p>
-                </div>
-            </div>
-        </section>
     </main>
     
     <!-- Notification -->
@@ -1262,18 +896,12 @@
         const searchBtn = document.getElementById('searchBtn');
         const applyFiltersBtn = document.getElementById('applyFilters');
         const resetFiltersBtn = document.getElementById('resetFilters');
-        const adminPanel = document.getElementById('adminPanel');
-        const opportunityForm = document.getElementById('opportunityForm');
-        const adminReset = document.getElementById('adminReset');
-        const compensationSelect = document.getElementById('oppCompensation');
-        const amountField = document.getElementById('amountField');
-        const adminTabs = document.querySelectorAll('.admin-tab');
-        const addContent = document.getElementById('addContent');
-        const manageContent = document.getElementById('manageContent');
-        const opportunitiesList = document.getElementById('opportunitiesList');
+        const pendingOpportunities = document.getElementById('pendingOpportunities');
+        const completedOpportunities = document.getElementById('completedOpportunities');
+        const dashboardTabs = document.querySelectorAll('.dashboard-tab');
 
         // Admin emails (replace with your actual admin emails)
-        const adminEmails = ['admin@opportunityhub.com', 'ibaymirzayev@gmail.com'];
+        const adminEmails = ['admin@opportunityhub.com'];
 
         // Current filtered opportunities
         let filteredOpportunities = [];
@@ -1315,11 +943,6 @@
             showOpportunities();
         });
 
-        navAdmin.addEventListener('click', (e) => {
-            e.preventDefault();
-            showAdminPanel();
-        });
-
         searchBtn.addEventListener('click', applySearchFilter);
         searchInput.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') applySearchFilter();
@@ -1328,25 +951,10 @@
         applyFiltersBtn.addEventListener('click', applyFilters);
         resetFiltersBtn.addEventListener('click', resetFilters);
 
-        opportunityForm.addEventListener('submit', handleAddOpportunity);
-        adminReset.addEventListener('click', resetForm);
-
-        compensationSelect.addEventListener('change', () => {
-            if (compensationSelect.value === 'paid' || compensationSelect.value === 'stipend') {
-                amountField.style.display = 'block';
-            } else {
-                amountField.style.display = 'none';
-            }
-        });
-
-        adminTabs.forEach(tab => {
+        dashboardTabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 const tabName = tab.getAttribute('data-tab');
-                switchAdminTab(tabName);
-                
-                if (tabName === 'manage') {
-                    loadOpportunitiesForManagement();
-                }
+                switchDashboardTab(tabName);
             });
         });
 
@@ -1381,7 +989,6 @@
                 
                 // Hide dashboard if user is not logged in
                 dashboard.style.display = 'none';
-                adminPanel.style.display = 'none';
             }
         });
 
@@ -1410,10 +1017,6 @@
                 
                 // Apply current filters
                 applyFilters();
-            }, {
-                // This allows unauthenticated users to read the data
-                // In a real app, you would set up Firebase rules to allow public read access
-                onlyOnce: true
             });
         }
 
@@ -1692,7 +1295,13 @@
         function renderDashboardOpportunities() {
             // Render pending opportunities
             if (userOpportunities.pending.length === 0) {
-                pendingOpportunities.innerHTML = '<p>You haven\'t saved any opportunities yet. Browse opportunities and save them to your dashboard.</p>';
+                pendingOpportunities.innerHTML = `
+                    <div class="empty-state">
+                        <i class="far fa-bookmark"></i>
+                        <h3>No pending opportunities</h3>
+                        <p>Save opportunities to your dashboard to track them here</p>
+                    </div>
+                `;
             } else {
                 pendingOpportunities.innerHTML = '';
                 userOpportunities.pending.forEach(opp => {
@@ -1703,7 +1312,13 @@
             
             // Render completed opportunities
             if (userOpportunities.completed.length === 0) {
-                completedOpportunities.innerHTML = '<p>You haven\'t completed any opportunities yet.</p>';
+                completedOpportunities.innerHTML = `
+                    <div class="empty-state">
+                        <i class="far fa-check-circle"></i>
+                        <h3>No completed opportunities</h3>
+                        <p>Mark opportunities as complete to track your achievements</p>
+                    </div>
+                `;
             } else {
                 completedOpportunities.innerHTML = '';
                 userOpportunities.completed.forEach(opp => {
@@ -1876,113 +1491,6 @@
             showNotification('Filters reset');
         }
 
-        // Handle adding new opportunity
-        function handleAddOpportunity(e) {
-            e.preventDefault();
-            
-            const title = document.getElementById('oppTitle').value;
-            const organization = document.getElementById('oppOrganization').value;
-            const type = document.getElementById('oppType').value;
-            const field = document.getElementById('oppField').value;
-            const compensation = document.getElementById('oppCompensation').value;
-            const amount = document.getElementById('oppAmount').value;
-            const location = document.getElementById('oppLocation').value;
-            const deadline = document.getElementById('oppDeadline').value;
-            const impact = document.getElementById('oppImpact').value;
-            const description = document.getElementById('oppDescription').value;
-            const fullDescription = document.getElementById('oppFullDescription').value;
-            const requirements = document.getElementById('oppRequirements').value;
-            const duration = document.getElementById('oppDuration').value;
-            const applyLink = document.getElementById('oppApplyLink').value;
-            
-            // Basic validation
-            if (!title || !organization || !type || !field || !compensation || !location || !deadline || !impact || !description || !applyLink) {
-                showNotification('Please fill in all required fields', 'error');
-                return;
-            }
-            
-            // Create opportunity object
-            const opportunity = {
-                title,
-                organization,
-                type,
-                field,
-                location,
-                deadline,
-                impact,
-                description,
-                fullDescription,
-                requirements,
-                duration,
-                applyLink,
-                createdAt: new Date().toISOString()
-            };
-            
-            // Add compensation details
-            if (compensation === 'paid') {
-                opportunity.paid = true;
-                opportunity.amount = amount;
-            } else if (compensation === 'stipend') {
-                opportunity.stipend = true;
-                opportunity.amount = amount;
-            } else if (compensation === 'scholarship') {
-                opportunity.scholarship = true;
-            }
-            
-            // Push to Firebase
-            const newOpportunityRef = push(ref(database, 'opportunities'));
-            set(newOpportunityRef, opportunity)
-                .then(() => {
-                    showNotification('Opportunity added successfully!');
-                    resetForm();
-                })
-                .catch((error) => {
-                    showNotification('Error adding opportunity: ' + error.message, 'error');
-                });
-        }
-
-        // Load opportunities for management
-        function loadOpportunitiesForManagement() {
-            const opportunitiesRef = ref(database, 'opportunities');
-            
-            onValue(opportunitiesRef, (snapshot) => {
-                const data = snapshot.val();
-                opportunitiesList.innerHTML = '';
-                
-                if (data) {
-                    for (const key in data) {
-                        const opportunity = data[key];
-                        const opportunityItem = document.createElement('div');
-                        opportunityItem.className = 'opportunity-item';
-                        opportunityItem.innerHTML = `
-                            <div class="opportunity-info">
-                                <h3>${opportunity.title}</h3>
-                                <div class="opportunity-meta">
-                                    <span>${opportunity.organization}</span>
-                                    <span>${getOpportunityTypeText(opportunity.type)}</span>
-                                    <span>${formatDate(opportunity.deadline)}</span>
-                                </div>
-                            </div>
-                            <div class="opportunity-actions">
-                                <button class="action-btn edit-btn" data-id="${key}">Edit</button>
-                                <button class="action-btn delete-btn" data-id="${key}">Delete</button>
-                            </div>
-                        `;
-                        
-                        opportunitiesList.appendChild(opportunityItem);
-                    }
-                } else {
-                    opportunitiesList.innerHTML = '<p>No opportunities found. Add your first opportunity!</p>';
-                }
-            });
-        }
-
-        // Reset form
-        function resetForm() {
-            document.getElementById('opportunityForm').reset();
-            amountField.style.display = 'none';
-        }
-
         // Check for approaching deadlines
         function checkDeadlines() {
             // This would check the user's saved opportunities for deadlines
@@ -2028,7 +1536,6 @@
                 filtersSection.style.display = 'none';
                 opportunitiesTitle.style.display = 'none';
                 opportunitiesGrid.style.display = 'none';
-                adminPanel.style.display = 'none';
                 dashboard.style.display = 'block';
             } else {
                 showAuthModal('login');
@@ -2043,7 +1550,6 @@
             opportunitiesTitle.style.display = 'block';
             opportunitiesGrid.style.display = 'grid';
             dashboard.style.display = 'none';
-            adminPanel.style.display = 'none';
         }
 
         // Show opportunities page
@@ -2052,25 +1558,10 @@
             // Additional logic for opportunities page could go here
         }
 
-        // Show admin panel
-        function showAdminPanel() {
-            const user = auth.currentUser;
-            if (user && adminEmails.includes(user.email)) {
-                heroSection.style.display = 'none';
-                filtersSection.style.display = 'none';
-                opportunitiesTitle.style.display = 'none';
-                opportunitiesGrid.style.display = 'none';
-                dashboard.style.display = 'none';
-                adminPanel.style.display = 'block';
-            } else {
-                showNotification('You do not have admin privileges', 'error');
-            }
-        }
-
-        // Switch admin tab
-        function switchAdminTab(tabName) {
+        // Switch dashboard tab
+        function switchDashboardTab(tabName) {
             // Update tabs
-            adminTabs.forEach(tab => {
+            dashboardTabs.forEach(tab => {
                 if (tab.getAttribute('data-tab') === tabName) {
                     tab.classList.add('active');
                 } else {
@@ -2079,12 +1570,12 @@
             });
             
             // Update content
-            if (tabName === 'add') {
-                addContent.classList.add('active');
-                manageContent.classList.remove('active');
+            if (tabName === 'pending') {
+                document.getElementById('pendingContent').classList.add('active');
+                document.getElementById('completedContent').classList.remove('active');
             } else {
-                addContent.classList.remove('active');
-                manageContent.classList.add('active');
+                document.getElementById('pendingContent').classList.remove('active');
+                document.getElementById('completedContent').classList.add('active');
             }
         }
 
