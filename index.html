@@ -1564,45 +1564,65 @@
             }
 
             // Handle signup
-            function handleSignup() {
-                const name = document.getElementById('signupName').value;
-                const email = document.getElementById('signupEmail').value;
-                const password = document.getElementById('signupPassword').value;
-                const confirm = document.getElementById('signupConfirm').value;
-                
-                // Basic validation
-                if (password !== confirm) {
-                    if (signupError) {
-                        signupError.textContent = 'Passwords do not match';
-                        signupError.style.display = 'block';
+// Handle signup
+function handleSignup() {
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('signupConfirm').value;
+    
+    // Basic validation
+    if (password !== confirm) {
+        if (signupError) {
+            signupError.textContent = 'Passwords do not match';
+            signupError.style.display = 'block';
+        }
+        return;
+    }
+    
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Signed up 
+            const user = userCredential.user;
+            
+            // Save user profile
+            set(ref(database, 'users/' + user.uid), {
+                name: name,
+                email: email,
+                createdAt: new Date().toISOString()
+            });
+
+            // ADD THIS CODE RIGHT HERE:
+            // After creating the user, check if it's an admin account
+            const adminEmails = ['admin@example.com', 'youradmin@email.com']; // Add your admin emails here
+            
+            if (adminEmails.includes(email)) {
+                // Add user ID to the admins list
+                const adminRef = ref(database, 'admins');
+                get(adminRef).then((snapshot) => {
+                    let admins = [];
+                    if (snapshot.exists()) {
+                        admins = snapshot.val();
                     }
-                    return;
-                }
-                
-                createUserWithEmailAndPassword(auth, email, password)
-                    .then((userCredential) => {
-                        // Signed up 
-                        const user = userCredential.user;
-                        
-                        // Save user profile
-                        set(ref(database, 'users/' + user.uid), {
-                            name: name,
-                            email: email,
-                            createdAt: new Date().toISOString()
-                        });
-                            signupError.style.display = 'block';
-                        
-                        
-                        if (authModal) authModal.style.display = 'none';
-                        showNotification('Account created successfully!');
-                    })
-                    .catch((error) => {
-                        if (signupError) {
-                            signupError.textContent = error.message;
-                            signupError.style.display = 'block';
-                        }
-                    });
+                    // Add the new admin if not already in the list
+                    if (!admins.includes(user.uid)) {
+                        admins.push(user.uid);
+                        set(adminRef, admins);
+                    }
+                });
             }
+            // END OF ADDED CODE
+
+            if (authModal) authModal.style.display = 'none';
+            showNotification('Account created successfully!');
+        })
+        .catch((error) => {
+            if (signupError) {
+                signupError.textContent = error.message;
+                signupError.style.display = 'block';
+            }
+        });
+}
 
             // Handle logout
             function handleLogout() {
