@@ -1133,7 +1133,7 @@
             projectId: "youthaxis-16bab",
             storageBucket: "youthaxis-16bab.firebasestorage.app",
             messagingSenderId: "287063568472",
-            appId: "极速3d1:287063568472:web:9209a3a4a82407d63e9a2d",
+            appId: "1:287063568472:web:9209a3a4a82407d63e9a2d",
             measurementId: "G-7M9QET4FLZ",
             databaseURL: "https://youthaxis-16bab-default-rtdb.firebaseio.com/"
         };
@@ -1183,7 +1183,7 @@
             const adminOpportunitiesList = document.getElementById('adminOpportunitiesList');
 
             // Admin emails (replace with your actual admin emails)
-            const adminEmails = ['admin@opportunityhub.com', 'admin@example.com'];
+            const adminEmails = ['boymirzayevismoiljon@gmail.com', 'ibaymirzayev@gmail.com'];
 
             // Current filtered opportunities
             let filteredOpportunities = [];
@@ -1372,7 +1372,7 @@
                                 <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.deadline)}</span>
                             </div>
                             <div class="detail">
-                                <i class="fas fa-chart-line"></极速3di>
+                                <i class="fas fa-chart-line"></i>
                                 <span>Impact: ${opp.impact}</span>
                             </div>
                             <p>${opp.description}</p>
@@ -1661,7 +1661,7 @@
                 if (pendingOpportunities) {
                     if (userOpportunities.pending.length === 0) {
                         pendingOpportunities.innerHTML = `
-                            <极速3ddiv class="empty-state">
+                            <div class="empty-state">
                                 <i class="far fa-bookmark"></i>
                                 <h3>No pending opportunities</h3>
                                 <p>Save opportunities to your dashboard to track them here</p>
@@ -1734,7 +1734,7 @@
                         <button class="save-btn saved" data-id="${opportunity.id}" title="Remove from dashboard">
                             <i class="fas fa-bookmark"></i>
                         </button>
-                        <a href="${opportunity.applyLink}" target="_blank" class极速3d="apply-link">Apply Now</a>
+                        <a href="${opportunity.applyLink}" target="_blank" class="apply-link">Apply Now</a>
                         ${status === 'pending' ? 
                         `<button class="apply-link complete-btn" data-id="${opportunity.id}">Mark as Complete</button>` : 
                         `<span class="completed-badge">Completed</span>`}
@@ -1766,11 +1766,11 @@
 
             // Mark opportunity as complete
             function markAsComplete(userId, opportunity) {
-                const userOppRef = ref(database, `userOpportunities/${userId}/${opportun极速3ity.id}`);
+                const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
                 
                 update(userOppRef, {
                     status: 'completed',
-                    completedAt极速3d: new Date().toISOString()
+                    completedAt: new Date().toISOString()
                 })
                 .then(() => {
                     showNotification('Opportunity marked as complete!');
@@ -1779,7 +1779,7 @@
                     userOpportunities.completed.push({...opportunity, status: 'completed'});
                     renderDashboardOpportunities();
                 })
-                .catch((error极速3d) => {
+                .catch((error) => {
                     console.error('Error updating opportunity:', error);
                 });
             }
@@ -1835,7 +1835,7 @@
                         if (oppDeadline < today) return false;
                         
                         const diffTime = oppDeadline - today;
-                        const diffDays = Math.ceil(diff极速3dTime / (极速3d1000 * 60 * 60 * 24));
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                         
                         if (deadlineFilter === 'week' && diffDays > 7) return false;
                         if (deadlineFilter === 'month' && diffDays > 30) return false;
