@@ -1645,15 +1645,21 @@ function handleSignup() {
 }
 
             // Handle logout
-            function handleLogout() {
-                signOut(auth)
-                    .then(() => {
-                        showNotification('Successfully logged out');
-                    })
-                    .catch((error) => {
-                        console.error('Logout error:', error);
-                    });
-            }
+function handleLogout() {
+    // Remove the listener when logging out
+    if (userOpportunitiesListener) {
+        userOpportunitiesListener();
+        userOpportunitiesListener = null;
+    }
+    
+    signOut(auth)
+        .then(() => {
+            showNotification('Successfully logged out');
+        })
+        .catch((error) => {
+            console.error('Logout error:', error);
+        });
+}
 
             // Save opportunity to user's dashboard
 // Save opportunity to user's dashboard
@@ -1712,11 +1718,21 @@ function saveOpportunity(userId, opportunity) {
             // Load user's saved opportunities
       // Load user's saved opportunities
 // Load user's saved opportunities
+let userOpportunitiesListener = null;
+
 function loadUserOpportunities(userId) {
+    // Remove previous listener if it exists
+    if (userOpportunitiesListener) {
+        userOpportunitiesListener(); // This detaches the previous listener
+    }
+    
     const userOppRef = ref(database, `userOpportunities/${userId}`);
     
-    onValue(userOppRef, (snapshot) => {
+    // Set up the listener and store it for potential cleanup
+    userOpportunitiesListener = onValue(userOppRef, (snapshot) => {
         const data = snapshot.val();
+        
+        // Always reset the arrays completely
         userOpportunities.pending = [];
         userOpportunities.completed = [];
         
@@ -1729,11 +1745,7 @@ function loadUserOpportunities(userId) {
             
             for (const key in data) {
                 const savedOpp = data[key];
-                
-                // Handle both old and new data structures
                 const opportunityId = savedOpp.opportunityId || key;
-                
-                // Find the full opportunity details from the map
                 const fullOpportunity = opportunityMap[opportunityId];
                 
                 if (fullOpportunity) {
@@ -1743,17 +1755,10 @@ function loadUserOpportunities(userId) {
                         status: savedOpp.status || 'pending'
                     };
                     
-                    // Check for duplicates before adding
-                    const isDuplicate = savedOpp.status === 'completed' 
-                        ? userOpportunities.completed.some(opp => opp.id === opportunityId)
-                        : userOpportunities.pending.some(opp => opp.id === opportunityId);
-                    
-                    if (!isDuplicate) {
-                        if (savedOpp.status === 'completed') {
-                            userOpportunities.completed.push(opportunityWithStatus);
-                        } else {
-                            userOpportunities.pending.push(opportunityWithStatus);
-                        }
+                    if (savedOpp.status === 'completed') {
+                        userOpportunities.completed.push(opportunityWithStatus);
+                    } else {
+                        userOpportunities.pending.push(opportunityWithStatus);
                     }
                 }
             }
