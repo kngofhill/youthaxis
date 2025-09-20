@@ -1188,7 +1188,7 @@
                 const email = document.getElementById('loginEmail').value;
                 const password = document.getElementById('loginPassword').value;
                 
-                signIn极速3dWithEmailAndPassword(auth, email, password)
+                signInWithEmailAndPassword(auth, email, password)
                     .then((userCredential) => {
                         // Signed in 
                         if (authModal) authModal.style.display = 'none';
