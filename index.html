@@ -1590,6 +1590,8 @@
                             email: email,
                             createdAt: new Date().toISOString()
                         });
+                            signupError.style.display = 'block';
+                        
                         
                         if (authModal) authModal.style.display = 'none';
                         showNotification('Account created successfully!');
