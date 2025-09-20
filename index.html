@@ -1312,16 +1312,16 @@
             initApp();
 
             // Check if user is admin using Firebase rules
-            async function checkAdminStatus(userId) {
-                try {
-                    const adminRef = ref(database, `admins`);
-                    const snapshot = await get(adminRef);
-                    return snapshot.exists() && snapshot.val().includes(userId);
-                } catch (error) {
-                    console.error('Error checking admin status:', error);
-                    return false;
-                }
-            }
+          async function checkAdminStatus(userId) {
+    try {
+        const adminRef = ref(database, `admins/${userId}`);
+        const snapshot = await get(adminRef);
+        return snapshot.exists();
+    } catch (error) {
+        console.error('Error checking admin status:', error);
+        return false;
+    }
+}
 
             // Load opportunities from Firebase
             function loadOpportunitiesFromFirebase() {
