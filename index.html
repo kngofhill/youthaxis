@@ -1201,7 +1201,7 @@
             if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
             
             if (authTabs) {
-                auth极速3dTabs.forEach(tab => {
+                authTabs.forEach(tab => {
                     tab.addEventListener('click', () => {
                         const tabName = tab.getAttribute('data-tab');
                         switchAuthTab(tabName);
