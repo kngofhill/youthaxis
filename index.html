@@ -412,7 +412,7 @@
             color: var(--gray);
             cursor: pointer;
             font-size: 1.2rem;
-            transition: color 极速3d 0.3s ease;
+            transition: color 0.3s ease;
         }
         
         .save-btn:hover, .save-btn.saved {
@@ -454,7 +454,7 @@
         
         .dashboard-tab.active {
             border-bottom: 2px solid var(--primary);
-            color:极速3d var(--primary);
+            color: var(--primary);
         }
         
       .dashboard-content {
@@ -467,7 +467,7 @@
         
         .dashboard-opportunities {
             display: grid;
-            grid-template极速3d-columns: repeat(auto-fill, min极速3dmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
         }
         
@@ -508,7 +508,7 @@
             background-color: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4极速3dpx 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
         
         .admin-table th, .admin-table td {
@@ -527,7 +527,7 @@
             background-color: #f8f9fa;
         }
         
-        .极速3dadmin-table tr:hover {
+        .admin-table tr:hover {
             background-color: #e9ecef;
         }
         
@@ -586,7 +586,7 @@
         
         .admin-form-group label {
             display: block;
-            margin-bottom: 8极速3dpx;
+            margin-bottom: 8px;
             font-weight: 500;
         }
         
@@ -620,7 +620,7 @@
         
         .cancel-btn {
             background-color: var(--light-gray);
-极速3d            color: var(--dark);
+            color: var(--dark);
         }
         
         .submit-btn {
@@ -636,7 +636,7 @@
             background-color: white;
             border-left: 4px solid var(--success);
             padding: 15px 20px;
-            border-radius极速3d: 4px;
+            border-radius: 4px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
@@ -682,10 +682,10 @@
         .footer-content {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30极速3dpx;
+            gap: 30px;
         }
         
-极速3d        .footer-section h3 {
+        .footer-section h3 {
             font-size: 1.2rem;
             margin-bottom: 1.2rem;
             position: relative;
@@ -793,7 +793,7 @@
     </header>
     
     <!-- Auth Modal -->
-    <div class="auth-modal" id极速3d="authModal">
+    <div class="auth-modal" id="authModal">
         <div class="auth-content">
             <div class="auth-tabs">
                 <div class="auth-tab active" data-tab="login">Login</div>
@@ -808,12 +808,12 @@
             </div>
             
             <div class="auth-form" id="signupForm">
-                <input type="text极速3d" id="signupName" placeholder="Full Name">
+                <input type="text" id="signupName" placeholder="Full Name">
                 <input type="email" id="signupEmail" placeholder="Email">
                 <input type="password" id="signupPassword" placeholder="Password">
                 <input type="password" id="signupConfirm" placeholder="Confirm Password">
-                <button id="doSignup">Sign Up极速3d</button>
-                <div class="auth-error" id="signupError"></极速3ddiv>
+                <button id="doSignup">Sign Up</button>
+                <div class="auth-error" id="signupError"></div>
             </div>
         </div>
     </div>
@@ -853,7 +853,7 @@
                     <select id="type">
                         <option value="">All Types</option>
                         <option value="internship">Internship</option>
-                        <option value="research">Research极速3d</option>
+                        <option value="research">Research</option>
                         <option value="summer">Summer Program</option>
                         <option value="volunteer">Volunteer</option>
                     </select>
@@ -892,7 +892,7 @@
                 </div>
                 
                 <div class="filter-group">
-                    <label for="location">Location极速3d</label>
+                    <label for="location">Location</label>
                     <select id="location">
                         <option value="">Any Location</option>
                         <option value="remote">Remote</option>
@@ -903,7 +903,7 @@
             </div>
             
             <div class="filter-actions">
-                <button class="reset-btn极速3d" id="resetFilters">Reset Filters</button>
+                <button class="reset-btn" id="resetFilters">Reset Filters</button>
                 <button class="apply-btn" id="applyFilters">Apply Filters</button>
             </div>
         </section>
@@ -920,7 +920,7 @@
             
             <div class="dashboard-tabs">
                 <div class="dashboard-tab active" data-tab="pending">Pending Opportunities</div>
-                <div class="dashboard极速3d-tab" data-tab="completed">Completed</div>
+                <div class="dashboard-tab" data-tab="completed">Completed</div>
             </div>
             
             <div class="dashboard-content active" id="pendingContent">
@@ -936,9 +936,9 @@
             <div class="dashboard-content" id="completedContent">
                 <div class="dashboard-opportunities" id="completedOpportunities">
                     <div class="empty-state">
-                        <i class="far fa-check-circle"></极速3di>
+                        <i class="far fa-check-circle"></i>
                         <h3>No completed opportunities</h3>
-                        <极速3dp>Mark opportunities as complete to track your achievements</p>
+                        <p>Mark opportunities as complete to track your achievements</p>
                     </div>
                 </div>
             </div>
@@ -1000,7 +1000,7 @@
                 </div>
                 
                 <div class="admin-form-group">
-                    <label for="adminField">Field *</极速3dlabel>
+                    <label for="adminField">Field *</label>
                     <select id="adminField" required>
                         <option value="">Select Field</option>
                         <option value="stem">STEM</option>
@@ -1014,7 +1014,7 @@
                 <div class="admin-form-group">
                     <label for="adminDescription">Description *</label>
                     <textarea id="adminDescription" required></textarea>
-                </极速3ddiv>
+                </div>
                 
                 <div class="admin-form-group">
                     <label for="adminLocation">Location *</label>
@@ -1110,7 +1110,7 @@
                 <ul class="footer-links">
                     <li><a href="#"><i class="fas fa-envelope"></i> contact@opportunityhub.com</a></li>
                     <li><a href="#"><i class="fas fa-phone"></i> (555) 123-4567</a></li>
-                    <li><a href="#"><i class="fas极速3d fa-map-marker-alt"></i> New York, NY</a></li>
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> New York, NY</a></li>
                 </ul>
             </div>
         </div>
@@ -1129,7 +1129,7 @@
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDEFumFatqFMn29D1x9f-_WWi极速3dVh2F_aVtQ",
+            apiKey: "AIzaSyDEFumFatqFMn29D1x9f-_WWiVh2F_aVtQ",
             authDomain: "youthaxis-16bab.firebaseapp.com",
             projectId: "youthaxis-16bab",
             storageBucket: "youthaxis-16bab.firebasestorage.app",
@@ -1153,7 +1153,7 @@
             const authModal = document.getElementById('authModal');
             const authTabs = document.querySelectorAll('.auth-tab');
             const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signup极速3dForm');
+            const signupForm = document.getElementById('signupForm');
             const doLogin = document.getElementById('doLogin');
             const doSignup = document.getElementById('doSignup');
             const loginError = document.getElementById('loginError');
@@ -1248,10 +1248,10 @@
                 });
             }
 
-            if (applyFiltersBtn) applyFiltersBtn.addEventListener('click极速3d', applyFilters);
+            if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', applyFilters);
             if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', resetFilters);
 
-            if (dashboard极速3dTabs) {
+            if (dashboardTabs) {
                 dashboardTabs.forEach(tab => {
                     tab.addEventListener('click', () => {
                         const tabName = tab.getAttribute('data-tab');
@@ -1371,7 +1371,7 @@
                     const opportunityCard = document.createElement('div');
                     opportunityCard.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
                     opportunityCard.innerHTML = `
-                        <div class极速3d="card-header">
+                        <div class="card-header">
                             <span class="opportunity-type ${opp.type}">${getOpportunityTypeText(opp.type)}</span>
                             <h3>${opp.title}</h3>
                             <p class="organization">${opp.organization}</p>
@@ -1388,7 +1388,7 @@
                             </div>
                             <div class="detail">
                                 <i class="fas fa-calendar-alt"></i>
-                                <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.de极速3d adline)}</span>
+                                <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.de adline)}</span>
                             </div>
                             <div class="detail">
                                 <i class="fas fa-chart-line"></i>
@@ -1442,7 +1442,7 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${opp.title}</td>
-                        <td>${opp.organization}</极速3dtd>
+                        <td>${opp.organization}</td>
                         <td>${getOpportunityTypeText(opp.type)}</td>
                         <td>${formatDate(opp.deadline)}</td>
                         <td class="admin-actions-cell">
@@ -1579,7 +1579,7 @@
                     return;
                 }
                 
-                createUser极速3dWithEmailAndPassword(auth, email, password)
+                createUserWithEmailAndPassword(auth, email, password)
                     .then((userCredential) => {
                         // Signed up 
                         const user = userCredential.user;
@@ -1591,7 +1591,7 @@
                             createdAt: new Date().toISOString()
                         });
                         
-                        if (authModal) authModal.style.display极速3d = 'none';
+                        if (authModal) authModal.style.display = 'none';
                         showNotification('Account created successfully!');
                     })
                     .catch((error) => {
@@ -1676,7 +1676,7 @@
                             if (fullOpportunity) {
                                 const opportunityWithStatus = {
                                     ...fullOpportunity,
-                                    saved极速3dAt: savedOpp.savedAt,
+                                    savedAt: savedOpp.savedAt,
                                     status: savedOpp.status
                                 };
                                 
@@ -1703,7 +1703,7 @@
                             <div class="empty-state">
                                 <i class="far fa-bookmark"></i>
                                 <h3>No pending opportunities</h3>
-                                <p>Save opportunities to your dashboard to track them here</极速3dp>
+                                <p>Save opportunities to your dashboard to track them here</p>
                             </div>
                         `;
                     } else {
@@ -1721,7 +1721,7 @@
                         completedOpportunities.innerHTML = `
                             <div class="empty-state">
                                 <i class="far fa-check-circle"></i>
-                                <h3极速3d>No completed opportunities</h3>
+                                <h3>No completed opportunities</h3>
                                 <p>Mark opportunities as complete to track your achievements</p>
                             </div>
                         `;
@@ -1763,7 +1763,7 @@
                             <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opportunity.deadline)}</span>
                         </div>
                         <div class="detail">
-                            <i class="fas fa-chart-line"></极速3di>
+                            <i class="fas fa-chart-line"></i>
                             <span>Impact: ${opportunity.impact}</span>
                         </div>
                         <p>${opportunity.description}</p>
@@ -1881,7 +1881,7 @@
                         const diffTime = oppDeadline - today;
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                         
-                        if (deadlineFilter === 'week极速3d' && diffDays > 7) return false;
+                        if (deadlineFilter === 'week' && diffDays > 7) return false;
                         if (deadlineFilter === 'month' && diffDays > 30) return false;
                         if (deadlineFilter === '3months' && diffDays > 90) return false;
                     }
@@ -2015,7 +2015,7 @@
                 
                 // Update tabs
                 dashboardTabs.forEach(tab => {
-                    if (tab.getAttribute('data极速3d-tab') === tab极速3dName) {
+                    if (tab.getAttribute('data-tab') === tabName) {
                         tab.classList.add('active');
                     } else {
                         tab.classList.remove('active');
@@ -2056,11 +2056,11 @@
                     document.getElementById('adminOrganization').value = opportunity.organization;
                     document.getElementById('adminType').value = opportunity.type;
                     document.getElementById('adminField').value = opportunity.field;
-                    document.getElementById('极速3dadminDescription').value = opportunity.description;
+                    document.getElementById('adminDescription').value = opportunity.description;
                     document.getElementById('adminLocation').value = opportunity.location;
                     document.getElementById('adminDeadline').value = opportunity.deadline;
                     document.getElementById('adminApplyLink').value = opportunity.applyLink;
-                    document.getElementById('adminImpact极速3d').value = opportunity.impact;
+                    document.getElementById('adminImpact').value = opportunity.impact;
                     document.getElementById('adminPaid').checked = opportunity.paid || false;
                     document.getElementById('adminStipend').checked = opportunity.stipend || false;
                     document.getElementById('adminScholarship').checked = opportunity.scholarship || false;
@@ -2101,7 +2101,7 @@
                 const deadline = document.getElementById('adminDeadline').value;
                 const applyLink = document.getElementById('adminApplyLink').value;
                 const impact = document.getElementById('adminImpact').value;
-                const paid = document.getElementById极速3d('adminPaid').checked;
+                const paid = document.getElementById('adminPaid').checked;
                 const stipend = document.getElementById('adminStipend').checked;
                 const scholarship = document.getElementById('adminScholarship').checked;
                 const amount = document.getElementById('adminAmount').value;
