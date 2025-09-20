@@ -1416,61 +1416,70 @@
             });
         }
 
-        // Apply filters
-        function applyFilters() {
-            const fieldFilter = document.getElementById('field').value;
-            const typeFilter = document.getElementById('type').value;
-            const compensationFilter = document.getElementById('compensation').value;
-            const deadlineFilter = document.getElementById('deadline').value;
-            const impactFilter = document.getElementById('impact').value;
-            const locationFilter = document.getElementById('location').value;
-            const searchTerm = searchInput.value.toLowerCase();
-            
-            filteredOpportunities = allOpportunities.filter(opp => {
-                // Field filter
-                if (fieldFilter && opp.field !== fieldFilter) return false;
-                
-                // Type filter
-                if (typeFilter && opp.type !== typeFilter) return false;
-                
-                // Compensation filter
-                if (compensationFilter === 'paid' && !opp.paid) return false;
-                if (compensationFilter === 'unpaid' && (opp.paid || opp.stipend || opp.scholarship)) return false;
-                if (compensationFilter === 'stipend' && !opp.stipend) return false;
-                
-                // Impact filter
-                if (impactFilter && opp.impact.toLowerCase() !== impactFilter.toLowerCase()) return false;
-                
-                // Location filter
-                if (locationFilter && opp.location.toLowerCase() !== locationFilter.toLowerCase()) return false;
-                
-                // Search term filter
-                if (searchTerm && !(
-                    opp.title.toLowerCase().includes(searchTerm) ||
-                    opp.organization.toLowerCase().includes(searchTerm) ||
-                    opp.description.toLowerCase().includes(searchTerm) ||
-                    (opp.field && opp.field.toLowerCase().includes(searchTerm))
-                )) return false;
-                
-                // Deadline filter (simplified for demo)
-                if (deadlineFilter && !isOpportunityExpired(opp.deadline)) {
-                    const today = new Date();
-                    const oppDeadline = new Date(opp.deadline);
-                    const diffTime = Math.abs(oppDeadline - today);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    if (deadlineFilter === 'week' && diffDays > 7) return false;
-                    if (deadlineFilter === 'month' && diffDays > 30) return false;
-                    if (deadlineFilter === '3months' && diffDays > 90) return false;
-                }
-                
-                return true;
-            });
-            
-            renderOpportunities();
-            showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
+// Apply filters
+function applyFilters() {
+    const fieldFilter = document.getElementById('field').value;
+    const typeFilter = document.getElementById('type').value;
+    const compensationFilter = document.getElementById('compensation').value;
+    const deadlineFilter = document.getElementById('deadline').value;
+    const impactFilter = document.getElementById('impact').value;
+    const locationFilter = document.getElementById('location').value;
+    const searchTerm = searchInput.value.toLowerCase();
+    
+    filteredOpportunities = allOpportunities.filter(opp => {
+        // Field filter
+        if (fieldFilter && opp.field !== fieldFilter) return false;
+        
+        // Type filter
+        if (typeFilter && opp.type !== typeFilter) return false;
+        
+        // Compensation filter
+        if (compensationFilter === 'paid' && !opp.paid) return false;
+        if (compensationFilter === 'unpaid' && (opp.paid || opp.stipend || opp.scholarship)) return false;
+        if (compensationFilter === 'stipend' && !opp.stipend) return false;
+        
+        // Impact filter
+        if (impactFilter && opp.impact && opp.impact.toLowerCase() !== impactFilter.toLowerCase()) return false;
+        
+        // Location filter - check if location contains the filter value
+        if (locationFilter && opp.location) {
+            const oppLocation = opp.location.toLowerCase();
+            if (locationFilter === 'remote' && !oppLocation.includes('remote')) return false;
+            if (locationFilter === 'onsite' && !oppLocation.includes('onsite') && 
+                !oppLocation.includes('on-site') && !oppLocation.includes('office')) return false;
+            if (locationFilter === 'hybrid' && !oppLocation.includes('hybrid')) return false;
         }
-
+        
+        // Search term filter
+        if (searchTerm && !(
+            (opp.title && opp.title.toLowerCase().includes(searchTerm)) ||
+            (opp.organization && opp.organization.toLowerCase().includes(searchTerm)) ||
+            (opp.description && opp.description.toLowerCase().includes(searchTerm)) ||
+            (opp.field && opp.field.toLowerCase().includes(searchTerm))
+        )) return false;
+        
+        // Deadline filter - check if deadline is within specified timeframe
+        if (deadlineFilter && opp.deadline) {
+            const today = new Date();
+            const oppDeadline = new Date(opp.deadline);
+            
+            // Skip expired opportunities for deadline filter
+            if (oppDeadline < today) return false;
+            
+            const diffTime = oppDeadline - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (deadlineFilter === 'week' && diffDays > 7) return false;
+            if (deadlineFilter === 'month' && diffDays > 30) return false;
+            if (deadlineFilter === '3months' && diffDays > 90) return false;
+        }
+        
+        return true;
+    });
+    
+    renderOpportunities();
+    showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
+}
         // Apply search filter
         function applySearchFilter() {
             applyFilters();
