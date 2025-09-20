@@ -6,6 +6,7 @@
     <title>OpportunityHub - Find Your Next Challenge</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Your existing CSS remains unchanged */
         :root {
             --primary: #4361ee;
             --secondary: #3a0ca3;
@@ -411,7 +412,7 @@
             color: var(--gray);
             cursor: pointer;
             font-size: 1.2rem;
-            transition: color 0.3s ease;
+            transition: color 极速3d 0.3s ease;
         }
         
         .save-btn:hover, .save-btn.saved {
@@ -453,7 +454,7 @@
         
         .dashboard-tab.active {
             border-bottom: 2px solid var(--primary);
-            color: var(--primary);
+            color:极速3d var(--primary);
         }
         
       .dashboard-content {
@@ -466,7 +467,7 @@
         
         .dashboard-opportunities {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template极速3d-columns: repeat(auto-fill, min极速3dmax(300px, 1fr));
             gap: 20px;
         }
         
@@ -507,7 +508,7 @@
             background-color: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4极速3dpx 12px rgba(0, 0, 0, 0.05);
         }
         
         .admin-table th, .admin-table td {
@@ -526,7 +527,7 @@
             background-color: #f8f9fa;
         }
         
-        .admin-table tr:hover {
+        .极速3dadmin-table tr:hover {
             background-color: #e9ecef;
         }
         
@@ -585,7 +586,7 @@
         
         .admin-form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 8极速3dpx;
             font-weight: 500;
         }
         
@@ -619,7 +620,7 @@
         
         .cancel-btn {
             background-color: var(--light-gray);
-            color: var(--dark);
+极速3d            color: var(--dark);
         }
         
         .submit-btn {
@@ -635,7 +636,7 @@
             background-color: white;
             border-left: 4px solid var(--success);
             padding: 15px 20px;
-            border-radius: 4px;
+            border-radius极速3d: 4px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
@@ -681,10 +682,10 @@
         .footer-content {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
+            gap: 30极速3dpx;
         }
         
-        .footer-section h3 {
+极速3d        .footer-section h3 {
             font-size: 1.2rem;
             margin-bottom: 1.2rem;
             position: relative;
@@ -792,7 +793,7 @@
     </header>
     
     <!-- Auth Modal -->
-    <div class="auth-modal" id="authModal">
+    <div class="auth-modal" id极速3d="authModal">
         <div class="auth-content">
             <div class="auth-tabs">
                 <div class="auth-tab active" data-tab="login">Login</div>
@@ -807,12 +808,12 @@
             </div>
             
             <div class="auth-form" id="signupForm">
-                <input type="text" id="signupName" placeholder="Full Name">
+                <input type="text极速3d" id="signupName" placeholder="Full Name">
                 <input type="email" id="signupEmail" placeholder="Email">
                 <input type="password" id="signupPassword" placeholder="Password">
                 <input type="password" id="signupConfirm" placeholder="Confirm Password">
-                <button id="doSignup">Sign Up</button>
-                <div class="auth-error" id="signupError"></div>
+                <button id="doSignup">Sign Up极速3d</button>
+                <div class="auth-error" id="signupError"></极速3ddiv>
             </div>
         </div>
     </div>
@@ -852,7 +853,7 @@
                     <select id="type">
                         <option value="">All Types</option>
                         <option value="internship">Internship</option>
-                        <option value="research">Research</option>
+                        <option value="research">Research极速3d</option>
                         <option value="summer">Summer Program</option>
                         <option value="volunteer">Volunteer</option>
                     </select>
@@ -891,7 +892,7 @@
                 </div>
                 
                 <div class="filter-group">
-                    <label for="location">Location</label>
+                    <label for="location">Location极速3d</label>
                     <select id="location">
                         <option value="">Any Location</option>
                         <option value="remote">Remote</option>
@@ -902,7 +903,7 @@
             </div>
             
             <div class="filter-actions">
-                <button class="reset-btn" id="resetFilters">Reset Filters</button>
+                <button class="reset-btn极速3d" id="resetFilters">Reset Filters</button>
                 <button class="apply-btn" id="applyFilters">Apply Filters</button>
             </div>
         </section>
@@ -919,7 +920,7 @@
             
             <div class="dashboard-tabs">
                 <div class="dashboard-tab active" data-tab="pending">Pending Opportunities</div>
-                <div class="dashboard-tab" data-tab="completed">Completed</div>
+                <div class="dashboard极速3d-tab" data-tab="completed">Completed</div>
             </div>
             
             <div class="dashboard-content active" id="pendingContent">
@@ -935,9 +936,9 @@
             <div class="dashboard-content" id="completedContent">
                 <div class="dashboard-opportunities" id="completedOpportunities">
                     <div class="empty-state">
-                        <i class="far fa-check-circle"></i>
+                        <i class="far fa-check-circle"></极速3di>
                         <h3>No completed opportunities</h3>
-                        <p>Mark opportunities as complete to track your achievements</p>
+                        <极速3dp>Mark opportunities as complete to track your achievements</p>
                     </div>
                 </div>
             </div>
@@ -999,7 +1000,7 @@
                 </div>
                 
                 <div class="admin-form-group">
-                    <label for="adminField">Field *</label>
+                    <label for="adminField">Field *</极速3dlabel>
                     <select id="adminField" required>
                         <option value="">Select Field</option>
                         <option value="stem">STEM</option>
@@ -1013,7 +1014,7 @@
                 <div class="admin-form-group">
                     <label for="adminDescription">Description *</label>
                     <textarea id="adminDescription" required></textarea>
-                </div>
+                </极速3ddiv>
                 
                 <div class="admin-form-group">
                     <label for="adminLocation">Location *</label>
@@ -1099,7 +1100,7 @@
                 <ul class="footer-links">
                     <li><a href="#">Application Tips</a></li>
                     <li><a href="#">Resume Builder</a></li>
-                    <li><a href="#">Interview Preparation</极速3d/a></li>
+                    <li><a href="#">Interview Preparation</a></li>
                     <li><a href="#">Blog</a></li>
                 </ul>
             </div>
@@ -1109,7 +1110,7 @@
                 <ul class="footer-links">
                     <li><a href="#"><i class="fas fa-envelope"></i> contact@opportunityhub.com</a></li>
                     <li><a href="#"><i class="fas fa-phone"></i> (555) 123-4567</a></li>
-                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> New York, NY</a></li>
+                    <li><a href="#"><i class="fas极速3d fa-map-marker-alt"></i> New York, NY</a></li>
                 </ul>
             </div>
         </div>
@@ -1128,7 +1129,7 @@
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDEFumFatqFMn29D1x9f-_WWiVh2F_aVtQ",
+            apiKey: "AIzaSyDEFumFatqFMn29D1x9f-_WWi极速3dVh2F_aVtQ",
             authDomain: "youthaxis-16bab.firebaseapp.com",
             projectId: "youthaxis-16bab",
             storageBucket: "youthaxis-16bab.firebasestorage.app",
@@ -1152,7 +1153,7 @@
             const authModal = document.getElementById('authModal');
             const authTabs = document.querySelectorAll('.auth-tab');
             const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signupForm');
+            const signupForm = document.getElementById('signup极速3dForm');
             const doLogin = document.getElementById('doLogin');
             const doSignup = document.getElementById('doSignup');
             const loginError = document.getElementById('loginError');
@@ -1182,9 +1183,6 @@
             const adminCancelBtn = document.getElementById('adminCancelBtn');
             const adminOpportunitiesList = document.getElementById('adminOpportunitiesList');
 
-            // Admin emails (replace with your actual admin emails)
-            const adminEmails = ['boymirzayevismoiljon@gmail.com', 'ibaymirzayev@gmail.com'];
-
             // Current filtered opportunities
             let filteredOpportunities = [];
             // All opportunities from Firebase
@@ -1194,6 +1192,9 @@
                 pending: [],
                 completed: []
             };
+            
+            // Track admin status
+            let isAdminUser = false;
 
             // Event Listeners
             if (loginBtn) loginBtn.addEventListener('click', () => showAuthModal('login'));
@@ -1247,10 +1248,10 @@
                 });
             }
 
-            if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', applyFilters);
+            if (applyFiltersBtn) applyFiltersBtn.addEventListener('click极速3d', applyFilters);
             if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', resetFilters);
 
-            if (dashboardTabs) {
+            if (dashboard极速3dTabs) {
                 dashboardTabs.forEach(tab => {
                     tab.addEventListener('click', () => {
                         const tabName = tab.getAttribute('data-tab');
@@ -1282,9 +1283,10 @@
                     if (logoutBtn) logoutBtn.style.display = 'block';
                     
                     // Check if user is admin using Firebase rules
-                    checkAdminStatus(user.uid).then(isAdmin => {
-                        if (isAdmin && navAdmin) {
-                            navAdmin.style.display = 'list-item';
+                    checkAdminStatus(user.uid).then(adminStatus => {
+                        isAdminUser = adminStatus;
+                        if (navAdmin) {
+                            navAdmin.style.display = isAdminUser ? 'list-item' : 'none';
                         }
                     });
                     
@@ -1300,6 +1302,9 @@
                     // Hide dashboard and admin panel if user is not logged in
                     if (dashboard) dashboard.style.display = 'none';
                     if (adminPanel) adminPanel.style.display = 'none';
+                    
+                    // Reset admin status
+                    isAdminUser = false;
                 }
             });
 
@@ -1366,7 +1371,7 @@
                     const opportunityCard = document.createElement('div');
                     opportunityCard.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
                     opportunityCard.innerHTML = `
-                        <div class="card-header">
+                        <div class极速3d="card-header">
                             <span class="opportunity-type ${opp.type}">${getOpportunityTypeText(opp.type)}</span>
                             <h3>${opp.title}</h3>
                             <p class="organization">${opp.organization}</p>
@@ -1383,7 +1388,7 @@
                             </div>
                             <div class="detail">
                                 <i class="fas fa-calendar-alt"></i>
-                                <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.deadline)}</span>
+                                <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.de极速3d adline)}</span>
                             </div>
                             <div class="detail">
                                 <i class="fas fa-chart-line"></i>
@@ -1437,7 +1442,7 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${opp.title}</td>
-                        <td>${opp.organization}</td>
+                        <td>${opp.organization}</极速3dtd>
                         <td>${getOpportunityTypeText(opp.type)}</td>
                         <td>${formatDate(opp.deadline)}</td>
                         <td class="admin-actions-cell">
@@ -1574,7 +1579,7 @@
                     return;
                 }
                 
-                createUserWithEmailAndPassword(auth, email, password)
+                createUser极速3dWithEmailAndPassword(auth, email, password)
                     .then((userCredential) => {
                         // Signed up 
                         const user = userCredential.user;
@@ -1586,10 +1591,10 @@
                             createdAt: new Date().toISOString()
                         });
                         
-                        if (authModal) authModal.style.display = 'none';
+                        if (authModal) authModal.style.display极速3d = 'none';
                         showNotification('Account created successfully!');
                     })
-                    .catch((error极速3d) => {
+                    .catch((error) => {
                         if (signupError) {
                             signupError.textContent = error.message;
                             signupError.style.display = 'block';
@@ -1671,7 +1676,7 @@
                             if (fullOpportunity) {
                                 const opportunityWithStatus = {
                                     ...fullOpportunity,
-                                    savedAt: savedOpp.savedAt,
+                                    saved极速3dAt: savedOpp.savedAt,
                                     status: savedOpp.status
                                 };
                                 
@@ -1698,7 +1703,7 @@
                             <div class="empty-state">
                                 <i class="far fa-bookmark"></i>
                                 <h3>No pending opportunities</h3>
-                                <p>Save opportunities to your dashboard to track them here</p>
+                                <p>Save opportunities to your dashboard to track them here</极速3dp>
                             </div>
                         `;
                     } else {
@@ -1716,7 +1721,7 @@
                         completedOpportunities.innerHTML = `
                             <div class="empty-state">
                                 <i class="far fa-check-circle"></i>
-                                <h3>No completed opportunities</h3>
+                                <h3极速3d>No completed opportunities</h3>
                                 <p>Mark opportunities as complete to track your achievements</p>
                             </div>
                         `;
@@ -1758,7 +1763,7 @@
                             <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opportunity.deadline)}</span>
                         </div>
                         <div class="detail">
-                            <i class="fas fa-chart-line"></i>
+                            <i class="fas fa-chart-line"></极速3di>
                             <span>Impact: ${opportunity.impact}</span>
                         </div>
                         <p>${opportunity.description}</p>
@@ -1854,6 +1859,7 @@
                         if (locationFilter === 'onsite' && !oppLocation.includes('onsite') && 
                             !oppLocation.includes('on-site') && !oppLocation.includes('office')) return false;
                         if (locationFilter === 'hybrid' && !oppLocation.includes('hybrid')) return false;
+                    
                     }
                     
                     // Search term filter
@@ -1875,7 +1881,7 @@
                         const diffTime = oppDeadline - today;
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                         
-                        if (deadlineFilter === 'week' && diffDays > 7) return false;
+                        if (deadlineFilter === 'week极速3d' && diffDays > 7) return false;
                         if (deadlineFilter === 'month' && diffDays > 30) return false;
                         if (deadlineFilter === '3months' && diffDays > 90) return false;
                     }
@@ -1983,23 +1989,21 @@
             function showAdminPanel() {
                 const user = auth.currentUser;
                 if (user) {
-                    // Check admin status using Firebase rules
-                    checkAdminStatus(user.uid).then(isAdmin => {
-                        if (isAdmin) {
-                            // Hide other sections and show admin panel
-                            if (heroSection) heroSection.style.display = 'none';
-                            if (filtersSection) filtersSection.style.display = 'none';
-                            if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
-                            if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
-                            if (dashboard) dashboard.style.display = 'none';
-                            if (adminPanel) adminPanel.style.display = 'block';
-                            
-                            // Render admin opportunities
-                            renderAdminOpportunities();
-                        } else {
-                            showNotification('Access denied. Admin privileges required.', 'error');
-                        }
-                    });
+                    // Check admin status using the stored variable
+                    if (isAdminUser) {
+                        // Hide other sections and show admin panel
+                        if (heroSection) heroSection.style.display = 'none';
+                        if (filtersSection) filtersSection.style.display = 'none';
+                        if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
+                        if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
+                        if (dashboard) dashboard.style.display = 'none';
+                        if (adminPanel) adminPanel.style.display = 'block';
+                        
+                        // Render admin opportunities
+                        renderAdminOpportunities();
+                    } else {
+                        showNotification('Access denied. Admin privileges required.', 'error');
+                    }
                 } else {
                     showNotification('Please sign in to access admin panel', 'warning');
                 }
@@ -2011,7 +2015,7 @@
                 
                 // Update tabs
                 dashboardTabs.forEach(tab => {
-                    if (tab.getAttribute('data-tab') === tabName) {
+                    if (tab.getAttribute('data极速3d-tab') === tab极速3dName) {
                         tab.classList.add('active');
                     } else {
                         tab.classList.remove('active');
@@ -2039,38 +2043,36 @@
                     return;
                 }
                 
-                checkAdminStatus(user.uid).then(isAdmin => {
-                    if (!isAdmin) {
-                        showNotification('Access denied. Admin privileges required.', 'error');
-                        return;
-                    }
-                    
-                    if (opportunity) {
-                        // Editing existing opportunity
-                        adminModalTitle.textContent = 'Edit Opportunity';
-                        document.getElementById('opportunityId').value = opportunity.id;
-                        document.getElementById('adminTitle').value = opportunity.title;
-                        document.getElementById('adminOrganization').value = opportunity.organization;
-                        document.getElementById('adminType').value = opportunity.type;
-                        document.getElementById('adminField').value = opportunity.field;
-                        document.getElementById('adminDescription').value = opportunity.description;
-                        document.getElementById('adminLocation').value = opportunity.location;
-                        document.getElementById('adminDeadline').value = opportunity.deadline;
-                        document.getElementById('adminApplyLink').value = opportunity.applyLink;
-                        document.getElementById('adminImpact').value = opportunity.impact;
-                        document.getElementById('adminPaid').checked = opportunity.paid || false;
-                        document.getElementById('adminStipend').checked = opportunity.stipend || false;
-                        document.getElementById('adminScholarship').checked = opportunity.scholarship || false;
-                        document.getElementById('adminAmount').value = opportunity.amount || '';
-                    } else {
-                        // Adding new opportunity
-                        adminModalTitle.textContent = 'Add New Opportunity';
-                        adminOpportunityForm.reset();
-                        document.getElementById('opportunityId').value = '';
-                    }
-                    
-                    adminModal.style.display = 'flex';
-                });
+                if (!isAdminUser) {
+                    showNotification('Access denied. Admin privileges required.', 'error');
+                    return;
+                }
+                
+                if (opportunity) {
+                    // Editing existing opportunity
+                    adminModalTitle.textContent = 'Edit Opportunity';
+                    document.getElementById('opportunityId').value = opportunity.id;
+                    document.getElementById('adminTitle').value = opportunity.title;
+                    document.getElementById('adminOrganization').value = opportunity.organization;
+                    document.getElementById('adminType').value = opportunity.type;
+                    document.getElementById('adminField').value = opportunity.field;
+                    document.getElementById('极速3dadminDescription').value = opportunity.description;
+                    document.getElementById('adminLocation').value = opportunity.location;
+                    document.getElementById('adminDeadline').value = opportunity.deadline;
+                    document.getElementById('adminApplyLink').value = opportunity.applyLink;
+                    document.getElementById('adminImpact极速3d').value = opportunity.impact;
+                    document.getElementById('adminPaid').checked = opportunity.paid || false;
+                    document.getElementById('adminStipend').checked = opportunity.stipend || false;
+                    document.getElementById('adminScholarship').checked = opportunity.scholarship || false;
+                    document.getElementById('adminAmount').value = opportunity.amount || '';
+                } else {
+                    // Adding new opportunity
+                    adminModalTitle.textContent = 'Add New Opportunity';
+                    adminOpportunityForm.reset();
+                    document.getElementById('opportunityId').value = '';
+                }
+                
+                adminModal.style.display = 'flex';
             }
 
             // Handle admin form submission
@@ -2084,68 +2086,66 @@
                     return;
                 }
                 
-                checkAdminStatus(user.uid).then(isAdmin => {
-                    if (!isAdmin) {
-                        showNotification('Access denied. Admin privileges required.', 'error');
-                        return;
-                    }
-                    
-                    const opportunityId = document.getElementById('opportunityId').value;
-                    const title = document.getElementById('adminTitle').value;
-                    const organization = document.getElementById('adminOrganization').value;
-                    const type = document.getElementById('adminType').value;
-                    const field = document.getElementById('adminField').value;
-                    const description = document.getElementById('adminDescription').value;
-                    const location = document.getElementById('adminLocation').value;
-                    const deadline = document.getElementById('adminDeadline').value;
-                    const applyLink = document.getElementById('adminApplyLink').value;
-                    const impact = document.getElementById('adminImpact').value;
-                    const paid = document.getElementById('adminPaid').checked;
-                    const stipend = document.getElementById('adminStipend').checked;
-                    const scholarship = document.getElementById('adminScholarship').checked;
-                    const amount = document.getElementById('adminAmount').value;
-                    
-                    const opportunityData = {
-                        title,
-                        organization,
-                        type,
-                        field,
-                        description,
-                        location,
-                        deadline,
-                        applyLink,
-                        impact,
-                        paid,
-                        stipend,
-                        scholarship,
-                        amount: amount || '',
-                        createdAt: opportunityId ? allOpportunities.find(opp => opp.id === opportunityId).createdAt : new Date().toISOString(),
-                        updatedAt: new Date().toISOString()
-                    };
-                    
-                    if (opportunityId) {
-                        // Update existing opportunity
-                        update(ref(database, `opportunities/${opportunityId}`), opportunityData)
-                            .then(() => {
-                                adminModal.style.display = 'none';
-                                showNotification('Opportunity updated successfully!');
-                            })
-                            .catch((error) => {
-                                showNotification('Error updating opportunity: ' + error.message, 'error');
-                            });
-                    } else {
-                        // Add new opportunity
-                        const newOpportunityRef = push(ref(database, 'opportunities'));
-                        set(newOpportunityRef, opportunityData)
-                            .then(() => {
-                                adminModal.style.display = 'none';
-                                showNotification('Opportunity added successfully!');
-                            })
-                            .catch((error) => {
-                                showNotification('Error adding opportunity: ' + error.message, 'error');
-                            });
-                    }
-                });
+                if (!isAdminUser) {
+                    showNotification('Access denied. Admin privileges required.', 'error');
+                    return;
+                }
+                
+                const opportunityId = document.getElementById('opportunityId').value;
+                const title = document.getElementById('adminTitle').value;
+                const organization = document.getElementById('adminOrganization').value;
+                const type = document.getElementById('adminType').value;
+                const field = document.getElementById('adminField').value;
+                const description = document.getElementById('adminDescription').value;
+                const location = document.getElementById('adminLocation').value;
+                const deadline = document.getElementById('adminDeadline').value;
+                const applyLink = document.getElementById('adminApplyLink').value;
+                const impact = document.getElementById('adminImpact').value;
+                const paid = document.getElementById极速3d('adminPaid').checked;
+                const stipend = document.getElementById('adminStipend').checked;
+                const scholarship = document.getElementById('adminScholarship').checked;
+                const amount = document.getElementById('adminAmount').value;
+                
+                const opportunityData = {
+                    title,
+                    organization,
+                    type,
+                    field,
+                    description,
+                    location,
+                    deadline,
+                    applyLink,
+                    impact,
+                    paid,
+                    stipend,
+                    scholarship,
+                    amount: amount || '',
+                    createdAt: opportunityId ? allOpportunities.find(opp => opp.id === opportunityId).createdAt : new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (opportunityId) {
+                    // Update existing opportunity
+                    update(ref(database, `opportunities/${opportunityId}`), opportunityData)
+                        .then(() => {
+                            adminModal.style.display = 'none';
+                            showNotification('Opportunity updated successfully!');
+                        })
+                        .catch((error) => {
+                            showNotification('Error updating opportunity: ' + error.message, 'error');
+                        });
+                } else {
+                    // Add new opportunity
+                    const newOpportunityRef = push(ref(database, 'opportunities'));
+                    set(newOpportunityRef, opportunityData)
+                        .then(() => {
+                            adminModal.style.display = 'none';
+                            showNotification('Opportunity added successfully!');
+                        })
+                        .catch((error) => {
+                            showNotification('Error adding opportunity: ' + error.message, 'error');
+                        });
+                }
             }
 
             // Delete opportunity
@@ -2157,22 +2157,20 @@
                     return;
                 }
                 
-                checkAdminStatus(user.uid).then(isAdmin => {
-                    if (!isAdmin) {
-                        showNotification('Access denied. Admin privileges required.', 'error');
-                        return;
-                    }
-                    
-                    if (confirm('Are you sure you want to delete this opportunity?')) {
-                        remove(ref(database, `opportunities/${opportunityId}`))
-                            .then(() => {
-                                showNotification('Opportunity deleted successfully!');
-                            })
-                            .catch((error) => {
-                                showNotification('Error deleting opportunity: ' + error.message, 'error');
-                            });
-                    }
-                });
+                if (!isAdminUser) {
+                    showNotification('Access denied. Admin privileges required.', 'error');
+                    return;
+                }
+                
+                if (confirm('Are you sure you want to delete this opportunity?')) {
+                    remove(ref(database, `opportunities/${opportunityId}`))
+                        .then(() => {
+                            showNotification('Opportunity deleted successfully!');
+                        })
+                        .catch((error) => {
+                            showNotification('Error deleting opportunity: ' + error.message, 'error');
+                        });
+                }
             }
 
             // Initialize the app
