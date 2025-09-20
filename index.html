@@ -1314,9 +1314,9 @@
             // Check if user is admin using Firebase rules
             async function checkAdminStatus(userId) {
                 try {
-                    const adminRef = ref(database, `admins/${userId}`);
+                    const adminRef = ref(database, `admins`);
                     const snapshot = await get(adminRef);
-                    return snapshot.exists();
+                    return snapshot.exists() && snapshot.val().includes(userId);
                 } catch (error) {
                     console.error('Error checking admin status:', error);
                     return false;
