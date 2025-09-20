@@ -1509,7 +1509,26 @@
                 const options = { year: 'numeric', month: 'short', day: 'numeric' };
                 return new Date(dateString).toLocaleDateString(undefined, options);
             }
-
+function debugAdminStatus() {
+    const user = auth.currentUser;
+    if (user) {
+        console.log("User ID:", user.uid);
+        console.log("Is admin (local):", isAdminUser);
+        
+        checkAdminStatus(user.uid).then(adminStatus => {
+            console.log("Is admin (Firebase):", adminStatus);
+            
+            // Check if user exists in admins node
+            const adminRef = ref(database, `admins/${user.uid}`);
+            get(adminRef).then(snapshot => {
+                console.log("Admin node exists:", snapshot.exists());
+                console.log("Admin node value:", snapshot.val());
+            });
+        });
+    } else {
+        console.log("No user logged in");
+    }
+}
             // Show auth modal
             function showAuthModal(tab) {
                 if (!authModal) return;
@@ -2008,28 +2027,50 @@ function handleSignup() {
             }
 
             // Show admin panel
-            function showAdminPanel() {
-                const user = auth.currentUser;
-                if (user) {
-                    // Check admin status using the stored variable
-                    if (isAdminUser) {
-                        // Hide other sections and show admin panel
-                        if (heroSection) heroSection.style.display = 'none';
-                        if (filtersSection) filtersSection.style.display = 'none';
-                        if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
-                        if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
-                        if (dashboard) dashboard.style.display = 'none';
-                        if (adminPanel) adminPanel.style.display = 'block';
-                        
-                        // Render admin opportunities
-                        renderAdminOpportunities();
-                    } else {
-                        showNotification('Access denied. Admin privileges required.', 'error');
-                    }
+function showAdminPanel() {
+    const user = auth.currentUser;
+    if (user) {
+        // Check admin status using the stored variable
+        if (isAdminUser) {
+            // Hide other sections and show admin panel
+            if (heroSection) heroSection.style.display = 'none';
+            if (filtersSection) filtersSection.style.display = 'none';
+            if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
+            if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
+            if (dashboard) dashboard.style.display = 'none';
+            if (adminPanel) adminPanel.style.display = 'block';
+            
+            // Render admin opportunities
+            renderAdminOpportunities();
+        } else {
+            // Double-check admin status in case it wasn't loaded yet
+            checkAdminStatus(user.uid).then(adminStatus => {
+                if (adminStatus) {
+                    isAdminUser = true;
+                    if (navAdmin) navAdmin.style.display = 'list-item';
+                    
+                    // Hide other sections and show admin panel
+                    if (heroSection) heroSection.style.display = 'none';
+                    if (filtersSection) filtersSection.style.display = 'none';
+                    if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
+                    if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
+                    if (dashboard) dashboard.style.display = 'none';
+                    if (adminPanel) adminPanel.style.display = 'block';
+                    
+                    // Render admin opportunities
+                    renderAdminOpportunities();
                 } else {
-                    showNotification('Please sign in to access admin panel', 'warning');
+                    showNotification('Access denied. Admin privileges required.', 'error');
                 }
-            }
+            }).catch(error => {
+                console.error('Error checking admin status:', error);
+                showNotification('Error checking admin status', 'error');
+            });
+        }
+    } else {
+        showNotification('Please sign in to access admin panel', 'warning');
+    }
+}
 
             // Switch dashboard tab
             function switchDashboardTab(tabName) {
