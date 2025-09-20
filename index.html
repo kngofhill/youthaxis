@@ -220,7 +220,7 @@
             display: flex;
         }
         
-        .search-bar input {
+       .search-bar input {
             flex: 1;
             padding: 15px;
             border: none;
@@ -273,7 +273,7 @@
             width: 100%;
             padding: 10px;
             border: 1px solid var(--light-gray);
-            border-radius: 极速3d4px;
+            border-radius: 4px;
             background-color: var(--light);
         }
         
@@ -291,20 +291,20 @@
             cursor: pointer;
         }
         
-极速3d        .apply-btn {
+        .apply-btn {
             background-color: var(--primary);
             color: white;
         }
         
         .reset-btn {
-极速3d            background-color: var(--light-gray);
+            background-color: var(--light-gray);
             color: var(--dark);
         }
         
         /* Opportunities Grid */
         .opportunities-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, min极速3max(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
             margin: 2rem 0;
         }
@@ -319,7 +319,7 @@
         
         .opportunity-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8极速3dpx 24px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
         
         .card-header {
@@ -358,7 +358,7 @@
         
         .card-header h3 {
             font-size: 1.3rem;
-            margin-bottom: 10极速3dpx;
+            margin-bottom: 10px;
         }
         
         .organization {
@@ -456,7 +456,7 @@
             color: var(--primary);
         }
         
-        .dashboard-content {
+      .dashboard-content {
             display: none;
         }
         
@@ -635,7 +635,7 @@
             background-color: white;
             border-left: 4px solid var(--success);
             padding: 15px 20px;
-            border-radius极速3d: 4px;
+            border-radius: 4px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
@@ -691,7 +691,7 @@
             padding-bottom: 10px;
         }
         
-        .footer-section h极速3d3::after {
+        .footer-section h3::after {
             content: '';
             position: absolute;
             bottom: 0;
@@ -778,12 +778,12 @@
                     <li><a href="#" class="nav-opportunities">Opportunities</a></li>
                     <li><a href="#" class="nav-dashboard">Dashboard</a></li>
                     <li><a href="#" class="nav-admin" style="display: none;">Admin</a></li>
-                    <li><a href="#">Resources</a></li>
+                    <极速3dli><a href="#">Resources</a></li>
                     <li><a href="#">Contact</a></li>
                 </ul>
             </nav>
             
-            <div class极速3d="auth-buttons">
+            <div class="auth-buttons">
                 <button id="loginBtn">Sign In</button>
                 <button id="signupBtn">Sign Up</button>
                 <button id="logoutBtn" style="display: none;">Logout</button>
@@ -803,10 +803,10 @@
                 <input type="email" id="loginEmail" placeholder="Email">
                 <input type="password" id="loginPassword" placeholder="Password">
                 <button id="doLogin">Login</button>
-                <div class="auth-error" id极速3d="loginError"></div>
+                <div class="auth-error" id="loginError"></div>
             </div>
             
-            <div class="auth-form" id="sign极速3dupForm">
+            <div class="auth-form" id="signupForm">
                 <input type="text" id="signupName" placeholder="Full Name">
                 <input type="email" id="signupEmail" placeholder="Email">
                 <input type="password" id="signupPassword" placeholder="Password">
@@ -874,7 +874,7 @@
                     <label for="deadline">Deadline Within</label>
                     <select id="deadline">
                         <option value="">Any Time</option>
-                        <option value="week">1 Week</极速3doption>
+                        <option value="week">1 Week</option>
                         <option value="month">1 Month</option>
                         <option value="3months">3 Months</option>
                     </select>
@@ -937,7 +937,7 @@
                     <div class="empty-state">
                         <i class="far fa-check-circle"></i>
                         <h3>No completed opportunities</h3>
-                        <极速3dp>Mark opportunities as complete to track your achievements</p>
+                        <p>Mark opportunities as complete to track your achievements</p>
                     </div>
                 </div>
             </div>
@@ -993,7 +993,7 @@
                         <option value="">Select Type</option>
                         <option value="internship">Internship</option>
                         <option value="research">Research</option>
-                        <option value="summer">Summer Program</option>
+                        <option value="sum极速3dmer">Summer Program</option>
                         <option value="volunteer">Volunteer</option>
                     </select>
                 </div>
@@ -1099,7 +1099,7 @@
                 <ul class="footer-links">
                     <li><a href="#">Application Tips</a></li>
                     <li><a href="#">Resume Builder</a></li>
-                    <li><a href="#">Interview Preparation</a></li>
+                    <li><a href="#">Interview Preparation</极速3d/a></li>
                     <li><a href="#">Blog</a></li>
                 </ul>
             </div>
@@ -1133,7 +1133,7 @@
             projectId: "youthaxis-16bab",
             storageBucket: "youthaxis-16bab.firebasestorage.app",
             messagingSenderId: "287063568472",
-            appId: "1:287063568472:web:9209a3a4a82407d63e9a2d",
+            app极速3dId: "1:287063568472:web:9209a3a4a82407d63e9a2d",
             measurementId: "G-7M9QET4FLZ",
             databaseURL: "https://youthaxis-16bab-default-rtdb.firebaseio.com/"
         };
@@ -1281,10 +1281,12 @@
                     if (signupBtn) signupBtn.style.display = 'none';
                     if (logoutBtn) logoutBtn.style.display = 'block';
                     
-                    // Check if user is admin
-                    if (adminEmails.includes(user.email) && navAdmin) {
-                        navAdmin.style.display = 'list-item';
-                    }
+                    // Check if user is admin using Firebase rules
+                    checkAdminStatus(user.uid).then(isAdmin => {
+                        if (isAdmin && navAdmin) {
+                            navAdmin.style.display = 'list-item';
+                        }
+                    });
                     
                     // Load user's saved opportunities
                     loadUserOpportunities(user.uid);
@@ -1303,6 +1305,18 @@
 
             // Initialize the app
             initApp();
+
+            // Check if user is admin using Firebase rules
+            async function checkAdminStatus(userId) {
+                try {
+                    const adminRef = ref(database, `admins/${userId}`);
+                    const snapshot = await get(adminRef);
+                    return snapshot.exists();
+                } catch (error) {
+                    console.error('Error checking admin status:', error);
+                    return false;
+                }
+            }
 
             // Load opportunities from Firebase
             function loadOpportunitiesFromFirebase() {
@@ -1575,7 +1589,7 @@
                         if (authModal) authModal.style.display = 'none';
                         showNotification('Account created successfully!');
                     })
-                    .catch((error) => {
+                    .catch((error极速3d) => {
                         if (signupError) {
                             signupError.textContent = error.message;
                             signupError.style.display = 'block';
@@ -1598,14 +1612,21 @@
             function saveOpportunity(userId, opportunity) {
                 const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
                 
+                // Store only a reference to the opportunity, not the full object
                 set(userOppRef, {
-                    ...opportunity,
+                    opportunityId: opportunity.id,
                     savedAt: new Date().toISOString(),
                     status: 'pending'
                 })
                 .then(() => {
                     showNotification('Opportunity saved to your dashboard!');
-                    userOpportunities.pending.push(opportunity);
+                    // Add to local state
+                    userOpportunities.pending.push({
+                        id: opportunity.id,
+                        ...opportunity,
+                        savedAt: new Date().toISOString(),
+                        status: 'pending'
+                    });
                     renderOpportunities();
                     renderDashboardOpportunities();
                 })
@@ -1621,6 +1642,7 @@
                 remove(userOppRef)
                 .then(() => {
                     showNotification('Opportunity removed from your dashboard');
+                    // Remove from local state
                     userOpportunities.pending = userOpportunities.pending.filter(opp => opp.id !== opportunity.id);
                     userOpportunities.completed = userOpportunities.completed.filter(opp => opp.id !== opportunity.id);
                     renderOpportunities();
@@ -1642,10 +1664,22 @@
                     
                     if (data) {
                         for (const key in data) {
-                            if (data[key].status === 'completed') {
-                                userOpportunities.completed.push(data[key]);
-                            } else {
-                                userOpportunities.pending.push(data[key]);
+                            const savedOpp = data[key];
+                            // Find the full opportunity details from allOpportunities
+                            const fullOpportunity = allOpportunities.find(opp => opp.id === savedOpp.opportunityId);
+                            
+                            if (fullOpportunity) {
+                                const opportunityWithStatus = {
+                                    ...fullOpportunity,
+                                    savedAt: savedOpp.savedAt,
+                                    status: savedOpp.status
+                                };
+                                
+                                if (savedOpp.status === 'completed') {
+                                    userOpportunities.completed.push(opportunityWithStatus);
+                                } else {
+                                    userOpportunities.pending.push(opportunityWithStatus);
+                                }
                             }
                         }
                     }
@@ -1776,7 +1810,11 @@
                     showNotification('Opportunity marked as complete!');
                     // Move from pending to completed
                     userOpportunities.pending = userOpportunities.pending.filter(opp => opp.id !== opportunity.id);
-                    userOpportunities.completed.push({...opportunity, status: 'completed'});
+                    userOpportunities.completed.push({
+                        ...opportunity, 
+                        status: 'completed',
+                        completedAt: new Date().toISOString()
+                    });
                     renderDashboardOpportunities();
                 })
                 .catch((error) => {
@@ -1944,19 +1982,26 @@
             // Show admin panel
             function showAdminPanel() {
                 const user = auth.currentUser;
-                if (user && adminEmails.includes(user.email)) {
-                    // Hide other sections and show admin panel
-                    if (heroSection) heroSection.style.display = 'none';
-                    if (filtersSection) filtersSection.style.display = 'none';
-                    if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
-                    if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
-                    if (dashboard) dashboard.style.display = 'none';
-                    if (adminPanel) adminPanel.style.display = 'block';
-                    
-                    // Render admin opportunities
-                    renderAdminOpportunities();
+                if (user) {
+                    // Check admin status using Firebase rules
+                    checkAdminStatus(user.uid).then(isAdmin => {
+                        if (isAdmin) {
+                            // Hide other sections and show admin panel
+                            if (heroSection) heroSection.style.display = 'none';
+                            if (filtersSection) filtersSection.style.display = 'none';
+                            if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
+                            if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
+                            if (dashboard) dashboard.style.display = 'none';
+                            if (adminPanel) adminPanel.style.display = 'block';
+                            
+                            // Render admin opportunities
+                            renderAdminOpportunities();
+                        } else {
+                            showNotification('Access denied. Admin privileges required.', 'error');
+                        }
+                    });
                 } else {
-                    showNotification('Access denied. Admin privileges required.', 'error');
+                    showNotification('Please sign in to access admin panel', 'warning');
                 }
             }
 
@@ -1989,36 +2034,43 @@
                 
                 // Check if user is admin
                 const user = auth.currentUser;
-                if (!user || !adminEmails.includes(user.email)) {
-                    showNotification('Access denied. Admin privileges required.', 'error');
+                if (!user) {
+                    showNotification('Please sign in to access admin features', 'warning');
                     return;
                 }
                 
-                if (opportunity) {
-                    // Editing existing opportunity
-                    adminModalTitle.textContent = 'Edit Opportunity';
-                    document.getElementById('opportunityId').value = opportunity.id;
-                    document.getElementById('adminTitle').value = opportunity.title;
-                    document.getElementById('adminOrganization').value = opportunity.organization;
-                    document.getElementById('adminType').value = opportunity.type;
-                    document.getElementById('adminField').value = opportunity.field;
-                    document.getElementById('adminDescription').value = opportunity.description;
-                    document.getElementById('adminLocation').value = opportunity.location;
-                    document.getElementById('adminDeadline').value = opportunity.deadline;
-                    document.getElementById('adminApplyLink').value = opportunity.applyLink;
-                    document.getElementById('adminImpact').value = opportunity.impact;
-                    document.getElementById('adminPaid').checked = opportunity.paid || false;
-                    document.getElementById('adminStipend').checked = opportunity.stipend || false;
-                    document.getElementById('adminScholarship').checked = opportunity.scholarship || false;
-                    document.getElementById('adminAmount').value = opportunity.amount || '';
-                } else {
-                    // Adding new opportunity
-                    adminModalTitle.textContent = 'Add New Opportunity';
-                    adminOpportunityForm.reset();
-                    document.getElementById('opportunityId').value = '';
-                }
-                
-                adminModal.style.display = 'flex';
+                checkAdminStatus(user.uid).then(isAdmin => {
+                    if (!isAdmin) {
+                        showNotification('Access denied. Admin privileges required.', 'error');
+                        return;
+                    }
+                    
+                    if (opportunity) {
+                        // Editing existing opportunity
+                        adminModalTitle.textContent = 'Edit Opportunity';
+                        document.getElementById('opportunityId').value = opportunity.id;
+                        document.getElementById('adminTitle').value = opportunity.title;
+                        document.getElementById('adminOrganization').value = opportunity.organization;
+                        document.getElementById('adminType').value = opportunity.type;
+                        document.getElementById('adminField').value = opportunity.field;
+                        document.getElementById('adminDescription').value = opportunity.description;
+                        document.getElementById('adminLocation').value = opportunity.location;
+                        document.getElementById('adminDeadline').value = opportunity.deadline;
+                        document.getElementById('adminApplyLink').value = opportunity.applyLink;
+                        document.getElementById('adminImpact').value = opportunity.impact;
+                        document.getElementById('adminPaid').checked = opportunity.paid || false;
+                        document.getElementById('adminStipend').checked = opportunity.stipend || false;
+                        document.getElementById('adminScholarship').checked = opportunity.scholarship || false;
+                        document.getElementById('adminAmount').value = opportunity.amount || '';
+                    } else {
+                        // Adding new opportunity
+                        adminModalTitle.textContent = 'Add New Opportunity';
+                        adminOpportunityForm.reset();
+                        document.getElementById('opportunityId').value = '';
+                    }
+                    
+                    adminModal.style.display = 'flex';
+                });
             }
 
             // Handle admin form submission
@@ -2027,86 +2079,100 @@
                 
                 // Check if user is admin
                 const user = auth.currentUser;
-                if (!user || !adminEmails.includes(user.email)) {
-                    showNotification('Access denied. Admin privileges required.', 'error');
+                if (!user) {
+                    showNotification('Please sign in to access admin features', 'warning');
                     return;
                 }
                 
-                const opportunityId = document.getElementById('opportunityId').value;
-                const title = document.getElementById('adminTitle').value;
-                const organization = document.getElementById('adminOrganization').value;
-                const type = document.getElementById('adminType').value;
-                const field = document.getElementById('adminField').value;
-                const description = document.getElementById('adminDescription').value;
-                const location = document.getElementById('adminLocation').value;
-                const deadline = document.getElementById('adminDeadline').value;
-                const applyLink = document.getElementById('adminApplyLink').value;
-                const impact = document.getElementById('adminImpact').value;
-                const paid = document.getElementById('adminPaid').checked;
-                const stipend = document.getElementById('adminStipend').checked;
-                const scholarship = document.getElementById('adminScholarship').checked;
-                const amount = document.getElementById('adminAmount').value;
-                
-                const opportunityData = {
-                    title,
-                    organization,
-                    type,
-                    field,
-                    description,
-                    location,
-                    deadline,
-                    applyLink,
-                    impact,
-                    paid,
-                    stipend,
-                    scholarship,
-                    amount: amount || '',
-                    createdAt: opportunityId ? allOpportunities.find(opp => opp.id === opportunityId).createdAt : new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                };
-                
-                if (opportunityId) {
-                    // Update existing opportunity
-                    update(ref(database, `opportunities/${opportunityId}`), opportunityData)
-                        .then(() => {
-                            adminModal.style.display = 'none';
-                            showNotification('Opportunity updated successfully!');
-                        })
-                        .catch((error) => {
-                            showNotification('Error updating opportunity: ' + error.message, 'error');
-                        });
-                } else {
-                    // Add new opportunity
-                    const newOpportunityRef = push(ref(database, 'opportunities'));
-                    set(newOpportunityRef, opportunityData)
-                        .then(() => {
-                            adminModal.style.display = 'none';
-                            showNotification('Opportunity added successfully!');
-                        })
-                        .catch((error) => {
-                            showNotification('Error adding opportunity: ' + error.message, 'error');
-                        });
-                }
+                checkAdminStatus(user.uid).then(isAdmin => {
+                    if (!isAdmin) {
+                        showNotification('Access denied. Admin privileges required.', 'error');
+                        return;
+                    }
+                    
+                    const opportunityId = document.getElementById('opportunityId').value;
+                    const title = document.getElementById('adminTitle').value;
+                    const organization = document.getElementById('adminOrganization').value;
+                    const type = document.getElementById('adminType').value;
+                    const field = document.getElementById('adminField').value;
+                    const description = document.getElementById('adminDescription').value;
+                    const location = document.getElementById('adminLocation').value;
+                    const deadline = document.getElementById('adminDeadline').value;
+                    const applyLink = document.getElementById('adminApplyLink').value;
+                    const impact = document.getElementById('adminImpact').value;
+                    const paid = document.getElementById('adminPaid').checked;
+                    const stipend = document.getElementById('adminStipend').checked;
+                    const scholarship = document.getElementById('adminScholarship').checked;
+                    const amount = document.getElementById('adminAmount').value;
+                    
+                    const opportunityData = {
+                        title,
+                        organization,
+                        type,
+                        field,
+                        description,
+                        location,
+                        deadline,
+                        applyLink,
+                        impact,
+                        paid,
+                        stipend,
+                        scholarship,
+                        amount: amount || '',
+                        createdAt: opportunityId ? allOpportunities.find(opp => opp.id === opportunityId).createdAt : new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    if (opportunityId) {
+                        // Update existing opportunity
+                        update(ref(database, `opportunities/${opportunityId}`), opportunityData)
+                            .then(() => {
+                                adminModal.style.display = 'none';
+                                showNotification('Opportunity updated successfully!');
+                            })
+                            .catch((error) => {
+                                showNotification('Error updating opportunity: ' + error.message, 'error');
+                            });
+                    } else {
+                        // Add new opportunity
+                        const newOpportunityRef = push(ref(database, 'opportunities'));
+                        set(newOpportunityRef, opportunityData)
+                            .then(() => {
+                                adminModal.style.display = 'none';
+                                showNotification('Opportunity added successfully!');
+                            })
+                            .catch((error) => {
+                                showNotification('Error adding opportunity: ' + error.message, 'error');
+                            });
+                    }
+                });
             }
 
             // Delete opportunity
             function deleteOpportunity(opportunityId) {
                 // Check if user is admin
                 const user = auth.currentUser;
-                if (!user || !adminEmails.includes(user.email)) {
-                    showNotification('Access denied. Admin privileges required.', 'error');
+                if (!user) {
+                    showNotification('Please sign in to access admin features', 'warning');
                     return;
                 }
                 
-                if (confirm('Are you sure you want to delete this opportunity?')) {
-                    remove(ref(database, `opportunities/${opportunityId}`))
-                        .then(() => {
-                            showNotification('Opportunity deleted successfully!');
-                        })
-                        .catch((error) => {
-                            showNotification('Error deleting opportunity: ' + error.message, 'error');
-                        });
-                }
+                checkAdminStatus(user.uid).then(isAdmin => {
+                    if (!isAdmin) {
+                        showNotification('Access denied. Admin privileges required.', 'error');
+                        return;
+                    }
+                    
+                    if (confirm('Are you sure you want to delete this opportunity?')) {
+                        remove(ref(database, `opportunities/${opportunityId}`))
+                            .then(() => {
+                                showNotification('Opportunity deleted successfully!');
+                            })
+                            .catch((error) => {
+                                showNotification('Error deleting opportunity: ' + error.message, 'error');
+                            });
+                    }
+                });
             }
 
             // Initialize the app
