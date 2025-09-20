@@ -1656,6 +1656,7 @@ function handleSignup() {
             }
 
             // Save opportunity to user's dashboard
+// Save opportunity to user's dashboard
 function saveOpportunity(userId, opportunity) {
     const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
     
@@ -1710,6 +1711,7 @@ function saveOpportunity(userId, opportunity) {
 
             // Load user's saved opportunities
       // Load user's saved opportunities
+// Load user's saved opportunities
 function loadUserOpportunities(userId) {
     const userOppRef = ref(database, `userOpportunities/${userId}`);
     
@@ -1727,8 +1729,12 @@ function loadUserOpportunities(userId) {
             
             for (const key in data) {
                 const savedOpp = data[key];
+                
+                // Handle both old and new data structures
+                const opportunityId = savedOpp.opportunityId || key;
+                
                 // Find the full opportunity details from the map
-                const fullOpportunity = opportunityMap[savedOpp.opportunityId];
+                const fullOpportunity = opportunityMap[opportunityId];
                 
                 if (fullOpportunity) {
                     const opportunityWithStatus = {
@@ -1739,8 +1745,8 @@ function loadUserOpportunities(userId) {
                     
                     // Check for duplicates before adding
                     const isDuplicate = savedOpp.status === 'completed' 
-                        ? userOpportunities.completed.some(opp => opp.id === fullOpportunity.id)
-                        : userOpportunities.pending.some(opp => opp.id === fullOpportunity.id);
+                        ? userOpportunities.completed.some(opp => opp.id === opportunityId)
+                        : userOpportunities.pending.some(opp => opp.id === opportunityId);
                     
                     if (!isDuplicate) {
                         if (savedOpp.status === 'completed') {
