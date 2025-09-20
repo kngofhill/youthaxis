@@ -1656,32 +1656,40 @@ function handleSignup() {
             }
 
             // Save opportunity to user's dashboard
-            function saveOpportunity(userId, opportunity) {
-                const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-                
-                // Store only a reference to the opportunity, not the full object
-                set(userOppRef, {
-                    opportunityId: opportunity.id,
-                    savedAt: new Date().toISOString(),
-                    status: 'pending'
-                })
-                .then(() => {
-                    showNotification('Opportunity saved to your dashboard!');
-                    // Add to local state
-                    userOpportunities.pending.push({
-                        id: opportunity.id,
-                        ...opportunity,
-                        savedAt: new Date().toISOString(),
-                        status: 'pending'
-                    });
-                    renderOpportunities();
-                    renderDashboardOpportunities();
-                })
-                .catch((error) => {
-                    console.error('Error saving opportunity:', error);
-                });
-            }
-
+function saveOpportunity(userId, opportunity) {
+    const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+    
+    // Check if already saved
+    const alreadySaved = userOpportunities.pending.some(opp => opp.id === opportunity.id) || 
+                        userOpportunities.completed.some(opp => opp.id === opportunity.id);
+    
+    if (alreadySaved) {
+        showNotification('This opportunity is already in your dashboard!', 'warning');
+        return;
+    }
+    
+    // Store only a reference to the opportunity, not the full object
+    set(userOppRef, {
+        opportunityId: opportunity.id,
+        savedAt: new Date().toISOString(),
+        status: 'pending'
+    })
+    .then(() => {
+        showNotification('Opportunity saved to your dashboard!');
+        // Add to local state
+        userOpportunities.pending.push({
+            id: opportunity.id,
+            ...opportunity,
+            savedAt: new Date().toISOString(),
+            status: 'pending'
+        });
+        renderOpportunities();
+        renderDashboardOpportunities();
+    })
+    .catch((error) => {
+        console.error('Error saving opportunity:', error);
+    });
+}
             // Remove opportunity from user's dashboard
             function removeOpportunity(userId, opportunity) {
                 const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
@@ -1701,41 +1709,54 @@ function handleSignup() {
             }
 
             // Load user's saved opportunities
-            function loadUserOpportunities(userId) {
-                const userOppRef = ref(database, `userOpportunities/${userId}`);
+      // Load user's saved opportunities
+function loadUserOpportunities(userId) {
+    const userOppRef = ref(database, `userOpportunities/${userId}`);
+    
+    onValue(userOppRef, (snapshot) => {
+        const data = snapshot.val();
+        userOpportunities.pending = [];
+        userOpportunities.completed = [];
+        
+        if (data) {
+            // Create a map of all opportunities for quick lookup
+            const opportunityMap = {};
+            allOpportunities.forEach(opp => {
+                opportunityMap[opp.id] = opp;
+            });
+            
+            for (const key in data) {
+                const savedOpp = data[key];
+                // Find the full opportunity details from the map
+                const fullOpportunity = opportunityMap[savedOpp.opportunityId];
                 
-                onValue(userOppRef, (snapshot) => {
-                    const data = snapshot.val();
-                    userOpportunities.pending = [];
-                    userOpportunities.completed = [];
+                if (fullOpportunity) {
+                    const opportunityWithStatus = {
+                        ...fullOpportunity,
+                        savedAt: savedOpp.savedAt,
+                        status: savedOpp.status || 'pending'
+                    };
                     
-                    if (data) {
-                        for (const key in data) {
-                            const savedOpp = data[key];
-                            // Find the full opportunity details from allOpportunities
-                            const fullOpportunity = allOpportunities.find(opp => opp.id === savedOpp.opportunityId);
-                            
-                            if (fullOpportunity) {
-                                const opportunityWithStatus = {
-                                    ...fullOpportunity,
-                                    savedAt: savedOpp.savedAt,
-                                    status: savedOpp.status
-                                };
-                                
-                                if (savedOpp.status === 'completed') {
-                                    userOpportunities.completed.push(opportunityWithStatus);
-                                } else {
-                                    userOpportunities.pending.push(opportunityWithStatus);
-                                }
-                            }
+                    // Check for duplicates before adding
+                    const isDuplicate = savedOpp.status === 'completed' 
+                        ? userOpportunities.completed.some(opp => opp.id === fullOpportunity.id)
+                        : userOpportunities.pending.some(opp => opp.id === fullOpportunity.id);
+                    
+                    if (!isDuplicate) {
+                        if (savedOpp.status === 'completed') {
+                            userOpportunities.completed.push(opportunityWithStatus);
+                        } else {
+                            userOpportunities.pending.push(opportunityWithStatus);
                         }
                     }
-                    
-                    renderOpportunities();
-                    renderDashboardOpportunities();
-                });
+                }
             }
-
+        }
+        
+        renderOpportunities();
+        renderDashboardOpportunities();
+    });
+}
             // Render dashboard opportunities
             function renderDashboardOpportunities() {
                 // Render pending opportunities
