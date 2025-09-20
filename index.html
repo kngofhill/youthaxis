@@ -1635,7 +1635,7 @@
             function loadUserOpportunities(userId) {
                 const userOppRef = ref(database, `userOpportunities/${userId}`);
                 
-                onValue(user极速3dOppRef, (snapshot) => {
+                onValue(userOppRef, (snapshot) => {
                     const data = snapshot.val();
                     userOpportunities.pending = [];
                     userOpportunities.completed = [];
