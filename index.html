@@ -1636,108 +1636,77 @@
             }
 
             // Save opportunity to user's dashboard
-            function saveOpportunity(userId, opportunity) {
-                const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-                
-                // Check if already saved
-                const alreadySaved = userOpportunities.pending.some(opp => opp.id === opportunity.id) || 
-                                    userOpportunities.completed.some(opp => opp.id === opportunity.id);
-                
-                if (alreadySaved) {
-                    showNotification('This opportunity is already in your dashboard!', 'warning');
-                    return;
-                }
-                
-                // Store only a reference to the opportunity, not the full object
-                set(userOppRef, {
-                    opportunityId: opportunity.id,
-                    savedAt: new Date().toISOString(),
-                    status: 'pending'
-                })
-                .then(() => {
-                    showNotification('Opportunity saved to your dashboard!');
-                    // Add to local state
-                    userOpportunities.pending.push({
-                        id: opportunity.id,
-                        ...opportunity,
-                        savedAt: new Date().toISOString(),
-                        status: 'pending'
-                    });
-                    renderOpportunities();
-                    renderDashboardOpportunities();
-                })
-                .catch((error) => {
-                    console.error('Error saving opportunity:', error);
-                });
-            }
+function saveOpportunity(userId, opportunity) {
+    const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+
+    // Already saved? (local check)
+    const alreadySaved = userOpportunities.pending.some(opp => opp.id === opportunity.id) ||
+                         userOpportunities.completed.some(opp => opp.id === opportunity.id);
+
+    if (alreadySaved) {
+        showNotification('This opportunity is already in your dashboard!', 'warning');
+        return;
+    }
+
+    // Only update Firebase; let the realtime listener update state & UI
+    set(userOppRef, {
+        opportunityId: opportunity.id,
+        savedAt: new Date().toISOString(),
+        status: 'pending'
+    })
+    .then(() => showNotification('Opportunity saved to your dashboard!'))
+    .catch((error) => console.error('Error saving opportunity:', error));
+}
 
             // Remove opportunity from user's dashboard
-            function removeOpportunity(userId, opportunity) {
-                const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-                
-                remove(userOppRef)
-                .then(() => {
-                    showNotification('Opportunity removed from your dashboard');
-                    // Remove from local state
-                    userOpportunities.pending = userOpportunities.pending.filter(opp => opp.id !== opportunity.id);
-                    userOpportunities.completed = userOpportunities.completed.filter(opp => opp.id !== opportunity.id);
-                    renderOpportunities();
-                    renderDashboardOpportunities();
-                })
-                .catch((error) => {
-                    console.error('Error removing opportunity:', error);
-                });
-            }
+        function removeOpportunity(userId, opportunity) {
+    const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
 
+    remove(userOppRef)
+    .then(() => showNotification('Opportunity removed from your dashboard'))
+    .catch((error) => console.error('Error removing opportunity:', error));
+}
             // Load user's saved opportunities
-            function loadUserOpportunities(userId) {
-                // Remove previous listener if it exists
-                if (userOpportunitiesListener) {
-                    userOpportunitiesListener();
-                }
-                
-                const userOppRef = ref(database, `userOpportunities/${userId}`);
-                
-                // Set up the listener and store it for potential cleanup
-                userOpportunitiesListener = onValue(userOppRef, (snapshot) => {
-                    const data = snapshot.val();
-                    
-                    // Always reset the arrays completely
-                    userOpportunities.pending = [];
-                    userOpportunities.completed = [];
-                    
-                    if (data) {
-                        // Create a map of all opportunities for quick lookup
-                        const opportunityMap = {};
-                        allOpportunities.forEach(opp => {
-                            opportunityMap[opp.id] = opp;
-                        });
-                        
-                        for (const key in data) {
-                            const savedOpp = data[key];
-                            const opportunityId = savedOpp.opportunityId || key;
-                            const fullOpportunity = opportunityMap[opportunityId];
-                            
-                            if (fullOpportunity) {
-                                const opportunityWithStatus = {
-                                    ...fullOpportunity,
-                                    savedAt: savedOpp.savedAt,
-                                    status: savedOpp.status || 'pending'
-                                };
-                                
-                                if (savedOpp.status === 'completed') {
-                                    userOpportunities.completed.push(opportunityWithStatus);
-                                } else {
-                                    userOpportunities.pending.push(opportunityWithStatus);
-                                }
-                            }
-                        }
+function loadUserOpportunities(userId) {
+    // Remove previous listener if any
+    if (userOpportunitiesListener) userOpportunitiesListener();
+
+    const userOppRef = ref(database, `userOpportunities/${userId}`);
+    userOpportunitiesListener = onValue(userOppRef, (snapshot) => {
+        const data = snapshot.val();
+
+        // Always reset arrays
+        userOpportunities.pending = [];
+        userOpportunities.completed = [];
+
+        if (data) {
+            // For fast lookup
+            const opportunityMap = {};
+            allOpportunities.forEach(opp => { opportunityMap[opp.id] = opp; });
+
+            for (const key in data) {
+                const savedOpp = data[key];
+                const opportunityId = savedOpp.opportunityId || key;
+                const fullOpportunity = opportunityMap[opportunityId];
+                if (fullOpportunity) {
+                    const opportunityWithStatus = {
+                        ...fullOpportunity,
+                        savedAt: savedOpp.savedAt,
+                        status: savedOpp.status || 'pending'
+                    };
+                    if (savedOpp.status === 'completed') {
+                        userOpportunities.completed.push(opportunityWithStatus);
+                    } else {
+                        userOpportunities.pending.push(opportunityWithStatus);
                     }
-                    
-                    renderOpportunities();
-                    renderDashboardOpportunities();
-                });
+                }
             }
+        }
+        // UI rendering now ONLY happens here
+        renderOpportunities();
+        renderDashboardOpportunities();
+    });
+}
 
             // Render dashboard opportunities
             function renderDashboardOpportunities() {
@@ -1849,29 +1818,16 @@
             }
 
             // Mark opportunity as complete
-            function markAsComplete(userId, opportunity) {
-                const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-                
-                update(userOppRef, {
-                    status: 'completed',
-                    completedAt: new Date().toISOString()
-                })
-                .then(() => {
-                    showNotification('Opportunity marked as complete!');
-                    // Move from pending to completed
-                    userOpportunities.pending = userOpportunities.pending.filter(opp => opp.id !== opportunity.id);
-                    userOpportunities.completed.push({
-                        ...opportunity, 
-                        status: 'completed',
-                        completedAt: new Date().toISOString()
-                    });
-                    renderDashboardOpportunities();
-                })
-                .catch((error) => {
-                    console.error('Error updating opportunity:', error);
-                });
-            }
-
+         
+        function markAsComplete(userId, opportunity) {
+    const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+    update(userOppRef, {
+        status: 'completed',
+        completedAt: new Date().toISOString()
+    })
+    .then(() => showNotification('Opportunity marked as complete!'))
+    .catch((error) => console.error('Error updating opportunity:', error));
+}
             // Apply filters
             function applyFilters() {
                 const fieldFilter = document.getElementById('field').value;
