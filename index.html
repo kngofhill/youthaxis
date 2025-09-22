@@ -1195,6 +1195,8 @@
             
             // Track admin status
             let isAdminUser = false;
+            // Track user opportunities listener
+            let userOpportunitiesListener = null;
 
             // Event Listeners
             if (loginBtn) loginBtn.addEventListener('click', () => showAuthModal('login'));
@@ -1305,6 +1307,12 @@
                     
                     // Reset admin status
                     isAdminUser = false;
+                    
+                    // Remove the user opportunities listener when logging out
+                    if (userOpportunitiesListener) {
+                        userOpportunitiesListener();
+                        userOpportunitiesListener = null;
+                    }
                 }
             });
 
@@ -1312,16 +1320,16 @@
             initApp();
 
             // Check if user is admin using Firebase rules
-          async function checkAdminStatus(userId) {
-    try {
-        const adminRef = ref(database, `admins/${userId}`);
-        const snapshot = await get(adminRef);
-        return snapshot.exists();
-    } catch (error) {
-        console.error('Error checking admin status:', error);
-        return false;
-    }
-}
+            async function checkAdminStatus(userId) {
+                try {
+                    const adminRef = ref(database, `admins/${userId}`);
+                    const snapshot = await get(adminRef);
+                    return snapshot.exists();
+                } catch (error) {
+                    console.error('Error checking admin status:', error);
+                    return false;
+                }
+            }
 
             // Load opportunities from Firebase
             function loadOpportunitiesFromFirebase() {
@@ -1509,27 +1517,7 @@
                 const options = { year: 'numeric', month: 'short', day: 'numeric' };
                 return new Date(dateString).toLocaleDateString(undefined, options);
             }
-function debugAdminStatus() {
-    const user = auth.currentUser;
-    if (user) {
-        console.log("User ID:", user.uid);
-        console.log("Is admin (local):", isAdminUser);
-        
-        checkAdminStatus(user.uid).then(adminStatus => {
-            console.log("Is admin (Firebase):", adminStatus);
-            
-            // Check if user exists in admins node
-            const adminRef = ref(database, `admins/${user.uid}`);
-            get(adminRef).then(snapshot => {
-                console.log("Admin node exists:", snapshot.exists());
-                console.log("Admin node value:", snapshot.val());
-            });
-        });
-    } else {
-        console.log("No user logged in");
-    }
-}
-            window.debugAdminStatus = debugAdminStatus;
+
             // Show auth modal
             function showAuthModal(tab) {
                 if (!authModal) return;
@@ -1584,119 +1572,105 @@ function debugAdminStatus() {
             }
 
             // Handle signup
-// Handle signup
-function handleSignup() {
-    const name = document.getElementById('signupName').value;
-    const email = document.getElementById('signupEmail').value;
-    const password = document.getElementById('signupPassword').value;
-    const confirm = document.getElementById('signupConfirm').value;
-    
-    // Basic validation
-    if (password !== confirm) {
-        if (signupError) {
-            signupError.textContent = 'Passwords do not match';
-            signupError.style.display = 'block';
-        }
-        return;
-    }
-    
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Signed up 
-            const user = userCredential.user;
-            
-            // Save user profile
-            set(ref(database, 'users/' + user.uid), {
-                name: name,
-                email: email,
-                createdAt: new Date().toISOString()
-            });
-
-            // ADD THIS CODE RIGHT HERE:
-            // After creating the user, check if it's an admin account
-            const adminEmails = ['boymirzayevismoiljon@gmail.com', 'ibaymirzayev@gmail.com']; // Add your admin emails here
-            
-            if (adminEmails.includes(email)) {
-                // Add user ID to the admins list
-                const adminRef = ref(database, 'admins');
-                get(adminRef).then((snapshot) => {
-                    let admins = [];
-                    if (snapshot.exists()) {
-                        admins = snapshot.val();
-                    }
-                    // Add the new admin if not already in the list
-                    if (!admins.includes(user.uid)) {
-                        admins.push(user.uid);
-                        set(adminRef, admins);
-                    }
-                });
-            }
-            // END OF ADDED CODE
-
-            if (authModal) authModal.style.display = 'none';
-            showNotification('Account created successfully!');
-        })
-        .catch((error) => {
-            if (signupError) {
-                signupError.textContent = error.message;
+            function handleSignup() {
+                const name = document.getElementById('signupName').value;
+                const email = document.getElementById('signupEmail').value;
+                const password = document.getElementById('signupPassword').value;
+                const confirm = document.getElementById('signupConfirm').value;
                 
+                // Basic validation
+                if (password !== confirm) {
+                    if (signupError) {
+                        signupError.textContent = 'Passwords do not match';
+                        signupError.style.display = 'block';
+                    }
+                    return;
+                }
+                
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then((userCredential) => {
+                        // Signed up 
+                        const user = userCredential.user;
+                        
+                        // Save user profile
+                        set(ref(database, 'users/' + user.uid), {
+                            name: name,
+                            email: email,
+                            createdAt: new Date().toISOString()
+                        });
+
+                        // After creating the user, check if it's an admin account
+                        const adminEmails = ['boymirzayevismoiljon@gmail.com', 'ibaymirzayev@gmail.com'];
+                        
+                        if (adminEmails.includes(email)) {
+                            // Add user ID to the admins list
+                            set(ref(database, `admins/${user.uid}`), true);
+                        }
+
+                        if (authModal) authModal.style.display = 'none';
+                        showNotification('Account created successfully!');
+                    })
+                    .catch((error) => {
+                        if (signupError) {
+                            signupError.textContent = error.message;
+                            signupError.style.display = 'block';
+                        }
+                    });
             }
-        });
-}
 
             // Handle logout
-function handleLogout() {
-    // Remove the listener when logging out
-    if (userOpportunitiesListener) {
-        userOpportunitiesListener();
-        userOpportunitiesListener = null;
-    }
-    
-    signOut(auth)
-        .then(() => {
-            showNotification('Successfully logged out');
-        })
-        .catch((error) => {
-            console.error('Logout error:', error);
-        });
-}
+            function handleLogout() {
+                // Remove the listener when logging out
+                if (userOpportunitiesListener) {
+                    userOpportunitiesListener();
+                    userOpportunitiesListener = null;
+                }
+                
+                signOut(auth)
+                    .then(() => {
+                        showNotification('Successfully logged out');
+                    })
+                    .catch((error) => {
+                        console.error('Logout error:', error);
+                    });
+            }
 
             // Save opportunity to user's dashboard
-// Save opportunity to user's dashboard
-function saveOpportunity(userId, opportunity) {
-    const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-    
-    // Check if already saved
-    const alreadySaved = userOpportunities.pending.some(opp => opp.id === opportunity.id) || 
-                        userOpportunities.completed.some(opp => opp.id === opportunity.id);
-    
-    if (alreadySaved) {
-        showNotification('This opportunity is already in your dashboard!', 'warning');
-        return;
-    }
-    
-    // Store only a reference to the opportunity, not the full object
-    set(userOppRef, {
-        opportunityId: opportunity.id,
-        savedAt: new Date().toISOString(),
-        status: 'pending'
-    })
-    .then(() => {
-        showNotification('Opportunity saved to your dashboard!');
-        // Add to local state
-        userOpportunities.pending.push({
-            id: opportunity.id,
-            ...opportunity,
-            savedAt: new Date().toISOString(),
-            status: 'pending'
-        });
-        renderOpportunities();
-        renderDashboardOpportunities();
-    })
-    .catch((error) => {
-        console.error('Error saving opportunity:', error);
-    });
-}
+            function saveOpportunity(userId, opportunity) {
+                const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+                
+                // Check if already saved
+                const alreadySaved = userOpportunities.pending.some(opp => opp.id === opportunity.id) || 
+                                    userOpportunities.completed.some(opp => opp.id === opportunity.id);
+                
+                if (alreadySaved) {
+                    showNotification('This opportunity is already in your dashboard!', 'warning');
+                    return;
+                }
+                
+                // Store only a reference to the opportunity, not the full object
+                set(userOppRef, {
+                    opportunityId: opportunity.id,
+                    savedAt: new Date().toISOString(),
+                    status: 'pending'
+                })
+                .then(() => {
+                    showNotification('Opportunity saved to your dashboard!');
+                    // Add to local state
+                    userOpportunities.pending.push({
+                        id: opportunity.id,
+                        ...opportunity,
+                        savedAt: new Date().toISOString(),
+                        status: 'pending'
+                    });
+                    renderOpportunities();
+                    renderDashboardOpportunities();
+                })
+                .catch((error) => {
+                    console.error('Error saving opportunity:', error);
+                });
+            }
+
             // Remove opportunity from user's dashboard
             function removeOpportunity(userId, opportunity) {
                 const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
@@ -1716,58 +1690,55 @@ function saveOpportunity(userId, opportunity) {
             }
 
             // Load user's saved opportunities
-      // Load user's saved opportunities
-// Load user's saved opportunities
-let userOpportunitiesListener = null;
-
-function loadUserOpportunities(userId) {
-    // Remove previous listener if it exists
-    if (userOpportunitiesListener) {
-        userOpportunitiesListener(); // This detaches the previous listener
-    }
-    
-    const userOppRef = ref(database, `userOpportunities/${userId}`);
-    
-    // Set up the listener and store it for potential cleanup
-    userOpportunitiesListener = onValue(userOppRef, (snapshot) => {
-        const data = snapshot.val();
-        
-        // Always reset the arrays completely
-        userOpportunities.pending = [];
-        userOpportunities.completed = [];
-        
-        if (data) {
-            // Create a map of all opportunities for quick lookup
-            const opportunityMap = {};
-            allOpportunities.forEach(opp => {
-                opportunityMap[opp.id] = opp;
-            });
-            
-            for (const key in data) {
-                const savedOpp = data[key];
-                const opportunityId = savedOpp.opportunityId || key;
-                const fullOpportunity = opportunityMap[opportunityId];
-                
-                if (fullOpportunity) {
-                    const opportunityWithStatus = {
-                        ...fullOpportunity,
-                        savedAt: savedOpp.savedAt,
-                        status: savedOpp.status || 'pending'
-                    };
-                    
-                    if (savedOpp.status === 'completed') {
-                        userOpportunities.completed.push(opportunityWithStatus);
-                    } else {
-                        userOpportunities.pending.push(opportunityWithStatus);
-                    }
+            function loadUserOpportunities(userId) {
+                // Remove previous listener if it exists
+                if (userOpportunitiesListener) {
+                    userOpportunitiesListener();
                 }
+                
+                const userOppRef = ref(database, `userOpportunities/${userId}`);
+                
+                // Set up the listener and store it for potential cleanup
+                userOpportunitiesListener = onValue(userOppRef, (snapshot) => {
+                    const data = snapshot.val();
+                    
+                    // Always reset the arrays completely
+                    userOpportunities.pending = [];
+                    userOpportunities.completed = [];
+                    
+                    if (data) {
+                        // Create a map of all opportunities for quick lookup
+                        const opportunityMap = {};
+                        allOpportunities.forEach(opp => {
+                            opportunityMap[opp.id] = opp;
+                        });
+                        
+                        for (const key in data) {
+                            const savedOpp = data[key];
+                            const opportunityId = savedOpp.opportunityId || key;
+                            const fullOpportunity = opportunityMap[opportunityId];
+                            
+                            if (fullOpportunity) {
+                                const opportunityWithStatus = {
+                                    ...fullOpportunity,
+                                    savedAt: savedOpp.savedAt,
+                                    status: savedOpp.status || 'pending'
+                                };
+                                
+                                if (savedOpp.status === 'completed') {
+                                    userOpportunities.completed.push(opportunityWithStatus);
+                                } else {
+                                    userOpportunities.pending.push(opportunityWithStatus);
+                                }
+                            }
+                        }
+                    }
+                    
+                    renderOpportunities();
+                    renderDashboardOpportunities();
+                });
             }
-        }
-        
-        renderOpportunities();
-        renderDashboardOpportunities();
-    });
-}
+
             // Render dashboard opportunities
             function renderDashboardOpportunities() {
                 // Render pending opportunities
@@ -2060,50 +2031,50 @@ function loadUserOpportunities(userId) {
             }
 
             // Show admin panel
-function showAdminPanel() {
-    const user = auth.currentUser;
-    if (user) {
-        // Check admin status using the stored variable
-        if (isAdminUser) {
-            // Hide other sections and show admin panel
-            if (heroSection) heroSection.style.display = 'none';
-            if (filtersSection) filtersSection.style.display = 'none';
-            if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
-            if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
-            if (dashboard) dashboard.style.display = 'none';
-            if (adminPanel) adminPanel.style.display = 'block';
-            
-            // Render admin opportunities
-            renderAdminOpportunities();
-        } else {
-            // Double-check admin status in case it wasn't loaded yet
-            checkAdminStatus(user.uid).then(adminStatus => {
-                if (adminStatus) {
-                    isAdminUser = true;
-                    if (navAdmin) navAdmin.style.display = 'list-item';
-                    
-                    // Hide other sections and show admin panel
-                    if (heroSection) heroSection.style.display = 'none';
-                    if (filtersSection) filtersSection.style.display = 'none';
-                    if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
-                    if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
-                    if (dashboard) dashboard.style.display = 'none';
-                    if (adminPanel) adminPanel.style.display = 'block';
-                    
-                    // Render admin opportunities
-                    renderAdminOpportunities();
+            function showAdminPanel() {
+                const user = auth.currentUser;
+                if (user) {
+                    // Check admin status using the stored variable
+                    if (isAdminUser) {
+                        // Hide other sections and show admin panel
+                        if (heroSection) heroSection.style.display = 'none';
+                        if (filtersSection) filtersSection.style.display = 'none';
+                        if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
+                        if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
+                        if (dashboard) dashboard.style.display = 'none';
+                        if (adminPanel) adminPanel.style.display = 'block';
+                        
+                        // Render admin opportunities
+                        renderAdminOpportunities();
+                    } else {
+                        // Double-check admin status in case it wasn't loaded yet
+                        checkAdminStatus(user.uid).then(adminStatus => {
+                            if (adminStatus) {
+                                isAdminUser = true;
+                                if (navAdmin) navAdmin.style.display = 'list-item';
+                                
+                                // Hide other sections and show admin panel
+                                if (heroSection) heroSection.style.display = 'none';
+                                if (filtersSection) filtersSection.style.display = 'none';
+                                if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
+                                if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
+                                if (dashboard) dashboard.style.display = 'none';
+                                if (adminPanel) adminPanel.style.display = 'block';
+                                
+                                // Render admin opportunities
+                                renderAdminOpportunities();
+                            } else {
+                                showNotification('Access denied. Admin privileges required.', 'error');
+                            }
+                        }).catch(error => {
+                            console.error('Error checking admin status:', error);
+                            showNotification('Error checking admin status', 'error');
+                        });
+                    }
                 } else {
-                    showNotification('Access denied. Admin privileges required.', 'error');
+                    showNotification('Please sign in to access admin panel', 'warning');
                 }
-            }).catch(error => {
-                console.error('Error checking admin status:', error);
-                showNotification('Error checking admin status', 'error');
-            });
-        }
-    } else {
-        showNotification('Please sign in to access admin panel', 'warning');
-    }
-}
+            }
 
             // Switch dashboard tab
             function switchDashboardTab(tabName) {
