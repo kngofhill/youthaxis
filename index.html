@@ -1760,7 +1760,7 @@
                 
                 sendPasswordResetEmail(auth, email)
                     .then(() => {
-                        showNotification('Password reset email sent. Check your inbox.', 'success');
+                        showNotification('Password reset email sent. Check your spam folder.', 'success');
                     })
                     .catch((error) => {
                         if (loginError) {
