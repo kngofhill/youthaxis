@@ -194,6 +194,47 @@
             display: none;
         }
         
+        /* Google Sign-In Button */
+        .google-signin-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 10px;
+            background-color: white;
+            color: #757575;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+        }
+        
+        .google-signin-btn:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .google-signin-btn img {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+        }
+        
+        /* Password Reset Link */
+        .password-reset-link {
+            text-align: center;
+            margin-top: 15px;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .password-reset-link:hover {
+            text-decoration: underline;
+        }
+        
         /* Hero Section */
         .hero {
             background: linear-gradient(rgba(67, 97, 238, 0.9), rgba(58, 12, 163, 0.9)), url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
@@ -386,6 +427,8 @@
         .deadline {
             color: var(--danger);
             font-weight: 600;
+            display: flex;
+            align-items: center;
         }
         
         .deadline.urgent {
@@ -804,7 +847,14 @@
                 <input type="email" id="loginEmail" placeholder="Email">
                 <input type="password" id="loginPassword" placeholder="Password">
                 <button id="doLogin">Login</button>
+                <div class="password-reset-link" id="passwordResetLink">Forgot Password?</div>
                 <div class="auth-error" id="loginError"></div>
+                
+                <div class="divider">or</div>
+                <button class="google-signin-btn" id="googleSignIn">
+                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">
+                    Sign in with Google
+                </button>
             </div>
             
             <div class="auth-form" id="signupForm">
@@ -814,6 +864,12 @@
                 <input type="password" id="signupConfirm" placeholder="Confirm Password">
                 <button id="doSignup">Sign Up</button>
                 <div class="auth-error" id="signupError"></div>
+                
+                <div class="divider">or</div>
+                <button class="google-signin-btn" id="googleSignUp">
+                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo">
+                    Sign up with Google
+                </button>
             </div>
         </div>
     </div>
@@ -1124,7 +1180,16 @@
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged, 
+            GoogleAuthProvider, 
+            signInWithPopup,
+            sendPasswordResetEmail
+        } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
         import { getDatabase, ref, set, get, child, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
 
         // Your web app's Firebase configuration
@@ -1143,6 +1208,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const database = getDatabase(app);
+        const googleProvider = new GoogleAuthProvider();
 
         // Wait for DOM to be fully loaded before accessing elements
         document.addEventListener('DOMContentLoaded', function() {
@@ -1182,6 +1248,9 @@
             const adminOpportunityForm = document.getElementById('adminOpportunityForm');
             const adminCancelBtn = document.getElementById('adminCancelBtn');
             const adminOpportunitiesList = document.getElementById('adminOpportunitiesList');
+            const googleSignIn = document.getElementById('googleSignIn');
+            const googleSignUp = document.getElementById('googleSignUp');
+            const passwordResetLink = document.getElementById('passwordResetLink');
 
             // Current filtered opportunities
             let filteredOpportunities = [];
@@ -1265,6 +1334,13 @@
             if (addOpportunityBtn) addOpportunityBtn.addEventListener('click', () => showAdminModal());
             if (adminCancelBtn) adminCancelBtn.addEventListener('click', () => adminModal.style.display = 'none');
             if (adminOpportunityForm) adminOpportunityForm.addEventListener('submit', handleAdminFormSubmit);
+
+            // Google Sign-In/Sign-Up buttons
+            if (googleSignIn) googleSignIn.addEventListener('click', () => handleGoogleSignIn());
+            if (googleSignUp) googleSignUp.addEventListener('click', () => handleGoogleSignIn());
+            
+            // Password reset link
+            if (passwordResetLink) passwordResetLink.addEventListener('click', handlePasswordReset);
 
             // Close modal when clicking outside
             window.addEventListener('click', (e) => {
@@ -1618,6 +1694,82 @@
                     });
             }
 
+            // Handle Google Sign-In
+            function handleGoogleSignIn() {
+                signInWithPopup(auth, googleProvider)
+                    .then((result) => {
+                        // This gives you a Google Access Token
+                        const credential = GoogleAuthProvider.credentialFromResult(result);
+                        const token = credential.accessToken;
+                        
+                        // The signed-in user info
+                        const user = result.user;
+                        
+                        // Check if user exists in database
+                        const userRef = ref(database, 'users/' + user.uid);
+                        
+                        get(userRef).then((snapshot) => {
+                            if (!snapshot.exists()) {
+                                // User doesn't exist, create a new user record
+                                set(userRef, {
+                                    name: user.displayName,
+                                    email: user.email,
+                                    createdAt: new Date().toISOString(),
+                                    isGoogleUser: true
+                                });
+                                
+                                // Check if user should be admin
+                                const adminEmails = ['boymirzayevismoiljon@gmail.com', 'ibaymirzayev@gmail.com'];
+                                if (adminEmails.includes(user.email)) {
+                                    set(ref(database, `admins/${user.uid}`), true);
+                                }
+                            }
+                            
+                            // Close auth modal and show success notification
+                            if (authModal) authModal.style.display = 'none';
+                            showNotification('Successfully signed in with Google!');
+                        });
+                    })
+                    .catch((error) => {
+                        // Handle Errors here
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        const email = error.customData?.email;
+                        const credential = GoogleAuthProvider.credentialFromError(error);
+                        
+                        // Show error in appropriate form
+                        const currentTab = document.querySelector('.auth-tab.active').getAttribute('data-tab');
+                        if (currentTab === 'login' && loginError) {
+                            loginError.textContent = errorMessage;
+                            loginError.style.display = 'block';
+                        } else if (currentTab === 'signup' && signupError) {
+                            signupError.textContent = errorMessage;
+                            signupError.style.display = 'block';
+                        }
+                    });
+            }
+
+            // Handle password reset
+            function handlePasswordReset() {
+                const email = document.getElementById('loginEmail').value;
+                
+                if (!email) {
+                    showNotification('Please enter your email address first', 'warning');
+                    return;
+                }
+                
+                sendPasswordResetEmail(auth, email)
+                    .then(() => {
+                        showNotification('Password reset email sent. Check your inbox.', 'success');
+                    })
+                    .catch((error) => {
+                        if (loginError) {
+                            loginError.textContent = error.message;
+                            loginError.style.display = 'block';
+                        }
+                    });
+            }
+
             // Handle logout
             function handleLogout() {
                 // Remove the listener when logging out
@@ -1636,97 +1788,97 @@
             }
 
             // Save opportunity to user's dashboard
-function saveOpportunity(userId, opportunity) {
-    const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-    
-    // Check if already saved in local state
-    const alreadySaved = userOpportunities.pending.some(opp => opp.id === opportunity.id) || 
-                        userOpportunities.completed.some(opp => opp.id === opportunity.id);
-    
-    if (alreadySaved) {
-        showNotification('This opportunity is already in your dashboard!', 'warning');
-        return;
-    }
-    
-    // Store only a reference to the opportunity, not the full object
-    set(userOppRef, {
-        opportunityId: opportunity.id,
-        savedAt: new Date().toISOString(),
-        status: 'pending'
-    })
-    .then(() => {
-        showNotification('Opportunity saved to your dashboard!');
-        // DON'T update local state here - let the Firebase listener handle it
-        // This prevents the duplicate issue
-    })
-    .catch((error) => {
-        console.error('Error saving opportunity:', error);
-    });
-}
+            function saveOpportunity(userId, opportunity) {
+                const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+                
+                // Check if already saved in local state
+                const alreadySaved = userOpportunities.pending.some(opp => opp.id === opportunity.id) || 
+                                    userOpportunities.completed.some(opp => opp.id === opportunity.id);
+                
+                if (alreadySaved) {
+                    showNotification('This opportunity is already in your dashboard!', 'warning');
+                    return;
+                }
+                
+                // Store only a reference to the opportunity, not the full object
+                set(userOppRef, {
+                    opportunityId: opportunity.id,
+                    savedAt: new Date().toISOString(),
+                    status: 'pending'
+                })
+                .then(() => {
+                    showNotification('Opportunity saved to your dashboard!');
+                    // DON'T update local state here - let the Firebase listener handle it
+                    // This prevents the duplicate issue
+                })
+                .catch((error) => {
+                    console.error('Error saving opportunity:', error);
+                });
+            }
 
             // Remove opportunity from user's dashboard
-    function removeOpportunity(userId, opportunity) {
-    const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-    
-    remove(userOppRef)
-    .then(() => {
-        showNotification('Opportunity removed from your dashboard');
-        // DON'T update local state here - let the Firebase listener handle it
-    })
-    .catch((error) => {
-        console.error('Error removing opportunity:', error);
-    });
-}
+            function removeOpportunity(userId, opportunity) {
+                const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+                
+                remove(userOppRef)
+                .then(() => {
+                    showNotification('Opportunity removed from your dashboard');
+                    // DON'T update local state here - let the Firebase listener handle it
+                })
+                .catch((error) => {
+                    console.error('Error removing opportunity:', error);
+                });
+            }
 
             // Load user's saved opportunities
-function loadUserOpportunities(userId) {
-    // Remove previous listener if it exists
-    if (userOpportunitiesListener) {
-        userOpportunitiesListener();
-    }
-    
-    const userOppRef = ref(database, `userOpportunities/${userId}`);
-    
-    // Set up the listener and store it for potential cleanup
-    userOpportunitiesListener = onValue(userOppRef, (snapshot) => {
-        const data = snapshot.val();
-        
-        // Always reset the arrays completely
-        userOpportunities.pending = [];
-        userOpportunities.completed = [];
-        
-        if (data) {
-            // Create a map of all opportunities for quick lookup
-            const opportunityMap = {};
-            allOpportunities.forEach(opp => {
-                opportunityMap[opp.id] = opp;
-            });
-            
-            for (const key in data) {
-                const savedOpp = data[key];
-                const opportunityId = savedOpp.opportunityId || key;
-                const fullOpportunity = opportunityMap[opportunityId];
-                
-                if (fullOpportunity) {
-                    const opportunityWithStatus = {
-                        ...fullOpportunity,
-                        savedAt: savedOpp.savedAt,
-                        status: savedOpp.status || 'pending'
-                    };
-                    
-                    if (savedOpp.status === 'completed') {
-                        userOpportunities.completed.push(opportunityWithStatus);
-                    } else {
-                        userOpportunities.pending.push(opportunityWithStatus);
-                    }
+            function loadUserOpportunities(userId) {
+                // Remove previous listener if it exists
+                if (userOpportunitiesListener) {
+                    userOpportunitiesListener();
                 }
+                
+                const userOppRef = ref(database, `userOpportunities/${userId}`);
+                
+                // Set up the listener and store it for potential cleanup
+                userOpportunitiesListener = onValue(userOppRef, (snapshot) => {
+                    const data = snapshot.val();
+                    
+                    // Always reset the arrays completely
+                    userOpportunities.pending = [];
+                    userOpportunities.completed = [];
+                    
+                    if (data) {
+                        // Create a map of all opportunities for quick lookup
+                        const opportunityMap = {};
+                        allOpportunities.forEach(opp => {
+                            opportunityMap[opp.id] = opp;
+                        });
+                        
+                        for (const key in data) {
+                            const savedOpp = data[key];
+                            const opportunityId = savedOpp.opportunityId || key;
+                            const fullOpportunity = opportunityMap[opportunityId];
+                            
+                            if (fullOpportunity) {
+                                const opportunityWithStatus = {
+                                    ...fullOpportunity,
+                                    savedAt: savedOpp.savedAt,
+                                    status: savedOpp.status || 'pending'
+                                };
+                                
+                                if (savedOpp.status === 'completed') {
+                                    userOpportunities.completed.push(opportunityWithStatus);
+                                } else {
+                                    userOpportunities.pending.push(opportunityWithStatus);
+                                }
+                            }
+                        }
+                    }
+                    
+                    renderOpportunities();
+                    renderDashboardOpportunities();
+                });
             }
-        }
-        
-        renderOpportunities();
-        renderDashboardOpportunities();
-    });
-}
 
             // Render dashboard opportunities
             function renderDashboardOpportunities() {
@@ -1838,16 +1990,16 @@ function loadUserOpportunities(userId) {
             }
 
             // Mark opportunity as complete
-         
-        function markAsComplete(userId, opportunity) {
-    const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-    update(userOppRef, {
-        status: 'completed',
-        completedAt: new Date().toISOString()
-    })
-    .then(() => showNotification('Opportunity marked as complete!'))
-    .catch((error) => console.error('Error updating opportunity:', error));
-}
+            function markAsComplete(userId, opportunity) {
+                const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+                update(userOppRef, {
+                    status: 'completed',
+                    completedAt: new Date().toISOString()
+                })
+                .then(() => showNotification('Opportunity marked as complete!'))
+                .catch((error) => console.error('Error updating opportunity:', error));
+            }
+
             // Apply filters
             function applyFilters() {
                 const fieldFilter = document.getElementById('field').value;
