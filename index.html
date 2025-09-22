@@ -1191,7 +1191,10 @@
             sendPasswordResetEmail
         } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
         import { getDatabase, ref, set, get, child, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-database.js";
-
+        import { 
+  // ... your existing imports
+  fetchSignInMethodsForEmail  // Add this import
+} from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
         // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDEFumFatqFMn29D1x9f-_WWiVh2F_aVtQ",
@@ -1748,10 +1751,7 @@
                         }
                     });
             }
-import { 
-  // ... your existing imports
-  fetchSignInMethodsForEmail  // Add this import
-} from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+
 
 // Then add this function:
 async function checkEmailExists(email) {
