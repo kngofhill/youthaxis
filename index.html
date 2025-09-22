@@ -1748,27 +1748,68 @@
                         }
                     });
             }
+import { 
+  // ... your existing imports
+  fetchSignInMethodsForEmail  // Add this import
+} from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
 
+// Then add this function:
+async function checkEmailExists(email) {
+  try {
+    const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+    return signInMethods.length > 0;
+  } catch (error) {
+    console.error('Error checking email:', error);
+    return false;
+  }
+}
             // Handle password reset
-            function handlePasswordReset() {
-                const email = document.getElementById('loginEmail').value;
-                
-                if (!email) {
-                    showNotification('Please enter your email address first', 'warning');
-                    return;
-                }
-                
-                sendPasswordResetEmail(auth, email)
-                    .then(() => {
-                        showNotification('Password reset email sent. Check your spam folder.', 'success');
-                    })
-                    .catch((error) => {
-                        if (loginError) {
-                            loginError.textContent = error.message;
-                            loginError.style.display = 'block';
-                        }
-                    });
-            }
+    async function handlePasswordReset() {
+  const email = document.getElementById('loginEmail').value;
+  
+  if (!email) {
+    showNotification('Please enter your email address first', 'warning');
+    return;
+  }
+  
+  // Basic email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    if (loginError) {
+      loginError.textContent = 'Please enter a valid email address';
+      loginError.style.display = 'block';
+    }
+    return;
+  }
+  
+  try {
+    // Check if email exists in Firebase Auth
+    const emailExists = await checkEmailExists(email);
+    
+    if (!emailExists) {
+      if (loginError) {
+        loginError.textContent = 'This email is not registered with us';
+        loginError.style.display = 'block';
+      }
+      return;
+    }
+    
+    // If email exists, send password reset email
+    await sendPasswordResetEmail(auth, email);
+    showNotification('Password reset email sent. Check your inbox or spam folder.', 'success');
+    
+    // Clear any previous errors
+    if (loginError) {
+      loginError.style.display = 'none';
+    }
+  } catch (error) {
+    console.error('Password reset error:', error);
+    if (loginError) {
+      loginError.textContent = error.message;
+      loginError.style.display = 'block';
+    }
+  }
+}
 
             // Handle logout
             function handleLogout() {
