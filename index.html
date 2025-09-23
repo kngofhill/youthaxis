@@ -356,6 +356,7 @@
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
         }
         
         .opportunity-card:hover {
@@ -438,6 +439,31 @@
             0% { color: var(--danger); }
             50% { color: #ff8fa3; }
             100% { color: var(--danger); }
+        }
+        
+        .time-remaining {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+            background-color: var(--light-gray);
+        }
+        
+        .time-remaining.urgent {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .time-remaining.warning {
+            background-color: var(--warning);
+            color: var(--dark);
+        }
+        
+        .time-remaining.normal {
+            background-color: var(--success);
+            color: white;
         }
         
         .card-footer {
@@ -1076,10 +1102,18 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             z-index: 999;
+            display: none;
+        }
+
+        .notification-settings.show {
+            display: block;
         }
 
         .notification-settings h4 {
             margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .setting-item {
@@ -1134,7 +1168,48 @@
             transform: translateX(26px);
         }
 
+        /* Settings Icon */
+        .settings-icon {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 5px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
 
+        .settings-icon:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Notification Preferences */
+        .notification-preferences {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .preference-item {
+            margin-bottom: 10px;
+        }
+
+        .preference-item label {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .preference-item input {
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -1165,6 +1240,9 @@
                 <button id="loginBtn">Sign In</button>
                 <button id="signupBtn">Sign Up</button>
                 <button id="logoutBtn" style="display: none;">Logout</button>
+                <button class="settings-icon" id="notificationSettingsBtn" style="display: none;">
+                    <i class="fas fa-cog"></i>
+                </button>
             </div>
         </div>
     </header>
@@ -1471,7 +1549,10 @@
     <div class="notification-system" id="notificationSystem">
         <div class="notification-header">
             <h3><i class="fas fa-bell"></i> Notifications</h3>
-            <button class="notification-clear" id="clearAllNotifications">Clear All</button>
+            <div>
+                <button class="notification-clear" id="markAllRead">Mark All Read</button>
+                <button class="notification-clear" id="clearAllNotifications">Clear All</button>
+            </div>
         </div>
         <div class="notification-list" id="notificationList">
             <!-- Notifications will be dynamically added here -->
@@ -1493,6 +1574,58 @@
                     <button class="btn-secondary" id="snoozeDeadlineBtn">Snooze (24h)</button>
                     <button class="btn-tertiary" id="dismissDeadlineBtn">Dismiss</button>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification Settings Panel -->
+    <div class="notification-settings" id="notificationSettings">
+        <h4>Notification Settings <button class="settings-icon" id="closeSettings"><i class="fas fa-times"></i></button></h4>
+        
+        <div class="setting-item">
+            <span>Browser Notifications</span>
+            <label class="switch">
+                <input type="checkbox" id="browserNotifications">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <div class="setting-item">
+            <span>Sound Notifications</span>
+            <label class="switch">
+                <input type="checkbox" id="soundNotifications">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <div class="notification-preferences">
+            <h5>Notification Preferences</h5>
+            <div class="preference-item">
+                <label>
+                    <input type="checkbox" id="deadlineReminders" checked>
+                    Deadline Reminders
+                </label>
+            </div>
+            <div class="preference-item">
+                <label>
+                    <input type="checkbox" id="newOpportunities" checked>
+                    New Opportunities
+                </label>
+            </div>
+            <div class="preference-item">
+                <label>
+                    <input type="checkbox" id="applicationUpdates" checked>
+                    Application Updates
+                </label>
+            </div>
+        </div>
+        
+        <div class="setting-item">
+            <span>Reminder Intervals (days before deadline)</span>
+            <div>
+                <label><input type="checkbox" name="reminderIntervals" value="7" checked> 7 days</label>
+                <label><input type="checkbox" name="reminderIntervals" value="3" checked> 3 days</label>
+                <label><input type="checkbox" name="reminderIntervals" value="1" checked> 1 day</label>
             </div>
         </div>
     </div>
@@ -1586,14 +1719,17 @@
         let userOpportunitiesListener = null;
         let notificationManager = null;
 
-        // Notification System
+        // Enhanced Notification System
         class NotificationManager {
             constructor() {
                 this.notifications = [];
                 this.settings = {
                     browserNotifications: true,
                     soundEnabled: true,
-                    reminderIntervals: [7, 3, 1] // days before deadline to remind
+                    reminderIntervals: [7, 3, 1], // days before deadline to remind
+                    deadlineReminders: true,
+                    newOpportunities: true,
+                    applicationUpdates: true
                 };
                 this.init();
             }
@@ -1614,6 +1750,12 @@
                 const notificationBell = document.getElementById('notificationBell');
                 if (notificationBell) {
                     notificationBell.addEventListener('click', () => this.toggleNotificationPanel());
+                }
+
+                // Mark all as read button
+                const markAllReadBtn = document.getElementById('markAllRead');
+                if (markAllReadBtn) {
+                    markAllReadBtn.addEventListener('click', () => this.markAllAsRead());
                 }
 
                 // Clear all notifications
@@ -1643,6 +1785,80 @@
                     dismissDeadlineBtn.addEventListener('click', () => this.dismissDeadline());
                 }
 
+                // Notification settings
+                const notificationSettingsBtn = document.getElementById('notificationSettingsBtn');
+                if (notificationSettingsBtn) {
+                    notificationSettingsBtn.addEventListener('click', () => this.toggleSettingsPanel());
+                }
+
+                const closeSettingsBtn = document.getElementById('closeSettings');
+                if (closeSettingsBtn) {
+                    closeSettingsBtn.addEventListener('click', () => this.hideSettingsPanel());
+                }
+
+                // Settings checkboxes
+                const browserNotificationsCheckbox = document.getElementById('browserNotifications');
+                if (browserNotificationsCheckbox) {
+                    browserNotificationsCheckbox.checked = this.settings.browserNotifications;
+                    browserNotificationsCheckbox.addEventListener('change', (e) => {
+                        this.settings.browserNotifications = e.target.checked;
+                        this.saveSettings();
+                    });
+                }
+
+                const soundNotificationsCheckbox = document.getElementById('soundNotifications');
+                if (soundNotificationsCheckbox) {
+                    soundNotificationsCheckbox.checked = this.settings.soundEnabled;
+                    soundNotificationsCheckbox.addEventListener('change', (e) => {
+                        this.settings.soundEnabled = e.target.checked;
+                        this.saveSettings();
+                    });
+                }
+
+                // Notification preferences
+                const deadlineRemindersCheckbox = document.getElementById('deadlineReminders');
+                if (deadlineRemindersCheckbox) {
+                    deadlineRemindersCheckbox.checked = this.settings.deadlineReminders;
+                    deadlineRemindersCheckbox.addEventListener('change', (e) => {
+                        this.settings.deadlineReminders = e.target.checked;
+                        this.saveSettings();
+                    });
+                }
+
+                const newOpportunitiesCheckbox = document.getElementById('newOpportunities');
+                if (newOpportunitiesCheckbox) {
+                    newOpportunitiesCheckbox.checked = this.settings.newOpportunities;
+                    newOpportunitiesCheckbox.addEventListener('change', (e) => {
+                        this.settings.newOpportunities = e.target.checked;
+                        this.saveSettings();
+                    });
+                }
+
+                const applicationUpdatesCheckbox = document.getElementById('applicationUpdates');
+                if (applicationUpdatesCheckbox) {
+                    applicationUpdatesCheckbox.checked = this.settings.applicationUpdates;
+                    applicationUpdatesCheckbox.addEventListener('change', (e) => {
+                        this.settings.applicationUpdates = e.target.checked;
+                        this.saveSettings();
+                    });
+                }
+
+                // Reminder intervals
+                const reminderIntervalsCheckboxes = document.querySelectorAll('input[name="reminderIntervals"]');
+                reminderIntervalsCheckboxes.forEach(checkbox => {
+                    checkbox.checked = this.settings.reminderIntervals.includes(parseInt(checkbox.value));
+                    checkbox.addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            this.settings.reminderIntervals.push(parseInt(e.target.value));
+                        } else {
+                            this.settings.reminderIntervals = this.settings.reminderIntervals.filter(
+                                interval => interval !== parseInt(e.target.value)
+                            );
+                        }
+                        this.saveSettings();
+                    });
+                });
+
                 // Close notification panel when clicking outside
                 document.addEventListener('click', (e) => {
                     const notificationSystem = document.getElementById('notificationSystem');
@@ -1653,12 +1869,25 @@
                         !notificationBell.contains(e.target)) {
                         this.hideNotificationPanel();
                     }
+
+                    // Close settings panel when clicking outside
+                    const notificationSettings = document.getElementById('notificationSettings');
+                    const notificationSettingsBtn = document.getElementById('notificationSettingsBtn');
+                    
+                    if (notificationSettings && notificationSettings.classList.contains('show') &&
+                        !notificationSettings.contains(e.target) && 
+                        !notificationSettingsBtn.contains(e.target)) {
+                        this.hideSettingsPanel();
+                    }
                 });
             }
 
             // Load notification settings from localStorage
             loadSettings() {
-                const savedSettings = localStorage.getItem('notificationSettings');
+                const user = auth.currentUser;
+                const key = user ? `notificationSettings_${user.uid}` : 'notificationSettings_guest';
+                const savedSettings = localStorage.getItem(key);
+                
                 if (savedSettings) {
                     this.settings = { ...this.settings, ...JSON.parse(savedSettings) };
                 }
@@ -1666,7 +1895,9 @@
 
             // Save notification settings to localStorage
             saveSettings() {
-                localStorage.setItem('notificationSettings', JSON.stringify(this.settings));
+                const user = auth.currentUser;
+                const key = user ? `notificationSettings_${user.uid}` : 'notificationSettings_guest';
+                localStorage.setItem(key, JSON.stringify(this.settings));
             }
 
             // Check for approaching deadlines
@@ -1952,6 +2183,14 @@
                 }
             }
 
+            markAllAsRead() {
+                this.notifications.forEach(notification => {
+                    notification.read = true;
+                });
+                this.saveNotifications();
+                this.updateNotificationUI();
+            }
+
             toggleReadStatus(notificationId) {
                 const notification = this.notifications.find(n => n.id === notificationId);
                 if (notification) {
@@ -1984,6 +2223,20 @@
                 const notificationSystem = document.getElementById('notificationSystem');
                 if (notificationSystem) {
                     notificationSystem.classList.remove('show');
+                }
+            }
+
+            toggleSettingsPanel() {
+                const notificationSettings = document.getElementById('notificationSettings');
+                if (notificationSettings) {
+                    notificationSettings.classList.toggle('show');
+                }
+            }
+
+            hideSettingsPanel() {
+                const notificationSettings = document.getElementById('notificationSettings');
+                if (notificationSettings) {
+                    notificationSettings.classList.remove('show');
                 }
             }
 
@@ -2101,6 +2354,40 @@
             }
         }
 
+        // Utility function to calculate time remaining
+        function calculateTimeRemaining(deadline) {
+            const now = new Date();
+            const deadlineDate = new Date(deadline);
+            const diffTime = deadlineDate - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) {
+                return { text: 'Expired', class: 'expired' };
+            } else if (diffDays === 0) {
+                return { text: 'Today', class: 'urgent' };
+            } else if (diffDays === 1) {
+                return { text: '1 day', class: 'urgent' };
+            } else if (diffDays < 7) {
+                return { text: `${diffDays} days`, class: 'urgent' };
+            } else if (diffDays < 30) {
+                const weeks = Math.floor(diffDays / 7);
+                const days = diffDays % 7;
+                let text = `${weeks} week${weeks > 1 ? 's' : ''}`;
+                if (days > 0) {
+                    text += `, ${days} day${days > 1 ? 's' : ''}`;
+                }
+                return { text, class: 'warning' };
+            } else {
+                const months = Math.floor(diffDays / 30);
+                const days = diffDays % 30;
+                let text = `${months} month${months > 1 ? 's' : ''}`;
+                if (days > 0) {
+                    text += `, ${days} day${days > 1 ? 's' : ''}`;
+                }
+                return { text, class: 'normal' };
+            }
+        }
+
         // Wait for DOM to be fully loaded before accessing elements
         document.addEventListener('DOMContentLoaded', function() {
             // DOM Elements
@@ -2142,6 +2429,7 @@
             const googleSignIn = document.getElementById('googleSignIn');
             const googleSignUp = document.getElementById('googleSignUp');
             const passwordResetLink = document.getElementById('passwordResetLink');
+            const notificationSettingsBtn = document.getElementById('notificationSettingsBtn');
 
             // Event Listeners
             if (loginBtn) loginBtn.addEventListener('click', () => showAuthModal('login'));
@@ -2235,6 +2523,7 @@
                     if (loginBtn) loginBtn.style.display = 'none';
                     if (signupBtn) signupBtn.style.display = 'none';
                     if (logoutBtn) logoutBtn.style.display = 'block';
+                    if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'block';
                     
                     // Check if user is admin using Firebase rules
                     checkAdminStatus(user.uid).then(adminStatus => {
@@ -2261,6 +2550,7 @@
                     if (loginBtn) loginBtn.style.display = 'block';
                     if (signupBtn) signupBtn.style.display = 'block';
                     if (logoutBtn) logoutBtn.style.display = 'none';
+                    if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'none';
                     if (navAdmin) navAdmin.style.display = 'none';
                     
                     // Hide dashboard and admin panel if user is not logged in
@@ -2343,6 +2633,7 @@
                     
                     const isExpired = isOpportunityExpired(opp.deadline);
                     const isUrgent = isDeadlineUrgent(opp.deadline);
+                    const timeRemaining = calculateTimeRemaining(opp.deadline);
                     
                     const opportunityCard = document.createElement('div');
                     opportunityCard.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
@@ -2364,7 +2655,9 @@
                             </div>
                             <div class="detail">
                                 <i class="fas fa-calendar-alt"></i>
-                                <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.deadline)}</span>
+                                <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.deadline)} 
+                                    <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
+                                </span>
                             </div>
                             <div class="detail">
                                 <i class="fas fa-chart-line"></i>
@@ -2415,12 +2708,14 @@
                 }
                 
                 allOpportunities.forEach(opp => {
+                    const timeRemaining = calculateTimeRemaining(opp.deadline);
+                    
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${opp.title}</td>
                         <td>${opp.organization}</td>
                         <td>${getOpportunityTypeText(opp.type)}</td>
-                        <td>${formatDate(opp.deadline)}</td>
+                        <td>${formatDate(opp.deadline)} <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span></td>
                         <td class="admin-actions-cell">
                             <button class="admin-btn edit-btn" data-id="${opp.id}">Edit</button>
                             <button class="admin-btn delete-btn" data-id="${opp.id}">Delete</button>
@@ -2896,6 +3191,7 @@
             function createDashboardOpportunityElement(opportunity, status) {
                 const isExpired = isOpportunityExpired(opportunity.deadline);
                 const isUrgent = isDeadlineUrgent(opportunity.deadline);
+                const timeRemaining = calculateTimeRemaining(opportunity.deadline);
                 
                 const element = document.createElement('div');
                 element.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
@@ -2917,7 +3213,9 @@
                         </div>
                         <div class="detail">
                             <i class="fas fa-calendar-alt"></i>
-                            <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opportunity.deadline)}</span>
+                            <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opportunity.deadline)} 
+                                <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
+                            </span>
                         </div>
                         <div class="detail">
                             <i class="fas fa-chart-line"></i>
