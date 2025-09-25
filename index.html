@@ -50,32 +50,6 @@
             top: 0;
             z-index: 100;
         }
-        .duplicate-warning-content {
-    background: white;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    animation: slideInUp 0.3s ease;
-}
-
-@keyframes slideInUp {
-    from {
-        transform: translateY(50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.duplicate-alert-close {
-    transition: color 0.3s ease;
-}
-
-.duplicate-alert-close:hover {
-    color: #dc3545 !important;
-}
         
         .header-content {
             display: flex;
@@ -3168,58 +3142,43 @@ function showDuplicateWarning(duplicateCheck, newOpportunity) {
     const duplicates = [];
     
     // Compare all opportunities with each other
-if (duplicates.length > 0) {
-    showNotification(`Found ${duplicates.length} potential duplicate pairs`, 'warning');
+    for (let i = 0; i < opportunityList.length; i++) {
+        for (let j = i + 1; j < opportunityList.length; j++) {
+            const opp1 = opportunityList[i];
+            const opp2 = opportunityList[j];
+            
+            const titleSimilarity = fuzzyMatch(opp1.title, opp2.title);
+            const orgSimilarity = fuzzyMatch(opp1.organization, opp2.organization);
+            
+            if ((titleSimilarity > 0.9 && orgSimilarity > 0.8) || opp1.applyLink === opp2.applyLink) {
+                duplicates.push({ 
+                    opp1, 
+                    opp2, 
+                    similarity: Math.round(titleSimilarity * 100),
+                    reason: opp1.applyLink === opp2.applyLink ? "Same application link" : "Similar title and organization"
+                });
+            }
+        }
+    }
     
-    // Create a detailed report for the modal
-    let reportHTML = `
-        <div style="max-height: 400px; overflow-y: auto; padding: 10px; background: #f8f9fa; border-radius: 5px;">
-            <h4 style="color: #dc3545; margin-bottom: 15px;">
-                <i class="fas fa-exclamation-triangle"></i> Duplicate Report
-            </h4>
-            <p><strong>Scan Date:</strong> ${new Date().toLocaleDateString()}</p>
-            <p><strong>Total Duplicate Pairs Found:</strong> ${duplicates.length}</p>
-            <hr>
-    `;
-    
-    duplicates.forEach((dup, index) => {
-        reportHTML += `
-            <div style="margin-bottom: 20px; padding: 10px; border-left: 3px solid #ffc107;">
-                <h5 style="margin: 0 0 10px 0; color: #856404;">
-                    Duplicate Pair #${index + 1} (${dup.similarity}% similarity)
-                </h5>
-                <p style="margin: 5px 0;"><strong>Reason:</strong> ${dup.reason}</p>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 200px;">
-                        <strong>Opportunity 1:</strong><br>
-                        <span style="color: #495057;">"${dup.opp1.title}"</span><br>
-                        <small>by ${dup.opp1.organization}</small>
-                    </div>
-                    <div style="flex: 1; min-width: 200px;">
-                        <strong>Opportunity 2:</strong><br>
-                        <span style="color: #495057;">"${dup.opp2.title}"</span><br>
-                        <small>by ${dup.opp2.organization}</small>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-    
-    reportHTML += `</div>`;
-    
-    // Show the report in a custom modal instead of alert()
-    showDuplicateReportModal(reportHTML, duplicates.length);
-} else {
-    showNotification('No duplicates found in the system!', 'success');
-    
-    // Also show a success modal for no duplicates
-    showDuplicateReportModal(`
-        <div style="text-align: center; padding: 30px;">
-            <i class="fas fa-check-circle" style="font-size: 3rem; color: #28a745;"></i>
-            <h4 style="color: #28a745; margin: 15px 0;">No Duplicates Found!</h4>
-            <p>Great job! The system is clean of duplicate opportunities.</p>
-        </div>
-    `, 0);
+    if (duplicates.length > 0) {
+        showNotification(`Found ${duplicates.length} potential duplicate pairs`, 'warning');
+        
+        // Create a report
+        let report = `Duplicate Report (${new Date().toLocaleDateString()})\n\n`;
+        report += `Found ${duplicates.length} potential duplicate pairs:\n\n`;
+        
+        duplicates.forEach((dup, index) => {
+            report += `${index + 1}. ${dup.reason} (${dup.similarity}% similarity)\n`;
+            report += `   - "${dup.opp1.title}" by ${dup.opp1.organization}\n`;
+            report += `   - "${dup.opp2.title}" by ${dup.opp2.organization}\n\n`;
+        });
+        
+        // Show the report in an alert (for demo purposes)
+        alert(report);
+    } else {
+        showNotification('No duplicates found in the system!', 'success');
+    }
 }
 
     // Wait for DOM to be fully loaded before accessing elements
@@ -3461,101 +3420,7 @@ if (duplicates.length > 0) {
         isAdminUser = false;
     }
 });
-// Function to show duplicate report in a modal
-function showDuplicateReportModal(reportHTML, duplicateCount) {
-    // Create modal element
-    const modal = document.createElement('div');
-    modal.className = 'duplicate-warning-modal';
-    modal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.7);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 10000;
-    `;
-    
-    modal.innerHTML = `
-        <div class="duplicate-warning-content" style="max-width: 700px; max-height: 80vh; overflow: hidden;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="margin: 0; color: ${duplicateCount > 0 ? '#dc3545' : '#28a745'};">
-                    <i class="fas fa-${duplicateCount > 0 ? 'exclamation-triangle' : 'check-circle'}"></i>
-                    Duplicate Scan Results
-                </h3>
-                <button class="duplicate-alert-close" id="closeDuplicateReport" 
-                    style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #6c757d;">
-                    &times;
-                </button>
-            </div>
-            
-            ${reportHTML}
-            
-            <div style="margin-top: 20px; text-align: right;">
-                <button class="btn-tertiary" id="closeDuplicateReportBtn" 
-                    style="padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
-                    Close Report
-                </button>
-                ${duplicateCount > 0 ? `
-                <button class="btn-primary" id="exportDuplicateReport" 
-                    style="padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
-                    <i class="fas fa-download"></i> Export Report
-                </button>
-                ` : ''}
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // Add event listeners
-    const closeBtn = document.getElementById('closeDuplicateReport');
-    const closeBtn2 = document.getElementById('closeDuplicateReportBtn');
-    const exportBtn = document.getElementById('exportDuplicateReport');
-    
-    function closeModal() {
-        if (document.body.contains(modal)) {
-            document.body.removeChild(modal);
-        }
-    }
-    
-    if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    if (closeBtn2) closeBtn2.addEventListener('click', closeModal);
-    
-    if (exportBtn) {
-        exportBtn.addEventListener('click', function() {
-            // Simple export functionality
-            const reportText = `Duplicate Report - ${new Date().toLocaleDateString()}\n\n` +
-                `Total duplicates found: ${duplicateCount}\n\n` +
-                Array.from(modal.querySelectorAll('h5, p, small')).map(el => el.textContent).join('\n');
-            
-            const blob = new Blob([reportText], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `duplicate-report-${new Date().toISOString().split('T')[0]}.txt`;
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            showNotification('Report exported successfully!', 'success');
-        });
-    }
-    
-    // Close modal when clicking outside
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
-    
-    // Add some animation
-    setTimeout(() => {
-        modal.style.opacity = '1';
-    }, 10);
-}
+
         // Initialize the app
         initApp();
 
@@ -4642,7 +4507,6 @@ function handleLogout() {
 </script>
 </body>
 </html>
-
 
 
 
