@@ -1376,6 +1376,72 @@
                 justify-content: space-between;
             }
         }
+                .format-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            margin-right: 5px;
+        }
+        
+        .online {
+            background-color: #e6f7ff;
+            color: #0066cc;
+        }
+        
+        .onsite {
+            background-color: #fff0e6;
+            color: #cc4400;
+        }
+        
+        .hybrid {
+            background-color: #e6f7ed;
+            color: #007a41;
+        }
+        
+        /* Updated card layout adjustments */
+        .card-header {
+            padding: 1.2rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .card-body {
+            padding: 1.2rem;
+        }
+        
+        .card-body p {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        /* Additional info section in details modal */
+        .additional-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        .info-item {
+            display: flex;
+            margin-bottom: 8px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            min-width: 120px;
+        }
+        
+        /* Conditional location field in admin form */
+        #locationFieldGroup {
+            transition: all 0.3s ease;
+        }
+        
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -1468,79 +1534,63 @@
     <!-- Main Content -->
     <main class="container">
         <!-- Filters -->
-        <section class="filters" id="filtersSection">
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="field">Field of Interest</label>
-                    <select id="field">
-                        <option value="">All Fields</option>
-                        <option value="stem">STEM</option>
-                        <option value="business">Business & Finance</option>
-                        <option value="arts">Arts & Design</option>
-                        <option value="social">Social Sciences</option>
-                        <option value="health">Health & Medicine</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="type">Opportunity Type</label>
-                    <select id="type">
-                        <option value="">All Types</option>
-                        <option value="internship">Internship</option>
-                        <option value="research">Research</option>
-                        <option value="summer">Summer Program</option>
-                        <option value="volunteer">Volunteer</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="compensation">Compensation</label>
-                    <select id="compensation">
-                        <option value="">Any</option>
-                        <option value="paid">Paid</option>
-                        <option value="unpaid">Unpaid</option>
-                        <option value="stipend">Stipend</option>
-                    </select>
-                </div>
+    <section class="filters" id="filtersSection">
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="field">Field of Interest</label>
+                <select id="field">
+                    <option value="">All Fields</option>
+                    <option value="stem">STEM</option>
+                    <option value="business">Business & Finance</option>
+                    <option value="arts">Arts & Design</option>
+                    <option value="social">Social Sciences</option>
+                    <option value="health">Health & Medicine</option>
+                </select>
             </div>
             
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="deadline">Deadline Within</label>
-                    <select id="deadline">
-                        <option value="">Any Time</option>
-                        <option value="week">1 Week</option>
-                        <option value="month">1 Month</option>
-                        <option value="3months">3 Months</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="impact">Impact Level</label>
-                    <select id="impact">
-                        <option value="">Any Impact</option>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="location">Location</label>
-                    <select id="location">
-                        <option value="">Any Location</option>
-                        <option value="remote">Remote</option>
-                        <option value="onsite">On-site</option>
-                        <option value="hybrid">Hybrid</option>
-                    </select>
-                </div>
+            <div class="filter-group">
+                <label for="type">Opportunity Type</label>
+                <select id="type">
+                    <option value="">All Types</option>
+                    <option value="internship">Internship</option>
+                    <option value="research">Research</option>
+                    <option value="summer">Summer Program</option>
+                    <option value="volunteer">Volunteer</option>
+                </select>
             </div>
             
-            <div class="filter-actions">
-                <button class="reset-btn" id="resetFilters">Reset Filters</button>
-                <button class="apply-btn" id="applyFilters">Apply Filters</button>
+            <!-- Updated: Format filter instead of location filter -->
+            <div class="filter-group">
+                <label for="format">Format</label>
+                <select id="format">
+                    <option value="">All Formats</option>
+                    <option value="online">Online</option>
+                    <option value="onsite">On-site</option>
+                    <option value="hybrid">Hybrid</option>
+                </select>
             </div>
+        </div>
+        
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="deadline">Deadline Within</label>
+                <select id="deadline">
+                    <option value="">Any Time</option>
+                    <option value="week">1 Week</option>
+                    <option value="month">1 Month</option>
+                    <option value="3months">3 Months</option>
+                </select>
+            </div>
+            
+            <!-- Removed: Impact filter -->
+        </div>
+        
+        <div class="filter-actions">
+            <button class="reset-btn" id="resetFilters">Reset Filters</button>
+            <button class="apply-btn" id="applyFilters">Apply Filters</button>
+        </div>
         </section>
+
         
         <!-- Opportunities Grid -->
         <h2 id="opportunitiesTitle">Featured Opportunities</h2>
@@ -1605,7 +1655,7 @@
     </main>
     
     <!-- Admin Modal -->
-    <div class="admin-modal" id="adminModal">
+  <div class="admin-modal" id="adminModal">
         <div class="admin-modal-content">
             <h2 id="adminModalTitle">Add New Opportunity</h2>
             
@@ -1650,9 +1700,21 @@
                     <textarea id="adminDescription" required></textarea>
                 </div>
                 
+                <!-- NEW: Format field (required) -->
                 <div class="admin-form-group">
+                    <label for="adminFormat">Format *</label>
+                    <select id="adminFormat" required>
+                        <option value="">Select Format</option>
+                        <option value="online">Online</option>
+                        <option value="onsite">On-site</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                </div>
+                
+                <!-- Location field (conditional) -->
+                <div class="admin-form-group" id="locationFieldGroup">
                     <label for="adminLocation">Location *</label>
-                    <input type="text" id="adminLocation" required>
+                    <input type="text" id="adminLocation">
                 </div>
                 
                 <div class="admin-form-group">
@@ -1665,34 +1727,29 @@
                     <input type="url" id="adminApplyLink" required>
                 </div>
                 
+                <!-- NEW: Additional Info Fields (optional) -->
                 <div class="admin-form-group">
-                    <label for="adminImpact">Impact Level *</label>
-                    <select id="adminImpact" required>
-                        <option value="">Select Impact Level</option>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
+                    <label for="adminTimeCommitment">Time Commitment (optional)</label>
+                    <input type="text" id="adminTimeCommitment" placeholder="e.g., 10 hours per week">
+                </div>
+                
+                <div class="admin-form-group">
+                    <label for="adminDuration">Duration (optional)</label>
+                    <input type="text" id="adminDuration" placeholder="e.g., 3 months">
+                </div>
+                
+                <div class="admin-form-group">
+                    <label for="adminLanguage">Language (optional)</label>
+                    <select id="adminLanguage">
+                        <option value="">Select Language</option>
+                        <option value="english">English</option>
+                        <option value="russian">Russian</option>
+                        <option value="uzbek">Uzbek</option>
+                        <option value="english_russian">English/Russian</option>
                     </select>
                 </div>
                 
-                <div class="admin-form-group">
-                    <label>Compensation Type</label>
-                    <div>
-                        <input type="checkbox" id="adminPaid">
-                        <label for="adminPaid">Paid</label>
-                        
-                        <input type="checkbox" id="adminStipend">
-                        <label for="adminStipend">Stipend</label>
-                        
-                        <input type="checkbox" id="adminScholarship">
-                        <label for="adminScholarship">Scholarship</label>
-                    </div>
-                </div>
-                
-                <div class="admin-form-group">
-                    <label for="adminAmount">Compensation Amount (if applicable)</label>
-                    <input type="text" id="adminAmount">
-                </div>
+                <!-- Removed: Compensation and Impact fields -->
                 
                 <div class="admin-form-actions">
                     <button type="button" class="cancel-btn" id="adminCancelBtn">Cancel</button>
@@ -1703,7 +1760,7 @@
     </div>
     
     <!-- Details Modal -->
-    <div class="details-modal" id="detailsModal">
+       <div class="details-modal" id="detailsModal">
         <div class="details-content">
             <div class="details-header">
                 <h2 id="detailsTitle">Opportunity Details</h2>
@@ -1730,13 +1787,13 @@
                     <h3>Deadline</h3>
                     <p id="detailsDeadline"></p>
                 </div>
-                <div class="details-section">
-                    <h3>Compensation</h3>
-                    <p id="detailsCompensation"></p>
-                </div>
-                <div class="details-section">
-                    <h3>Impact Level</h3>
-                    <p id="detailsImpact"></p>
+                
+                <!-- NEW: Additional Info Section -->
+                <div class="details-section additional-info">
+                    <h3>Additional Information</h3>
+                    <div id="detailsAdditionalInfo">
+                        <!-- Additional info will be populated here -->
+                    </div>
                 </div>
             </div>
             <div class="details-actions">
@@ -1751,7 +1808,6 @@
             </div>
         </div>
     </div>
-    
     <!-- Notification -->
     <div class="notification" id="notification">
         <i class="fas fa-bell"></i>
@@ -1937,22 +1993,31 @@
     let currentOpportunityDetails = null;
 
     // Utility functions (moved to global scope)
-    function getOpportunityTypeText(type) {
-        switch(type) {
-            case 'internship': return 'Internship';
-            case 'research': return 'Research';
-            case 'summer': return 'Summer Program';
-            case 'volunteer': return 'Volunteer';
-            default: return type;
+        function getOpportunityTypeText(type) {
+            switch(type) {
+                case 'internship': return 'Internship';
+                case 'research': return 'Research';
+                case 'summer': return 'Summer Program';
+                case 'volunteer': return 'Volunteer';
+                default: return type;
+            }
         }
-    }
-
-    function getCompensationText(opp) {
-        if (opp.paid && opp.amount) return `Paid - ${opp.amount}`;
-        if (opp.stipend && opp.amount) return `Stipend - ${opp.amount}`;
-        if (opp.scholarship) return 'Scholarship Available';
-        return 'Unpaid';
-    }
+    function getFormatText(format) {
+            switch(format) {
+                case 'online': return 'Online';
+                case 'onsite': return 'On-site';
+                case 'hybrid': return 'Hybrid';
+                default: return format;
+            }
+        }
+    function getFormatClass(format) {
+            switch(format) {
+                case 'online': return 'online';
+                case 'onsite': return 'onsite';
+                case 'hybrid': return 'hybrid';
+                default: return '';
+            }
+        }
 
     function formatDate(dateString) {
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
@@ -2006,51 +2071,106 @@
         return diffDays <= 7 && diffDays >= 0;
     }
 
-    function showOpportunityDetails(opportunity) {
-        const detailsModal = document.getElementById('detailsModal');
-        const detailsTitle = document.getElementById('detailsTitle');
-        const detailsDescription = document.getElementById('detailsDescription');
-        const detailsOrganization = document.getElementById('detailsOrganization');
-        const detailsType = document.getElementById('detailsType');
-        const detailsLocation = document.getElementById('detailsLocation');
-        const detailsDeadline = document.getElementById('detailsDeadline');
-        const detailsCompensation = document.getElementById('detailsCompensation');
-        const detailsImpact = document.getElementById('detailsImpact');
-        const detailsApplyLink = document.getElementById('detailsApplyLink');
-        const detailsSaveBtn = document.getElementById('detailsSaveBtn');
-        
-        if (!detailsModal) return;
-        
-        // Set opportunity details
-        detailsTitle.textContent = opportunity.title;
-        detailsDescription.textContent = opportunity.description;
-        detailsOrganization.textContent = opportunity.organization;
-        detailsType.textContent = getOpportunityTypeText(opportunity.type);
-        detailsLocation.textContent = opportunity.location;
-        detailsDeadline.textContent = formatDate(opportunity.deadline);
-        detailsCompensation.textContent = getCompensationText(opportunity);
-        detailsImpact.textContent = opportunity.impact;
-        detailsApplyLink.href = opportunity.applyLink;
-        
-        // Check if opportunity is already saved
-        const isSaved = userOpportunities.pending.some(item => item.id === opportunity.id) || 
-                       userOpportunities.completed.some(item => item.id === opportunity.id);
-        
-        // Update save button
-        if (isSaved) {
-            detailsSaveBtn.innerHTML = '<i class="fas fa-bookmark"></i> Remove from Dashboard';
-            detailsSaveBtn.classList.add('saved');
-        } else {
-            detailsSaveBtn.innerHTML = '<i class="far fa-bookmark"></i> Save to Dashboard';
-            detailsSaveBtn.classList.remove('saved');
-        }
-        
-        // Store current opportunity for save button functionality
-        currentOpportunityDetails = opportunity;
-        
-        // Show modal
-        detailsModal.classList.add('show');
-    }
+      function showOpportunityDetails(opportunity) {
+                const detailsModal = document.getElementById('detailsModal');
+                const detailsTitle = document.getElementById('detailsTitle');
+                const detailsDescription = document.getElementById('detailsDescription');
+                const detailsOrganization = document.getElementById('detailsOrganization');
+                const detailsType = document.getElementById('detailsType');
+                const detailsLocation = document.getElementById('detailsLocation');
+                const detailsDeadline = document.getElementById('detailsDeadline');
+                const detailsApplyLink = document.getElementById('detailsApplyLink');
+                const detailsSaveBtn = document.getElementById('detailsSaveBtn');
+                
+                if (!detailsModal) return;
+                
+                // Set opportunity details
+                detailsTitle.textContent = opportunity.title;
+                detailsDescription.textContent = opportunity.description;
+                detailsOrganization.textContent = opportunity.organization;
+                detailsType.textContent = getOpportunityTypeText(opportunity.type);
+                
+                // Set location based on format
+                if (opportunity.format === 'online') {
+                    detailsLocation.textContent = 'Online';
+                } else {
+                    detailsLocation.textContent = opportunity.location || 'Not specified';
+                }
+                
+                detailsDeadline.textContent = formatDate(opportunity.deadline);
+                detailsApplyLink.href = opportunity.applyLink;
+                
+                // Populate additional info section
+                let additionalInfoHTML = '';
+                
+                if (opportunity.format) {
+                    additionalInfoHTML += `
+                        <div class="info-item">
+                            <span class="info-label">Format:</span>
+                            <span>${getFormatText(opportunity.format)}</span>
+                        </div>
+                    `;
+                }
+                
+                if (opportunity.timeCommitment) {
+                    additionalInfoHTML += `
+                        <div class="info-item">
+                            <span class="info-label">Time Commitment:</span>
+                            <span>${opportunity.timeCommitment}</span>
+                        </div>
+                    `;
+                }
+                
+                if (opportunity.duration) {
+                    additionalInfoHTML += `
+                        <div class="info-item">
+                            <span class="info-label">Duration:</span>
+                            <span>${opportunity.duration}</span>
+                        </div>
+                    `;
+                }
+                
+                if (opportunity.language) {
+                    let languageText = opportunity.language;
+                    if (languageText === 'english_russian') {
+                        languageText = 'English/Russian';
+                    } else {
+                        languageText = languageText.charAt(0).toUpperCase() + languageText.slice(1);
+                    }
+                    
+                    additionalInfoHTML += `
+                        <div class="info-item">
+                            <span class="info-label">Language:</span>
+                            <span>${languageText}</span>
+                        </div>
+                    `;
+                }
+                
+                if (additionalInfoHTML === '') {
+                    additionalInfoHTML = '<p>No additional information available.</p>';
+                }
+                
+                detailsAdditionalInfo.innerHTML = additionalInfoHTML;
+                
+                // Check if opportunity is already saved
+                const isSaved = userOpportunities.pending.some(item => item.id === opportunity.id) || 
+                               userOpportunities.completed.some(item => item.id === opportunity.id);
+                
+                // Update save button
+                if (isSaved) {
+                    detailsSaveBtn.innerHTML = '<i class="fas fa-bookmark"></i> Remove from Dashboard';
+                    detailsSaveBtn.classList.add('saved');
+                } else {
+                    detailsSaveBtn.innerHTML = '<i class="far fa-bookmark"></i> Save to Dashboard';
+                    detailsSaveBtn.classList.remove('saved');
+                }
+                
+                // Store current opportunity for save button functionality
+                currentOpportunityDetails = opportunity;
+                
+                // Show modal
+                detailsModal.classList.add('show');
+            }
 
     function closeOpportunityDetails() {
         const detailsModal = document.getElementById('detailsModal');
@@ -2722,6 +2842,14 @@
         const detailsModal = document.getElementById('detailsModal');
         const detailsClose = document.getElementById('detailsClose');
         const detailsSaveBtn = document.getElementById('detailsSaveBtn');
+            const formatFilter = document.getElementById('format');
+            const adminFormat = document.getElementById('adminFormat');
+            const locationFieldGroup = document.getElementById('locationFieldGroup');
+            const adminLocation = document.getElementById('adminLocation');
+            const adminTimeCommitment = document.getElementById('adminTimeCommitment');
+            const adminDuration = document.getElementById('adminDuration');
+            const adminLanguage = document.getElementById('adminLanguage');
+            const detailsAdditionalInfo = document.getElementById('detailsAdditionalInfo');
 
         // Event Listeners
         if (loginBtn) loginBtn.addEventListener('click', () => showAuthModal('login'));
@@ -2736,7 +2864,9 @@
                 });
             });
         }
-        
+        if (adminFormat) {
+                adminFormat.addEventListener('change', handleFormatChange);
+            }
         if (doLogin) doLogin.addEventListener('click', handleLogin);
         if (doSignup) doSignup.addEventListener('click', handleSignup);
         
@@ -2914,101 +3044,107 @@
                 }
             });
         }
+        function handleFormatChange() {
+                const format = adminFormat.value;
+                
+                if (format === 'online') {
+                    locationFieldGroup.classList.add('hidden');
+                    adminLocation.value = 'Online';
+                    adminLocation.required = false;
+                } else {
+                    locationFieldGroup.classList.remove('hidden');
+                    adminLocation.required = true;
+                    
+                    if (adminLocation.value === 'Online') {
+                        adminLocation.value = '';
+                    }
+                }
+            }
 
         // Render opportunities to the grid
-        function renderOpportunities() {
-            if (!opportunitiesGrid) return;
-            
-            opportunitiesGrid.innerHTML = '';
-            
-            if (filteredOpportunities.length === 0) {
-                opportunitiesGrid.innerHTML = '<p class="no-results">No opportunities match your filters. Try adjusting your search criteria.</p>';
-                return;
-            }
-            
-            filteredOpportunities.forEach(opp => {
-                const isSaved = userOpportunities.pending.some(item => item.id === opp.id) || 
-                               userOpportunities.completed.some(item => item.id === opp.id);
+               function renderOpportunities() {
+                if (!opportunitiesGrid) return;
                 
-                const isExpired = isOpportunityExpired(opp.deadline);
-                const isUrgent = isDeadlineUrgent(opp.deadline);
-                const timeRemaining = calculateTimeRemaining(opp.deadline);
+                opportunitiesGrid.innerHTML = '';
                 
-                const opportunityCard = document.createElement('div');
-                opportunityCard.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
-                opportunityCard.innerHTML = `
-                    <div class="card-header">
-                        <span class="opportunity-type ${opp.type}">${getOpportunityTypeText(opp.type)}</span>
-                        <h3>${opp.title}</h3>
-                        <p class="organization">${opp.organization}</p>
-                    </div>
+                if (filteredOpportunities.length === 0) {
+                    opportunitiesGrid.innerHTML = '<p class="no-results">No opportunities match your filters. Try adjusting your search criteria.</p>';
+                    return;
+                }
+                
+                filteredOpportunities.forEach(opp => {
+                    const isSaved = userOpportunities.pending.some(item => item.id === opp.id) || 
+                                   userOpportunities.completed.some(item => item.id === opp.id);
                     
-                    <div class="card-body">
-                        <div class="detail">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <span>${getCompensationText(opp)}</span>
-                        </div>
-                        <div class="detail">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>${opp.location}</span>
-                        </div>
-                        <div class="detail">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.deadline)} 
-                                <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
-                            </span>
-                        </div>
-                        <div class="detail">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Impact: ${opp.impact}</span>
-                        </div>
-                        <p>${opp.description.substring(0, 150)}${opp.description.length > 150 ? '...' : ''}</p>
-                    </div>
+                    const isExpired = isOpportunityExpired(opp.deadline);
+                    const isUrgent = isDeadlineUrgent(opp.deadline);
+                    const timeRemaining = calculateTimeRemaining(opp.deadline);
                     
-                    <div class="card-footer">
-                        <div class="card-actions">
-                            <div class="left-actions">
-                                <button class="save-btn ${isSaved ? 'saved' : ''}" data-id="${opp.id}" title="${isSaved ? 'Remove from dashboard' : 'Save to dashboard'}">
-                                    <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i>
-                                </button>
+                    const opportunityCard = document.createElement('div');
+                    opportunityCard.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
+                    opportunityCard.innerHTML = `
+                        <div class="card-header">
+                            <span class="opportunity-type ${opp.type}">${getOpportunityTypeText(opp.type)}</span>
+                            <span class="format-badge ${getFormatClass(opp.format)}">${getFormatText(opp.format)}</span>
+                            <h3>${opp.title}</h3>
+                            <p class="organization">${opp.organization}</p>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="detail">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.deadline)} 
+                                    <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
+                                </span>
                             </div>
-                            <div class="right-actions">
-                                <button class="details-btn" data-id="${opp.id}">View Details</button>
-                                <a href="${opp.applyLink}" target="_blank" class="apply-link">Apply Now</a>
+                            <p>${opp.description.substring(0, 150)}${opp.description.length > 150 ? '...' : ''}</p>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="card-actions">
+                                <div class="left-actions">
+                                    <button class="save-btn ${isSaved ? 'saved' : ''}" data-id="${opp.id}" title="${isSaved ? 'Remove from dashboard' : 'Save to dashboard'}">
+                                        <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i>
+                                    </button>
+                                </div>
+                                <div class="right-actions">
+                                    <button class="details-btn" data-id="${opp.id}">View Details</button>
+                                    <a href="${opp.applyLink}" target="_blank" class="apply-link">Apply Now</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-                
-                opportunitiesGrid.appendChild(opportunityCard);
-                
-                // Add event listeners to save buttons
-                const saveButton = opportunityCard.querySelector('.save-btn');
-                saveButton.addEventListener('click', function() {
-                    const user = auth.currentUser;
-                    if (user) {
+                    `;
+                    
+                    opportunitiesGrid.appendChild(opportunityCard);
+                    
+                    // Add event listeners to save buttons
+                    const saveButton = opportunityCard.querySelector('.save-btn');
+                    saveButton.addEventListener('click', function() {
+                        const user = auth.currentUser;
+                        if (user) {
+                            const oppId = this.getAttribute('data-id');
+                            const opportunity = allOpportunities.find(opp => opp.id === oppId);
+                            if (this.classList.contains('saved')) {
+                                removeOpportunity(user.uid, opportunity);
+                            } else {
+                                saveOpportunity(user.uid, opportunity);
+                            }
+                        } else {
+                            showAuthModal('login');
+                            showNotification('Please sign in to save opportunities', 'warning');
+                        }
+                    });
+                    
+                    // Add event listener to details button
+                    const detailsButton = opportunityCard.querySelector('.details-btn');
+                    detailsButton.addEventListener('click', function() {
                         const oppId = this.getAttribute('data-id');
                         const opportunity = allOpportunities.find(opp => opp.id === oppId);
-                        if (this.classList.contains('saved')) {
-                            removeOpportunity(user.uid, opportunity);
-                        } else {
-                            saveOpportunity(user.uid, opportunity);
-                        }
-                    } else {
-                        showAuthModal('login');
-                        showNotification('Please sign in to save opportunities', 'warning');
-                    }
+                        showOpportunityDetails(opportunity);
+                    });
                 });
-                
-                // Add event listener to details button
-                const detailsButton = opportunityCard.querySelector('.details-btn');
-                detailsButton.addEventListener('click', function() {
-                    const oppId = this.getAttribute('data-id');
-                    const opportunity = allOpportunities.find(opp => opp.id === oppId);
-                    showOpportunityDetails(opportunity);
-                });
-            });
-        }
+            }
+
 
         // Handle details modal save button
         function handleDetailsSave() {
@@ -3589,70 +3725,53 @@
         }
 
         // Apply filters
-        function applyFilters() {
-            const fieldFilter = document.getElementById('field').value;
-            const typeFilter = document.getElementById('type').value;
-            const compensationFilter = document.getElementById('compensation').value;
-            const deadlineFilter = document.getElementById('deadline').value;
-            const impactFilter = document.getElementById('impact').value;
-            const locationFilter = document.getElementById('location').value;
-            const searchTerm = searchInput.value.toLowerCase();
-            
-            filteredOpportunities = allOpportunities.filter(opp => {
-                // Field filter
-                if (fieldFilter && opp.field !== fieldFilter) return false;
+      function applyFilters() {
+                const fieldFilter = document.getElementById('field').value;
+                const typeFilter = document.getElementById('type').value;
+                const formatFilter = document.getElementById('format').value;
+                const deadlineFilter = document.getElementById('deadline').value;
+                const searchTerm = searchInput.value.toLowerCase();
                 
-                // Type filter
-                if (typeFilter && opp.type !== typeFilter) return false;
-                
-                // Compensation filter
-                if (compensationFilter === 'paid' && !opp.paid) return false;
-                if (compensationFilter === 'unpaid' && (opp.paid || opp.stipend || opp.scholarship)) return false;
-                if (compensationFilter === 'stipend' && !opp.stipend) return false;
-                
-                // Impact filter
-                if (impactFilter && opp.impact && opp.impact.toLowerCase() !== impactFilter.toLowerCase()) return false;
-                
-                // Location filter - check if location contains the filter value
-                if (locationFilter && opp.location) {
-                    const oppLocation = opp.location.toLowerCase();
-                    if (locationFilter === 'remote' && !oppLocation.includes('remote')) return false;
-                    if (locationFilter === 'onsite' && !oppLocation.includes('onsite') && 
-                        !oppLocation.includes('on-site') && !oppLocation.includes('office')) return false;
-                    if (locationFilter === 'hybrid' && !oppLocation.includes('hybrid')) return false;
-                
-                }
-                
-                // Search term filter
-                if (searchTerm && !(
-                    (opp.title && opp.title.toLowerCase().includes(searchTerm)) ||
-                    (opp.organization && opp.organization.toLowerCase().includes(searchTerm)) ||
-                    (opp.description && opp.description.toLowerCase().includes(searchTerm)) ||
-                    (opp.field && opp.field.toLowerCase().includes(searchTerm))
-                )) return false;
-                
-                // Deadline filter - check if deadline is within specified timeframe
-                if (deadlineFilter && opp.deadline) {
-                    const today = new Date();
-                    const oppDeadline = new Date(opp.deadline);
+                filteredOpportunities = allOpportunities.filter(opp => {
+                    // Field filter
+                    if (fieldFilter && opp.field !== fieldFilter) return false;
                     
-                    // Skip expired opportunities for deadline filter
-                    if (oppDeadline < today) return false;
+                    // Type filter
+                    if (typeFilter && opp.type !== typeFilter) return false;
                     
-                    const diffTime = oppDeadline - today;
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    // Format filter
+                    if (formatFilter && opp.format !== formatFilter) return false;
                     
-                    if (deadlineFilter === 'week' && diffDays > 7) return false;
-                    if (deadlineFilter === 'month' && diffDays > 30) return false;
-                    if (deadlineFilter === '3months' && diffDays > 90) return false;
-                }
+                    // Search term filter
+                    if (searchTerm && !(
+                        (opp.title && opp.title.toLowerCase().includes(searchTerm)) ||
+                        (opp.organization && opp.organization.toLowerCase().includes(searchTerm)) ||
+                        (opp.description && opp.description.toLowerCase().includes(searchTerm)) ||
+                        (opp.field && opp.field.toLowerCase().includes(searchTerm))
+                    )) return false;
+                    
+                    // Deadline filter - check if deadline is within specified timeframe
+                    if (deadlineFilter && opp.deadline) {
+                        const today = new Date();
+                        const oppDeadline = new Date(opp.deadline);
+                        
+                        // Skip expired opportunities for deadline filter
+                        if (oppDeadline < today) return false;
+                        
+                        const diffTime = oppDeadline - today;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        
+                        if (deadlineFilter === 'week' && diffDays > 7) return false;
+                        if (deadlineFilter === 'month' && diffDays > 30) return false;
+                        if (deadlineFilter === '3months' && diffDays > 90) return false;
+                    }
+                    
+                    return true;
+                });
                 
-                return true;
-            });
-            
-            renderOpportunities();
-            showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
-        }
+                renderOpportunities();
+                showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
+            }
 
         // Apply search filter
         function applySearchFilter() {
@@ -3660,19 +3779,17 @@
         }
 
         // Reset filters
-        function resetFilters() {
-            document.getElementById('field').value = '';
-            document.getElementById('type').value = '';
-            document.getElementById('compensation').value = '';
-            document.getElementById('deadline').value = '';
-            document.getElementById('impact').value = '';
-            document.getElementById('location').value = '';
-            if (searchInput) searchInput.value = '';
-            
-            filteredOpportunities = [...allOpportunities];
-            renderOpportunities();
-            showNotification('Filters reset');
-        }
+      function resetFilters() {
+                document.getElementById('field').value = '';
+                document.getElementById('type').value = '';
+                document.getElementById('format').value = '';
+                document.getElementById('deadline').value = '';
+                if (searchInput) searchInput.value = '';
+                
+                filteredOpportunities = [...allOpportunities];
+                renderOpportunities();
+                showNotification('Filters reset');
+            }
 
         // Check for approaching deadlines
         function checkDeadlines() {
@@ -3816,121 +3933,126 @@
         }
 
         // Show admin modal for adding/editing opportunities
-        function showAdminModal(opportunity = null) {
-            if (!adminModal) return;
-            
-            // Check if user is admin
-            const user = auth.currentUser;
-            if (!user) {
-                showNotification('Please sign in to access admin features', 'warning');
-                return;
+           function showAdminModal(opportunity = null) {
+                if (!adminModal) return;
+                
+                // Check if user is admin
+                const user = auth.currentUser;
+                if (!user) {
+                    showNotification('Please sign in to access admin features', 'warning');
+                    return;
+                }
+                
+                if (!isAdminUser) {
+                    showNotification('Access denied. Admin privileges required.', 'error');
+                    return;
+                }
+                
+                if (opportunity) {
+                    // Editing existing opportunity
+                    adminModalTitle.textContent = 'Edit Opportunity';
+                    document.getElementById('opportunityId').value = opportunity.id;
+                    document.getElementById('adminTitle').value = opportunity.title;
+                    document.getElementById('adminOrganization').value = opportunity.organization;
+                    document.getElementById('adminType').value = opportunity.type;
+                    document.getElementById('adminField').value = opportunity.field;
+                    document.getElementById('adminDescription').value = opportunity.description;
+                    document.getElementById('adminFormat').value = opportunity.format || '';
+                    document.getElementById('adminLocation').value = opportunity.location || '';
+                    document.getElementById('adminDeadline').value = opportunity.deadline;
+                    document.getElementById('adminApplyLink').value = opportunity.applyLink;
+                    document.getElementById('adminTimeCommitment').value = opportunity.timeCommitment || '';
+                    document.getElementById('adminDuration').value = opportunity.duration || '';
+                    document.getElementById('adminLanguage').value = opportunity.language || '';
+                    
+                    // Handle format-based location field visibility
+                    handleFormatChange();
+                } else {
+                    // Adding new opportunity
+                    adminModalTitle.textContent = 'Add New Opportunity';
+                    adminOpportunityForm.reset();
+                    document.getElementById('opportunityId').value = '';
+                    
+                    // Reset format-based location field visibility
+                    handleFormatChange();
+                }
+                
+                adminModal.style.display = 'flex';
             }
-            
-            if (!isAdminUser) {
-                showNotification('Access denied. Admin privileges required.', 'error');
-                return;
-            }
-            
-            if (opportunity) {
-                // Editing existing opportunity
-                adminModalTitle.textContent = 'Edit Opportunity';
-                document.getElementById('opportunityId').value = opportunity.id;
-                document.getElementById('adminTitle').value = opportunity.title;
-                document.getElementById('adminOrganization').value = opportunity.organization;
-                document.getElementById('adminType').value = opportunity.type;
-                document.getElementById('adminField').value = opportunity.field;
-                document.getElementById('adminDescription').value = opportunity.description;
-                document.getElementById('adminLocation').value = opportunity.location;
-                document.getElementById('adminDeadline').value = opportunity.deadline;
-                document.getElementById('adminApplyLink').value = opportunity.applyLink;
-                document.getElementById('adminImpact').value = opportunity.impact;
-                document.getElementById('adminPaid').checked = opportunity.paid || false;
-                document.getElementById('adminStipend').checked = opportunity.stipend || false;
-                document.getElementById('adminScholarship').checked = opportunity.scholarship || false;
-                document.getElementById('adminAmount').value = opportunity.amount || '';
-            } else {
-                // Adding new opportunity
-                adminModalTitle.textContent = 'Add New Opportunity';
-                adminOpportunityForm.reset();
-                document.getElementById('opportunityId').value = '';
-            }
-            
-            adminModal.style.display = 'flex';
-        }
 
         // Handle admin form submission
-        function handleAdminFormSubmit(e) {
-            e.preventDefault();
-            
-            // Check if user is admin
-            const user = auth.currentUser;
-            if (!user) {
-                showNotification('Please sign in to access admin features', 'warning');
-                return;
+             function handleAdminFormSubmit(e) {
+                e.preventDefault();
+                
+                // Check if user is admin
+                const user = auth.currentUser;
+                if (!user) {
+                    showNotification('Please sign in to access admin features', 'warning');
+                    return;
+                }
+                
+                if (!isAdminUser) {
+                    showNotification('Access denied. Admin privileges required.', 'error');
+                    return;
+                }
+                
+                const opportunityId = document.getElementById('opportunityId').value;
+                const title = document.getElementById('adminTitle').value;
+                const organization = document.getElementById('adminOrganization').value;
+                const type = document.getElementById('adminType').value;
+                const field = document.getElementById('adminField').value;
+                const description = document.getElementById('adminDescription').value;
+                const format = document.getElementById('adminFormat').value;
+                const location = document.getElementById('adminLocation').value;
+                const deadline = document.getElementById('adminDeadline').value;
+                const applyLink = document.getElementById('adminApplyLink').value;
+                const timeCommitment = document.getElementById('adminTimeCommitment').value;
+                const duration = document.getElementById('adminDuration').value;
+                const language = document.getElementById('adminLanguage').value;
+                
+                // For online format, set location to "Online"
+                const finalLocation = format === 'online' ? 'Online' : location;
+                
+                const opportunityData = {
+                    title,
+                    organization,
+                    type,
+                    field,
+                    description,
+                    format,
+                    location: finalLocation,
+                    deadline,
+                    applyLink,
+                    timeCommitment,
+                    duration,
+                    language,
+                    createdAt: opportunityId ? allOpportunities.find(opp => opp.id === opportunityId).createdAt : new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+                
+                if (opportunityId) {
+                    // Update existing opportunity
+                    update(ref(database, `opportunities/${opportunityId}`), opportunityData)
+                        .then(() => {
+                            adminModal.style.display = 'none';
+                            showNotification('Opportunity updated successfully!');
+                        })
+                        .catch((error) => {
+                            showNotification('Error updating opportunity: ' + error.message, 'error');
+                        });
+                } else {
+                    // Add new opportunity
+                    const newOpportunityRef = push(ref(database, 'opportunities'));
+                    set(newOpportunityRef, opportunityData)
+                        .then(() => {
+                            adminModal.style.display = 'none';
+                            showNotification('Opportunity added successfully!');
+                        })
+                        .catch((error) => {
+                            showNotification('Error adding opportunity: ' + error.message, 'error');
+                        });
+                }
             }
-            
-            if (!isAdminUser) {
-                showNotification('Access denied. Admin privileges required.', 'error');
-                return;
-            }
-            
-            const opportunityId = document.getElementById('opportunityId').value;
-            const title = document.getElementById('adminTitle').value;
-            const organization = document.getElementById('adminOrganization').value;
-            const type = document.getElementById('adminType').value;
-            const field = document.getElementById('adminField').value;
-            const description = document.getElementById('adminDescription').value;
-            const location = document.getElementById('adminLocation').value;
-            const deadline = document.getElementById('adminDeadline').value;
-            const applyLink = document.getElementById('adminApplyLink').value;
-            const impact = document.getElementById('adminImpact').value;
-            const paid = document.getElementById('adminPaid').checked;
-            const stipend = document.getElementById('adminStipend').checked;
-            const scholarship = document.getElementById('adminScholarship').checked;
-            const amount = document.getElementById('adminAmount').value;
-            
-            const opportunityData = {
-                title,
-                organization,
-                type,
-                field,
-                description,
-                location,
-                deadline,
-                applyLink,
-                impact,
-                paid,
-                stipend,
-                scholarship,
-                amount: amount || '',
-                createdAt: opportunityId ? allOpportunities.find(opp => opp.id === opportunityId).createdAt : new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            };
-            
-            if (opportunityId) {
-                // Update existing opportunity
-                update(ref(database, `opportunities/${opportunityId}`), opportunityData)
-                    .then(() => {
-                        adminModal.style.display = 'none';
-                        showNotification('Opportunity updated successfully!');
-                    })
-                    .catch((error) => {
-                        showNotification('Error updating opportunity: ' + error.message, 'error');
-                    });
-            } else {
-                // Add new opportunity
-                const newOpportunityRef = push(ref(database, 'opportunities'));
-                set(newOpportunityRef, opportunityData)
-                    .then(() => {
-                        adminModal.style.display = 'none';
-                        showNotification('Opportunity added successfully!');
-                    })
-                    .catch((error) => {
-                        showNotification('Error adding opportunity: ' + error.message, 'error');
-                    });
-            }
-        }
-
         // Delete opportunity
         function deleteOpportunity(opportunityId) {
             // Check if user is admin
@@ -3970,3 +4092,30 @@
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
