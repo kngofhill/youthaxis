@@ -2223,6 +2223,56 @@
             detailsModal.classList.remove('show');
         }
     }
+    // Global notification function
+function showNotification(message, type = 'success') {
+    // First try to use the notification manager if available
+    if (notificationManager && notificationManager.addNotification) {
+        const notificationId = `manual-${Date.now()}`;
+        const notification = {
+            id: notificationId,
+            title: type === 'error' ? 'Error' : type === 'warning' ? 'Warning' : 'Success',
+            message: message,
+            type: type,
+            timestamp: new Date().toISOString(),
+            read: false,
+            urgent: type === 'error',
+            category: 'system'
+        };
+        notificationManager.addNotification(notification);
+        return;
+    }
+    
+    // Fallback to the simple notification system
+    const notification = document.getElementById('notification');
+    if (!notification) return;
+    
+    const notificationContent = notification.querySelector('.notification-content');
+    
+    // Update notification style based on type
+    notification.className = 'notification';
+    if (type === 'error') {
+        notification.classList.add('error');
+    } else if (type === 'warning') {
+        notification.classList.add('warning');
+    }
+    
+    if (message) {
+        notificationContent.innerHTML = `
+            <h4>${type === 'error' ? 'Error' : type === 'warning' ? 'Warning' : 'Success'}</h4>
+            <p>${message}</p>
+        `;
+    }
+    
+    notification.classList.add('show');
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+}
+let showNotification = function(message, type = 'success') {
+    // Implementation will be overridden below
+    console.log(`Notification [${type}]: ${message}`);
+};
 
     // Enhanced Notification System
   class NotificationManager {
@@ -2954,76 +3004,102 @@
     }
 
     // Show duplicate warning modal
-    function showDuplicateWarning(duplicateCheck, newOpportunity) {
-        // Create a custom modal for duplicate handling
-        const duplicateModal = document.createElement('div');
-        duplicateModal.className = 'duplicate-warning-modal';
-        duplicateModal.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-        `;
-        
-        duplicateModal.innerHTML = `
-            <div class="duplicate-warning-content">
-                <h3><i class="fas fa-exclamation-triangle"></i> Possible Duplicate Found</h3>
-                <p><strong>Reason:</strong> ${duplicateCheck.reason}</p>
-                <p><strong>Confidence:</strong> ${duplicateCheck.confidence}% match</p>
-                
-                <div class="existing-opportunity-info">
-                    <h4>Existing Opportunity:</h4>
-                    <p><strong>Title:</strong> ${duplicateCheck.existingOpportunity.title}</p>
-                    <p><strong>Organization:</strong> ${duplicateCheck.existingOpportunity.organization}</p>
-                    <p><strong>Deadline:</strong> ${formatDate(duplicateCheck.existingOpportunity.deadline)}</p>
-                    <p><strong>Added by:</strong> ${duplicateCheck.existingOpportunity.addedByName || 'Unknown'}</p>
-                </div>
-                
-                <div class="duplicate-warning-actions">
-                    <button class="cancel-duplicate-btn" id="cancelDuplicate">
-                        Cancel
-                    </button>
-                    <button class="view-existing-btn" id="viewExisting">
-                        View Existing
-                    </button>
-                    <button class="force-add-btn" id="forceAdd">
-                        Add Anyway
-                    </button>
-                </div>
+ // Show duplicate warning modal - FIXED VERSION
+function showDuplicateWarning(duplicateCheck, newOpportunity) {
+    // Create a custom modal for duplicate handling
+    const duplicateModal = document.createElement('div');
+    duplicateModal.className = 'duplicate-warning-modal';
+    duplicateModal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+    `;
+    
+    duplicateModal.innerHTML = `
+        <div class="duplicate-warning-content">
+            <h3><i class="fas fa-exclamation-triangle"></i> Possible Duplicate Found</h3>
+            <p><strong>Reason:</strong> ${duplicateCheck.reason}</p>
+            <p><strong>Confidence:</strong> ${duplicateCheck.confidence}% match</p>
+            
+            <div class="existing-opportunity-info">
+                <h4>Existing Opportunity:</h4>
+                <p><strong>Title:</strong> ${duplicateCheck.existingOpportunity.title}</p>
+                <p><strong>Organization:</strong> ${duplicateCheck.existingOpportunity.organization}</p>
+                <p><strong>Deadline:</strong> ${formatDate(duplicateCheck.existingOpportunity.deadline)}</p>
+                <p><strong>Added by:</strong> ${duplicateCheck.existingOpportunity.addedByName || 'Unknown'}</p>
             </div>
-        `;
-        
-        document.body.appendChild(duplicateModal);
-        
-        // Event listeners for modal buttons
-        document.getElementById('cancelDuplicate').addEventListener('click', () => {
+            
+            <div class="duplicate-warning-actions">
+                <button class="cancel-duplicate-btn" id="cancelDuplicate">
+                    Cancel
+                </button>
+                <button class="view-existing-btn" id="viewExisting">
+                    View Existing
+                </button>
+                <button class="force-add-btn" id="forceAdd">
+                    Add Anyway
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(duplicateModal);
+    
+    // Store references for cleanup
+    let modalRemoved = false;
+    
+    function removeModal() {
+        if (!modalRemoved && document.body.contains(duplicateModal)) {
             document.body.removeChild(duplicateModal);
-        });
-        
-        document.getElementById('viewExisting').addEventListener('click', () => {
-            document.body.removeChild(duplicateModal);
-            // Find and show the existing opportunity
-            const existingOpp = allOpportunities.find(opp => 
-                opp.title === duplicateCheck.existingOpportunity.title &&
-                opp.organization === duplicateCheck.existingOpportunity.organization
-            );
-            if (existingOpp) {
-                closeAdminModal();
-                showOpportunityDetails(existingOpp);
-            }
-        });
-        
-        document.getElementById('forceAdd').addEventListener('click', () => {
-            document.body.removeChild(duplicateModal);
-            saveOpportunityData(null, newOpportunity);
-        });
+            modalRemoved = true;
+        }
     }
+    
+    // Event listeners for modal buttons
+    document.getElementById('cancelDuplicate').addEventListener('click', () => {
+        removeModal();
+    });
+    
+    document.getElementById('viewExisting').addEventListener('click', () => {
+        removeModal();
+        closeAdminModal();
+        
+        // Find the existing opportunity with a more flexible search
+        const existingOpp = allOpportunities.find(opp => 
+            opp.id === duplicateCheck.existingOpportunity.id || // Match by ID if available
+            (opp.title.toLowerCase() === duplicateCheck.existingOpportunity.title.toLowerCase() &&
+             opp.organization.toLowerCase() === duplicateCheck.existingOpportunity.organization.toLowerCase())
+        );
+        
+        if (existingOpp) {
+            // Small delay to ensure modal is closed
+            setTimeout(() => {
+                showOpportunityDetails(existingOpp);
+            }, 100);
+        } else {
+            showNotification('Could not find the existing opportunity.', 'error');
+        }
+    });
+    
+    document.getElementById('forceAdd').addEventListener('click', () => {
+        removeModal();
+        saveOpportunityData(null, newOpportunity);
+    });
+    
+    // Close modal when clicking outside
+    duplicateModal.addEventListener('click', (e) => {
+        if (e.target === duplicateModal) {
+            removeModal();
+        }
+    });
+}
 
     // Save opportunity data to Firebase
     function saveOpportunityData(opportunityId, opportunityData) {
@@ -3050,62 +3126,63 @@
                 });
         }
     }
+    // Global notification function
 
     // Check all duplicates in the system
-    async function checkAllDuplicates() {
-        showNotification('Scanning for duplicates...', 'warning');
-        
-        const opportunitiesRef = ref(database, 'opportunities');
-        const snapshot = await get(opportunitiesRef);
-        
-        if (!snapshot.exists()) {
-            showNotification('No opportunities found to check.', 'warning');
-            return;
-        }
-        
-        const opportunities = snapshot.val();
-        const opportunityList = Object.values(opportunities);
-        const duplicates = [];
-        
-        // Compare all opportunities with each other
-        for (let i = 0; i < opportunityList.length; i++) {
-            for (let j = i + 1; j < opportunityList.length; j++) {
-                const opp1 = opportunityList[i];
-                const opp2 = opportunityList[j];
-                
-                const titleSimilarity = fuzzyMatch(opp1.title, opp2.title);
-                const orgSimilarity = fuzzyMatch(opp1.organization, opp2.organization);
-                
-                if ((titleSimilarity > 0.9 && orgSimilarity > 0.8) || opp1.applyLink === opp2.applyLink) {
-                    duplicates.push({ 
-                        opp1, 
-                        opp2, 
-                        similarity: Math.round(titleSimilarity * 100),
-                        reason: opp1.applyLink === opp2.applyLink ? "Same application link" : "Similar title and organization"
-                    });
-                }
+  async function checkAllDuplicates() {
+    showNotification('Scanning for duplicates...', 'warning');
+    
+    const opportunitiesRef = ref(database, 'opportunities');
+    const snapshot = await get(opportunitiesRef);
+    
+    if (!snapshot.exists()) {
+        showNotification('No opportunities found to check.', 'warning');
+        return;
+    }
+    
+    const opportunities = snapshot.val();
+    const opportunityList = Object.values(opportunities);
+    const duplicates = [];
+    
+    // Compare all opportunities with each other
+    for (let i = 0; i < opportunityList.length; i++) {
+        for (let j = i + 1; j < opportunityList.length; j++) {
+            const opp1 = opportunityList[i];
+            const opp2 = opportunityList[j];
+            
+            const titleSimilarity = fuzzyMatch(opp1.title, opp2.title);
+            const orgSimilarity = fuzzyMatch(opp1.organization, opp2.organization);
+            
+            if ((titleSimilarity > 0.9 && orgSimilarity > 0.8) || opp1.applyLink === opp2.applyLink) {
+                duplicates.push({ 
+                    opp1, 
+                    opp2, 
+                    similarity: Math.round(titleSimilarity * 100),
+                    reason: opp1.applyLink === opp2.applyLink ? "Same application link" : "Similar title and organization"
+                });
             }
         }
-        
-        if (duplicates.length > 0) {
-            showNotification(`Found ${duplicates.length} potential duplicate pairs`, 'warning');
-            
-            // Create a report
-            let report = `Duplicate Report (${new Date().toLocaleDateString()})\n\n`;
-            report += `Found ${duplicates.length} potential duplicate pairs:\n\n`;
-            
-            duplicates.forEach((dup, index) => {
-                report += `${index + 1}. ${dup.reason} (${dup.similarity}% similarity)\n`;
-                report += `   - "${dup.opp1.title}" by ${dup.opp1.organization}\n`;
-                report += `   - "${dup.opp2.title}" by ${dup.opp2.organization}\n\n`;
-            });
-            
-            // Show the report in an alert (for demo purposes)
-            alert(report);
-        } else {
-            showNotification('No duplicates found in the system!', 'success');
-        }
     }
+    
+    if (duplicates.length > 0) {
+        showNotification(`Found ${duplicates.length} potential duplicate pairs`, 'warning');
+        
+        // Create a report
+        let report = `Duplicate Report (${new Date().toLocaleDateString()})\n\n`;
+        report += `Found ${duplicates.length} potential duplicate pairs:\n\n`;
+        
+        duplicates.forEach((dup, index) => {
+            report += `${index + 1}. ${dup.reason} (${dup.similarity}% similarity)\n`;
+            report += `   - "${dup.opp1.title}" by ${dup.opp1.organization}\n`;
+            report += `   - "${dup.opp2.title}" by ${dup.opp2.organization}\n\n`;
+        });
+        
+        // Show the report in an alert (for demo purposes)
+        alert(report);
+    } else {
+        showNotification('No duplicates found in the system!', 'success');
+    }
+}
 
     // Wait for DOM to be fully loaded before accessing elements
     document.addEventListener('DOMContentLoaded', function() {
@@ -4156,31 +4233,7 @@ function handleLogout() {
         }
 
         // Show notification
-        function showNotification(message, type = 'success') {
-            if (!notification) return;
-            const notificationContent = notification.querySelector('.notification-content');
-            
-            // Update notification style based on type
-            notification.className = 'notification';
-            if (type === 'error') {
-                notification.classList.add('error');
-            } else if (type === 'warning') {
-                notification.classList.add('warning');
-            }
-            
-            if (message) {
-                notificationContent.innerHTML = `
-                    <h4>${type === 'error' ? 'Error' : type === 'warning' ? 'Warning' : 'Success'}</h4>
-                    <p>${message}</p>
-                `;
-            }
-            
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
+     
 
         // Show dashboard
         function showDashboard() {
