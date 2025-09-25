@@ -1525,8 +1525,6 @@
                     <li><a href="#" class="nav-opportunities">Opportunities</a></li>
                     <li><a href="#" class="nav-dashboard">Dashboard</a></li>
                     <li><a href="#" class="nav-admin" style="display: none;">Admin</a></li>
-                    <li><a href="#">Resources</a></li>
-                    <li><a href="#">Contact</a></li>
                     <li class="notification-bell" id="notificationBell" style="display: none;">
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
@@ -1987,29 +1985,23 @@
             <div class="footer-section">
                 <h3>Quick Links</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Browse Opportunities</a></li>
-                    <li><a href="#">Post an Opportunity</a></li>
-                    <li><a href="#">Success Stories</a></li>
-                    <li><a href="#">Upcoming Deadlines</a></li>
+                    <li><a href="#" class="footer-opportunities">Browse Opportunities</a></li>
+                    <li><a href="#" class="footer-dashboard">My Dashboard</a></li>
                 </ul>
             </div>
             
             <div class="footer-section">
                 <h3>Resources</h3>
                 <ul class="footer-links">
-                    <li><a href="#">Application Tips</a></li>
-                    <li><a href="#">Resume Builder</a></li>
-                    <li><a href="#">Interview Preparation</a></li>
-                    <li><a href="#">Blog</a></li>
+                    <li><a href="#" class="footer-resources">Application Tips</a></li>
+                    <li><a href="#" class="footer-resources">Interview Preparation</a></li>
                 </ul>
             </div>
             
             <div class="footer-section">
                 <h3>Contact Us</h3>
                 <ul class="footer-links">
-                    <li><a href="#"><i class="fas fa-envelope"></i> contact@opportunityhub.com</a></li>
-                    <li><a href="#"><i class="fas fa-phone"></i> (555) 123-4567</a></li>
-                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> New York, NY</a></li>
+                    <li><a href="mailto:contact@opportunityhub.com"><i class="fas fa-envelope"></i> contact@opportunityhub.com</a></li>
                 </ul>
             </div>
         </div>
@@ -2223,98 +2215,100 @@
             detailsModal.classList.remove('show');
         }
     }
-    // Global notification function
-function showNotification(message, type = 'success') {
-    // First try to use the notification manager if available
-    if (notificationManager && notificationManager.addNotification) {
-        const notificationId = `manual-${Date.now()}`;
-        const notification = {
-            id: notificationId,
-            title: type === 'error' ? 'Error' : type === 'warning' ? 'Warning' : 'Success',
-            message: message,
-            type: type,
-            timestamp: new Date().toISOString(),
-            read: false,
-            urgent: type === 'error',
-            category: 'system'
-        };
-        notificationManager.addNotification(notification);
-        return;
-    }
-    
-    // Fallback to the simple notification system
-    const notification = document.getElementById('notification');
-    if (!notification) return;
-    
-    const notificationContent = notification.querySelector('.notification-content');
-    
-    // Update notification style based on type
-    notification.className = 'notification';
-    if (type === 'error') {
-        notification.classList.add('error');
-    } else if (type === 'warning') {
-        notification.classList.add('warning');
-    }
-    
-    if (message) {
-        notificationContent.innerHTML = `
-            <h4>${type === 'error' ? 'Error' : type === 'warning' ? 'Warning' : 'Success'}</h4>
-            <p>${message}</p>
-        `;
-    }
-    
-    notification.classList.add('show');
-    
-    setTimeout(() => {
-        notification.classList.remove('show');
-    }, 3000);
-}
 
+    // Global notification function - FIXED VERSION
+    function showNotification(message, type = 'success') {
+        // First try to use the notification manager if available
+        if (notificationManager && notificationManager.addNotification) {
+            const notificationId = `manual-${Date.now()}`;
+            const notification = {
+                id: notificationId,
+                title: type === 'error' ? 'Error' : type === 'warning' ? 'Warning' : 'Success',
+                message: message,
+                type: type,
+                timestamp: new Date().toISOString(),
+                read: false,
+                urgent: type === 'error',
+                category: 'system'
+            };
+            notificationManager.addNotification(notification);
+            
+            // ALSO show popup notification
+            showPopupNotification(message, type);
+            return;
+        }
+        
+        // Fallback to the simple notification system
+        showPopupNotification(message, type);
+    }
+
+    // Show popup notification (fixed version)
+    function showPopupNotification(message, type = 'success') {
+        const notification = document.getElementById('notification');
+        if (!notification) return;
+        
+        const notificationContent = notification.querySelector('.notification-content');
+        
+        // Update notification style based on type
+        notification.className = 'notification';
+        if (type === 'error') {
+            notification.classList.add('error');
+        } else if (type === 'warning') {
+            notification.classList.add('warning');
+        }
+        
+        if (message) {
+            notificationContent.innerHTML = `
+                <h4>${type === 'error' ? 'Error' : type === 'warning' ? 'Warning' : 'Success'}</h4>
+                <p>${message}</p>
+            `;
+        }
+        
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
 
     // Enhanced Notification System
-  class NotificationManager {
-    constructor() {
-        this.notifications = [];
-        this.settings = {
-            browserNotifications: true,
-            soundEnabled: true,
-            reminderIntervals: [7, 3, 1], // days before deadline to remind
-            deadlineReminders: true,
-            newOpportunities: true,
-            applicationUpdates: true
-        };
-        this.deadlineCheckInterval = null; // Add this line to track the interval
-        this.init();
-    }
-
-    init() {
-        this.loadSettings();
-        this.setupEventListeners();
-        this.startDeadlineChecker();
-        
-        // Request notification permission
-        if ('Notification' in window) {
-            Notification.requestPermission();
-        }
-        
-        // Update UI immediately
-        this.updateNotificationUI(); // Add this line
-    }
-
-    // ADD THIS CLEANUP METHOD:
-    cleanup() {
-        // Clear the deadline checker interval
-        if (this.deadlineCheckInterval) {
-            clearInterval(this.deadlineCheckInterval);
+    class NotificationManager {
+        constructor() {
+            this.notifications = [];
+            this.settings = {
+                browserNotifications: true,
+                soundEnabled: true,
+                reminderIntervals: [7, 3, 1], // days before deadline to remind
+                deadlineReminders: true,
+                newOpportunities: true,
+                applicationUpdates: true
+            };
             this.deadlineCheckInterval = null;
+            this.init();
         }
-        
-        // Hide any open modals
-        this.hideNotificationPanel();
-        this.hideSettingsPanel();
-        this.hideDeadlineAlert();
-    }
 
+        init() {
+            this.loadSettings();
+            this.setupEventListeners();
+            this.startDeadlineChecker();
+            this.loadNotifications();
+            
+            // Request notification permission
+            if ('Notification' in window) {
+                Notification.requestPermission();
+            }
+        }
+
+        cleanup() {
+            if (this.deadlineCheckInterval) {
+                clearInterval(this.deadlineCheckInterval);
+                this.deadlineCheckInterval = null;
+            }
+            
+            this.hideNotificationPanel();
+            this.hideSettingsPanel();
+            this.hideDeadlineAlert();
+        }
 
         setupEventListeners() {
             // Notification bell
@@ -2472,17 +2466,17 @@ function showNotification(message, type = 'success') {
         }
 
         // Check for approaching deadlines
- startDeadlineChecker() {
-        // Check every hour
-        this.deadlineCheckInterval = setInterval(() => {
-            this.checkApproachingDeadlines();
-        }, 60 * 60 * 1000);
+        startDeadlineChecker() {
+            // Check every hour
+            this.deadlineCheckInterval = setInterval(() => {
+                this.checkApproachingDeadlines();
+            }, 60 * 60 * 1000);
 
-        // Initial check
-        setTimeout(() => {
-            this.checkApproachingDeadlines();
-        }, 2000);
-    }
+            // Initial check
+            setTimeout(() => {
+                this.checkApproachingDeadlines();
+            }, 2000);
+        }
 
         async checkApproachingDeadlines() {
             const user = auth.currentUser;
@@ -2600,6 +2594,11 @@ function showNotification(message, type = 'success') {
             this.notifications.unshift(notification);
             this.saveNotifications();
             this.updateNotificationUI();
+            
+            // Show popup notification for urgent or new notifications
+            if (notification.urgent || notification.category === 'system') {
+                showPopupNotification(notification.message, notification.type);
+            }
         }
 
         saveNotifications() {
@@ -2635,7 +2634,7 @@ function showNotification(message, type = 'success') {
             if (unreadCount > 0) {
                 notificationBadge.textContent = unreadCount > 99 ? '99+' : unreadCount;
                 notificationBadge.style.display = 'block';
-                notificationBell.style.display = 'list-item';
+                if (notificationBell) notificationBell.style.display = 'list-item';
             } else {
                 notificationBadge.style.display = 'none';
             }
@@ -2909,7 +2908,6 @@ function showNotification(message, type = 'success') {
     }
 
     // DUPLICATE DETECTION FUNCTIONS
-    // Fuzzy string matching function
     function fuzzyMatch(str1, str2, threshold = 0.8) {
         if (!str1 || !str2) return 0;
         
@@ -3001,102 +2999,101 @@ function showNotification(message, type = 'success') {
     }
 
     // Show duplicate warning modal
- // Show duplicate warning modal - FIXED VERSION
-function showDuplicateWarning(duplicateCheck, newOpportunity) {
-    // Create a custom modal for duplicate handling
-    const duplicateModal = document.createElement('div');
-    duplicateModal.className = 'duplicate-warning-modal';
-    duplicateModal.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 10000;
-    `;
-    
-    duplicateModal.innerHTML = `
-        <div class="duplicate-warning-content">
-            <h3><i class="fas fa-exclamation-triangle"></i> Possible Duplicate Found</h3>
-            <p><strong>Reason:</strong> ${duplicateCheck.reason}</p>
-            <p><strong>Confidence:</strong> ${duplicateCheck.confidence}% match</p>
-            
-            <div class="existing-opportunity-info">
-                <h4>Existing Opportunity:</h4>
-                <p><strong>Title:</strong> ${duplicateCheck.existingOpportunity.title}</p>
-                <p><strong>Organization:</strong> ${duplicateCheck.existingOpportunity.organization}</p>
-                <p><strong>Deadline:</strong> ${formatDate(duplicateCheck.existingOpportunity.deadline)}</p>
-                <p><strong>Added by:</strong> ${duplicateCheck.existingOpportunity.addedByName || 'Unknown'}</p>
-            </div>
-            
-            <div class="duplicate-warning-actions">
-                <button class="cancel-duplicate-btn" id="cancelDuplicate">
-                    Cancel
-                </button>
-                <button class="view-existing-btn" id="viewExisting">
-                    View Existing
-                </button>
-                <button class="force-add-btn" id="forceAdd">
-                    Add Anyway
-                </button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(duplicateModal);
-    
-    // Store references for cleanup
-    let modalRemoved = false;
-    
-    function removeModal() {
-        if (!modalRemoved && document.body.contains(duplicateModal)) {
-            document.body.removeChild(duplicateModal);
-            modalRemoved = true;
-        }
-    }
-    
-    // Event listeners for modal buttons
-    document.getElementById('cancelDuplicate').addEventListener('click', () => {
-        removeModal();
-    });
-    
-    document.getElementById('viewExisting').addEventListener('click', () => {
-        removeModal();
-        closeAdminModal();
+    function showDuplicateWarning(duplicateCheck, newOpportunity) {
+        // Create a custom modal for duplicate handling
+        const duplicateModal = document.createElement('div');
+        duplicateModal.className = 'duplicate-warning-modal';
+        duplicateModal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        `;
         
-        // Find the existing opportunity with a more flexible search
-        const existingOpp = allOpportunities.find(opp => 
-            opp.id === duplicateCheck.existingOpportunity.id || // Match by ID if available
-            (opp.title.toLowerCase() === duplicateCheck.existingOpportunity.title.toLowerCase() &&
-             opp.organization.toLowerCase() === duplicateCheck.existingOpportunity.organization.toLowerCase())
-        );
+        duplicateModal.innerHTML = `
+            <div class="duplicate-warning-content">
+                <h3><i class="fas fa-exclamation-triangle"></i> Possible Duplicate Found</h3>
+                <p><strong>Reason:</strong> ${duplicateCheck.reason}</p>
+                <p><strong>Confidence:</strong> ${duplicateCheck.confidence}% match</p>
+                
+                <div class="existing-opportunity-info">
+                    <h4>Existing Opportunity:</h4>
+                    <p><strong>Title:</strong> ${duplicateCheck.existingOpportunity.title}</p>
+                    <p><strong>Organization:</strong> ${duplicateCheck.existingOpportunity.organization}</p>
+                    <p><strong>Deadline:</strong> ${formatDate(duplicateCheck.existingOpportunity.deadline)}</p>
+                    <p><strong>Added by:</strong> ${duplicateCheck.existingOpportunity.addedByName || 'Unknown'}</p>
+                </div>
+                
+                <div class="duplicate-warning-actions">
+                    <button class="cancel-duplicate-btn" id="cancelDuplicate">
+                        Cancel
+                    </button>
+                    <button class="view-existing-btn" id="viewExisting">
+                        View Existing
+                    </button>
+                    <button class="force-add-btn" id="forceAdd">
+                        Add Anyway
+                    </button>
+                </div>
+            </div>
+        `;
         
-        if (existingOpp) {
-            // Small delay to ensure modal is closed
-            setTimeout(() => {
-                showOpportunityDetails(existingOpp);
-            }, 100);
-        } else {
-            showNotification('Could not find the existing opportunity.', 'error');
+        document.body.appendChild(duplicateModal);
+        
+        // Store references for cleanup
+        let modalRemoved = false;
+        
+        function removeModal() {
+            if (!modalRemoved && document.body.contains(duplicateModal)) {
+                document.body.removeChild(duplicateModal);
+                modalRemoved = true;
+            }
         }
-    });
-    
-    document.getElementById('forceAdd').addEventListener('click', () => {
-        removeModal();
-        saveOpportunityData(null, newOpportunity);
-    });
-    
-    // Close modal when clicking outside
-    duplicateModal.addEventListener('click', (e) => {
-        if (e.target === duplicateModal) {
+        
+        // Event listeners for modal buttons
+        document.getElementById('cancelDuplicate').addEventListener('click', () => {
             removeModal();
-        }
-    });
-}
+        });
+        
+        document.getElementById('viewExisting').addEventListener('click', () => {
+            removeModal();
+            closeAdminModal();
+            
+            // Find the existing opportunity with a more flexible search
+            const existingOpp = allOpportunities.find(opp => 
+                opp.id === duplicateCheck.existingOpportunity.id || // Match by ID if available
+                (opp.title.toLowerCase() === duplicateCheck.existingOpportunity.title.toLowerCase() &&
+                 opp.organization.toLowerCase() === duplicateCheck.existingOpportunity.organization.toLowerCase())
+            );
+            
+            if (existingOpp) {
+                // Small delay to ensure modal is closed
+                setTimeout(() => {
+                    showOpportunityDetails(existingOpp);
+                }, 100);
+            } else {
+                showNotification('Could not find the existing opportunity.', 'error');
+            }
+        });
+        
+        document.getElementById('forceAdd').addEventListener('click', () => {
+            removeModal();
+            saveOpportunityData(null, newOpportunity);
+        });
+        
+        // Close modal when clicking outside
+        duplicateModal.addEventListener('click', (e) => {
+            if (e.target === duplicateModal) {
+                removeModal();
+            }
+        });
+    }
 
     // Save opportunity data to Firebase
     function saveOpportunityData(opportunityId, opportunityData) {
@@ -3123,63 +3120,62 @@ function showDuplicateWarning(duplicateCheck, newOpportunity) {
                 });
         }
     }
-    // Global notification function
 
     // Check all duplicates in the system
-  async function checkAllDuplicates() {
-    showNotification('Scanning for duplicates...', 'warning');
-    
-    const opportunitiesRef = ref(database, 'opportunities');
-    const snapshot = await get(opportunitiesRef);
-    
-    if (!snapshot.exists()) {
-        showNotification('No opportunities found to check.', 'warning');
-        return;
-    }
-    
-    const opportunities = snapshot.val();
-    const opportunityList = Object.values(opportunities);
-    const duplicates = [];
-    
-    // Compare all opportunities with each other
-    for (let i = 0; i < opportunityList.length; i++) {
-        for (let j = i + 1; j < opportunityList.length; j++) {
-            const opp1 = opportunityList[i];
-            const opp2 = opportunityList[j];
-            
-            const titleSimilarity = fuzzyMatch(opp1.title, opp2.title);
-            const orgSimilarity = fuzzyMatch(opp1.organization, opp2.organization);
-            
-            if ((titleSimilarity > 0.9 && orgSimilarity > 0.8) || opp1.applyLink === opp2.applyLink) {
-                duplicates.push({ 
-                    opp1, 
-                    opp2, 
-                    similarity: Math.round(titleSimilarity * 100),
-                    reason: opp1.applyLink === opp2.applyLink ? "Same application link" : "Similar title and organization"
-                });
+    async function checkAllDuplicates() {
+        showNotification('Scanning for duplicates...', 'warning');
+        
+        const opportunitiesRef = ref(database, 'opportunities');
+        const snapshot = await get(opportunitiesRef);
+        
+        if (!snapshot.exists()) {
+            showNotification('No opportunities found to check.', 'warning');
+            return;
+        }
+        
+        const opportunities = snapshot.val();
+        const opportunityList = Object.values(opportunities);
+        const duplicates = [];
+        
+        // Compare all opportunities with each other
+        for (let i = 0; i < opportunityList.length; i++) {
+            for (let j = i + 1; j < opportunityList.length; j++) {
+                const opp1 = opportunityList[i];
+                const opp2 = opportunityList[j];
+                
+                const titleSimilarity = fuzzyMatch(opp1.title, opp2.title);
+                const orgSimilarity = fuzzyMatch(opp1.organization, opp2.organization);
+                
+                if ((titleSimilarity > 0.9 && orgSimilarity > 0.8) || opp1.applyLink === opp2.applyLink) {
+                    duplicates.push({ 
+                        opp1, 
+                        opp2, 
+                        similarity: Math.round(titleSimilarity * 100),
+                        reason: opp1.applyLink === opp2.applyLink ? "Same application link" : "Similar title and organization"
+                    });
+                }
             }
         }
+        
+        if (duplicates.length > 0) {
+            showNotification(`Found ${duplicates.length} potential duplicate pairs`, 'warning');
+            
+            // Create a report
+            let report = `Duplicate Report (${new Date().toLocaleDateString()})\n\n`;
+            report += `Found ${duplicates.length} potential duplicate pairs:\n\n`;
+            
+            duplicates.forEach((dup, index) => {
+                report += `${index + 1}. ${dup.reason} (${dup.similarity}% similarity)\n`;
+                report += `   - "${dup.opp1.title}" by ${dup.opp1.organization}\n`;
+                report += `   - "${dup.opp2.title}" by ${dup.opp2.organization}\n\n`;
+            });
+            
+            // Show the report in an alert (for demo purposes)
+            alert(report);
+        } else {
+            showNotification('No duplicates found in the system!', 'success');
+        }
     }
-    
-    if (duplicates.length > 0) {
-        showNotification(`Found ${duplicates.length} potential duplicate pairs`, 'warning');
-        
-        // Create a report
-        let report = `Duplicate Report (${new Date().toLocaleDateString()})\n\n`;
-        report += `Found ${duplicates.length} potential duplicate pairs:\n\n`;
-        
-        duplicates.forEach((dup, index) => {
-            report += `${index + 1}. ${dup.reason} (${dup.similarity}% similarity)\n`;
-            report += `   - "${dup.opp1.title}" by ${dup.opp1.organization}\n`;
-            report += `   - "${dup.opp2.title}" by ${dup.opp2.organization}\n\n`;
-        });
-        
-        // Show the report in an alert (for demo purposes)
-        alert(report);
-    } else {
-        showNotification('No duplicates found in the system!', 'success');
-    }
-}
 
     // Wait for DOM to be fully loaded before accessing elements
     document.addEventListener('DOMContentLoaded', function() {
@@ -3230,6 +3226,9 @@ function showDuplicateWarning(duplicateCheck, newOpportunity) {
         const locationFieldGroup = document.getElementById('locationFieldGroup');
         const checkDuplicateBtn = document.getElementById('checkDuplicateBtn');
         const checkDuplicatesBtn = document.getElementById('checkDuplicatesBtn');
+        const footerOpportunities = document.querySelector('.footer-opportunities');
+        const footerDashboard = document.querySelector('.footer-dashboard');
+        const footerResources = document.querySelectorAll('.footer-resources');
 
         // Event Listeners
         if (loginBtn) loginBtn.addEventListener('click', () => showAuthModal('login'));
@@ -3324,6 +3323,30 @@ function showDuplicateWarning(duplicateCheck, newOpportunity) {
             checkDuplicatesBtn.addEventListener('click', checkAllDuplicates);
         }
 
+        // Footer links functionality
+        if (footerOpportunities) {
+            footerOpportunities.addEventListener('click', (e) => {
+                e.preventDefault();
+                showOpportunities();
+            });
+        }
+        
+        if (footerDashboard) {
+            footerDashboard.addEventListener('click', (e) => {
+                e.preventDefault();
+                showDashboard();
+            });
+        }
+        
+        if (footerResources) {
+            footerResources.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showNotification('Resources section coming soon!', 'info');
+                });
+            });
+        }
+
         // Close modals when clicking outside
         window.addEventListener('click', (e) => {
             if (e.target === authModal) {
@@ -3337,92 +3360,95 @@ function showDuplicateWarning(duplicateCheck, newOpportunity) {
             }
         });
 
-        // Check auth state
-   onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        // User is signed in
-        if (loginBtn) loginBtn.style.display = 'none';
-        if (signupBtn) signupBtn.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'block';
-        if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'block';
-        
-        // Check admin status
-        try {
-            isAdminUser = await checkAdminStatus(user.uid);
-            console.log('User is admin:', isAdminUser);
-            
-            if (navAdmin) {
-                navAdmin.style.display = isAdminUser ? 'list-item' : 'none';
+        // Check auth state - FIXED VERSION
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // User is signed in
+                if (loginBtn) loginBtn.style.display = 'none';
+                if (signupBtn) signupBtn.style.display = 'none';
+                if (logoutBtn) logoutBtn.style.display = 'block';
+                if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'block';
+                
+                // Check admin status
+                try {
+                    isAdminUser = await checkAdminStatus(user.uid);
+                    console.log('User is admin:', isAdminUser);
+                    
+                    if (navAdmin) {
+                        navAdmin.style.display = isAdminUser ? 'list-item' : 'none';
+                    }
+                } catch (error) {
+                    console.error('Error checking admin status:', error);
+                    isAdminUser = false;
+                }
+                
+                // Show notification bell
+                const notificationBell = document.getElementById('notificationBell');
+                if (notificationBell) {
+                    notificationBell.style.display = 'list-item';
+                }
+                
+                // Initialize notification manager (clean up old one first)
+                if (notificationManager) {
+                    notificationManager.cleanup();
+                }
+                notificationManager = new NotificationManager();
+                
+                // Load user's saved opportunities
+                loadUserOpportunities(user.uid);
+                
+                // Always show home page when logging in - FIXED
+                setTimeout(() => {
+                    showHome();
+                    renderOpportunities(); // Ensure opportunities are rendered
+                }, 100);
+                
+            } else {
+                // User is signed out - Reset everything
+                if (loginBtn) loginBtn.style.display = 'block';
+                if (signupBtn) signupBtn.style.display = 'block';
+                if (logoutBtn) logoutBtn.style.display = 'none';
+                if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'none';
+                if (navAdmin) navAdmin.style.display = 'none';
+                
+                // Hide notification bell
+                const notificationBell = document.getElementById('notificationBell');
+                if (notificationBell) {
+                    notificationBell.style.display = 'none';
+                }
+                
+                // Clean up notification manager
+                if (notificationManager) {
+                    notificationManager.cleanup();
+                    notificationManager = null;
+                }
+                
+                // Clear user opportunities
+                userOpportunities = {
+                    pending: [],
+                    completed: []
+                };
+                
+                // Remove the user opportunities listener
+                if (userOpportunitiesListener) {
+                    userOpportunitiesListener();
+                    userOpportunitiesListener = null;
+                }
+                
+                // Hide dashboard and admin panel
+                if (dashboard) dashboard.style.display = 'none';
+                if (adminPanel) adminPanel.style.display = 'none';
+                
+                // Always show home page when logging out - FIXED
+                setTimeout(() => {
+                    showHome();
+                    renderOpportunities(); // Ensure opportunities are rendered
+                }, 100);
+                
+                // Reset admin status
+                isAdminUser = false;
             }
-        } catch (error) {
-            console.error('Error checking admin status:', error);
-            isAdminUser = false;
-        }
-        
-        // Show notification bell
-        const notificationBell = document.getElementById('notificationBell');
-        if (notificationBell) {
-            notificationBell.style.display = 'list-item';
-        }
-        
-        // Initialize notification manager (clean up old one first)
-        if (notificationManager) {
-            notificationManager.cleanup();
-        }
-        notificationManager = new NotificationManager();
-        
-        // Load user's saved opportunities
-        loadUserOpportunities(user.uid);
-        
-        // Always show home page when logging in
-        showHome();
-        
-    } else {
-        // User is signed out - Reset everything
-        if (loginBtn) loginBtn.style.display = 'block';
-        if (signupBtn) signupBtn.style.display = 'block';
-        if (logoutBtn) logoutBtn.style.display = 'none';
-        if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'none';
-        if (navAdmin) navAdmin.style.display = 'none';
-        
-        // Hide notification bell
-        const notificationBell = document.getElementById('notificationBell');
-        if (notificationBell) {
-            notificationBell.style.display = 'none';
-        }
-        
-        // Clean up notification manager
-        if (notificationManager) {
-            notificationManager.cleanup();
-            notificationManager = null;
-        }
-        
-        // Clear user opportunities
-        userOpportunities = {
-            pending: [],
-            completed: []
-        };
-        
-        // Remove the user opportunities listener
-        if (userOpportunitiesListener) {
-            userOpportunitiesListener();
-            userOpportunitiesListener = null;
-        }
-        
-        // Hide dashboard and admin panel
-        if (dashboard) dashboard.style.display = 'none';
-        if (adminPanel) adminPanel.style.display = 'none';
-        
-        // Always show home page when logging out
-        showHome();
-        
-        // Reset admin status
-        isAdminUser = false;
-    }
-});
-
-        // Initialize the app
-        initApp();
+        });
 
         // Check if user is admin using Firebase rules
         async function checkAdminStatus(userId) {
@@ -3453,7 +3479,7 @@ function showDuplicateWarning(duplicateCheck, newOpportunity) {
                     }
                 }
                 
-                // Apply current filters
+                // Apply current filters and render opportunities
                 applyFilters();
                 
                 // Render admin opportunities if admin panel is visible
@@ -3885,34 +3911,35 @@ function showDuplicateWarning(duplicateCheck, newOpportunity) {
         }
 
         // Handle logout
-function handleLogout() {
-    // Clean up notification manager before logout
-    if (notificationManager) {
-        notificationManager.cleanup();
-        notificationManager = null;
-    }
-    
-    // Remove the user opportunities listener
-    if (userOpportunitiesListener) {
-        userOpportunitiesListener();
-        userOpportunitiesListener = null;
-    }
-    
-    // Clear user data
-    userOpportunities = {
-        pending: [],
-        completed: []
-    };
-    
-    // Sign out from Firebase
-    signOut(auth)
-        .then(() => {
-            showNotification('Successfully logged out');
-        })
-        .catch((error) => {
-            console.error('Logout error:', error);
-        });
-}
+        function handleLogout() {
+            // Clean up notification manager before logout
+            if (notificationManager) {
+                notificationManager.cleanup();
+                notificationManager = null;
+            }
+            
+            // Remove the user opportunities listener
+            if (userOpportunitiesListener) {
+                userOpportunitiesListener();
+                userOpportunitiesListener = null;
+            }
+            
+            // Clear user data
+            userOpportunities = {
+                pending: [],
+                completed: []
+            };
+            
+            // Sign out from Firebase
+            signOut(auth)
+                .then(() => {
+                    showNotification('Successfully logged out');
+                })
+                .catch((error) => {
+                    console.error('Logout error:', error);
+                });
+        }
+
         // Save opportunity to user's dashboard
         function saveOpportunity(userId, opportunity) {
             const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
@@ -4218,20 +4245,6 @@ function handleLogout() {
             showNotification('Filters reset');
         }
 
-        // Check for approaching deadlines
-        function checkDeadlines() {
-            // This would check the user's saved opportunities for deadlines
-            // and show notifications for approaching deadlines
-            
-            // For demo purposes, we'll just show a notification after 2 seconds
-            setTimeout(() => {
-                showNotification('You have 3 opportunities with deadlines in the next week.', 'warning');
-            }, 2000);
-        }
-
-        // Show notification
-     
-
         // Show dashboard
         function showDashboard() {
             const user = auth.currentUser;
@@ -4263,7 +4276,6 @@ function handleLogout() {
         // Show opportunities page
         function showOpportunities() {
             showHome();
-            // Additional logic for opportunities page could go here
         }
 
         // Show admin panel
@@ -4496,13 +4508,15 @@ function handleLogout() {
         // Initialize the app
         function initApp() {
             loadOpportunitiesFromFirebase();
-            checkDeadlines();
             
             // Clean up expired notification markers
             if (notificationManager) {
                 notificationManager.cleanupExpiredMarkers();
             }
         }
+
+        // Initialize the app
+        initApp();
     });
 </script>
 </body>
