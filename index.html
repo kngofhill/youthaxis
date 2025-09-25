@@ -2106,30 +2106,49 @@
     }
 
     // Enhanced Notification System
-    class NotificationManager {
-        constructor() {
-            this.notifications = [];
-            this.settings = {
-                browserNotifications: true,
-                soundEnabled: true,
-                reminderIntervals: [7, 3, 1], // days before deadline to remind
-                deadlineReminders: true,
-                newOpportunities: true,
-                applicationUpdates: true
-            };
-            this.init();
-        }
+  class NotificationManager {
+    constructor() {
+        this.notifications = [];
+        this.settings = {
+            browserNotifications: true,
+            soundEnabled: true,
+            reminderIntervals: [7, 3, 1], // days before deadline to remind
+            deadlineReminders: true,
+            newOpportunities: true,
+            applicationUpdates: true
+        };
+        this.deadlineCheckInterval = null; // Add this line to track the interval
+        this.init();
+    }
 
-        init() {
-            this.loadSettings();
-            this.setupEventListeners();
-            this.startDeadlineChecker();
-            
-            // Request notification permission
-            if ('Notification' in window) {
-                Notification.requestPermission();
-            }
+    init() {
+        this.loadSettings();
+        this.setupEventListeners();
+        this.startDeadlineChecker();
+        
+        // Request notification permission
+        if ('Notification' in window) {
+            Notification.requestPermission();
         }
+        
+        // Update UI immediately
+        this.updateNotificationUI(); // Add this line
+    }
+
+    // ADD THIS CLEANUP METHOD:
+    cleanup() {
+        // Clear the deadline checker interval
+        if (this.deadlineCheckInterval) {
+            clearInterval(this.deadlineCheckInterval);
+            this.deadlineCheckInterval = null;
+        }
+        
+        // Hide any open modals
+        this.hideNotificationPanel();
+        this.hideSettingsPanel();
+        this.hideDeadlineAlert();
+    }
+
 
         setupEventListeners() {
             // Notification bell
@@ -2287,17 +2306,17 @@
         }
 
         // Check for approaching deadlines
-        startDeadlineChecker() {
-            // Check every hour
-            setInterval(() => {
-                this.checkApproachingDeadlines();
-            }, 60 * 60 * 1000);
+ startDeadlineChecker() {
+        // Check every hour
+        this.deadlineCheckInterval = setInterval(() => {
+            this.checkApproachingDeadlines();
+        }, 60 * 60 * 1000);
 
-            // Initial check
-            setTimeout(() => {
-                this.checkApproachingDeadlines();
-            }, 2000);
-        }
+        // Initial check
+        setTimeout(() => {
+            this.checkApproachingDeadlines();
+        }, 2000);
+    }
 
         async checkApproachingDeadlines() {
             const user = auth.currentUser;
@@ -2869,62 +2888,88 @@
         });
 
         // Check auth state
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in
-                if (loginBtn) loginBtn.style.display = 'none';
-                if (signupBtn) signupBtn.style.display = 'none';
-                if (logoutBtn) logoutBtn.style.display = 'block';
-                if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'block';
-                
-                // Check if user is admin using Firebase rules
-                checkAdminStatus(user.uid).then(adminStatus => {
-                    isAdminUser = adminStatus;
-                    if (navAdmin) {
-                        navAdmin.style.display = isAdminUser ? 'list-item' : 'none';
-                    }
-                });
-                
-                // Load user's saved opportunities
-                loadUserOpportunities(user.uid);
-                
-                // Initialize notification manager for ALL users (not just admins)
-                notificationManager = new NotificationManager();
-                notificationManager.loadNotifications();
-                
-                // Show notification bell for ALL users
-                const notificationBell = document.getElementById('notificationBell');
-                if (notificationBell) {
-                    notificationBell.style.display = 'list-item';
-                }
-            } else {
-                // User is signed out
-                if (loginBtn) loginBtn.style.display = 'block';
-                if (signupBtn) signupBtn.style.display = 'block';
-                if (logoutBtn) logoutBtn.style.display = 'none';
-                if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'none';
-                if (navAdmin) navAdmin.style.display = 'none';
-                
-                // Hide dashboard and admin panel if user is not logged in
-                if (dashboard) dashboard.style.display = 'none';
-                if (adminPanel) adminPanel.style.display = 'none';
-                
-                // Reset admin status
-                isAdminUser = false;
-                
-                // Remove the user opportunities listener when logging out
-                if (userOpportunitiesListener) {
-                    userOpportunitiesListener();
-                    userOpportunitiesListener = null;
-                }
-                
-                // Hide notification bell
-                const notificationBell = document.getElementById('notificationBell');
-                if (notificationBell) {
-                    notificationBell.style.display = 'none';
-                }
+   onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        // User is signed in
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (signupBtn) signupBtn.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'block';
+        if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'block';
+        
+        // Check admin status
+        try {
+            isAdminUser = await checkAdminStatus(user.uid);
+            console.log('User is admin:', isAdminUser);
+            
+            if (navAdmin) {
+                navAdmin.style.display = isAdminUser ? 'list-item' : 'none';
             }
-        });
+        } catch (error) {
+            console.error('Error checking admin status:', error);
+            isAdminUser = false;
+        }
+        
+        // Show notification bell
+        const notificationBell = document.getElementById('notificationBell');
+        if (notificationBell) {
+            notificationBell.style.display = 'list-item';
+        }
+        
+        // Initialize notification manager (clean up old one first)
+        if (notificationManager) {
+            notificationManager.cleanup();
+        }
+        notificationManager = new NotificationManager();
+        
+        // Load user's saved opportunities
+        loadUserOpportunities(user.uid);
+        
+        // Always show home page when logging in
+        showHome();
+        
+    } else {
+        // User is signed out - Reset everything
+        if (loginBtn) loginBtn.style.display = 'block';
+        if (signupBtn) signupBtn.style.display = 'block';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'none';
+        if (navAdmin) navAdmin.style.display = 'none';
+        
+        // Hide notification bell
+        const notificationBell = document.getElementById('notificationBell');
+        if (notificationBell) {
+            notificationBell.style.display = 'none';
+        }
+        
+        // Clean up notification manager
+        if (notificationManager) {
+            notificationManager.cleanup();
+            notificationManager = null;
+        }
+        
+        // Clear user opportunities
+        userOpportunities = {
+            pending: [],
+            completed: []
+        };
+        
+        // Remove the user opportunities listener
+        if (userOpportunitiesListener) {
+            userOpportunitiesListener();
+            userOpportunitiesListener = null;
+        }
+        
+        // Hide dashboard and admin panel
+        if (dashboard) dashboard.style.display = 'none';
+        if (adminPanel) adminPanel.style.display = 'none';
+        
+        // Always show home page when logging out
+        showHome();
+        
+        // Reset admin status
+        isAdminUser = false;
+    }
+});
 
         // Initialize the app
         initApp();
@@ -3389,22 +3434,34 @@
         }
 
         // Handle logout
-        function handleLogout() {
-            // Remove the listener when logging out
-            if (userOpportunitiesListener) {
-                userOpportunitiesListener();
-                userOpportunitiesListener = null;
-            }
-            
-            signOut(auth)
-                .then(() => {
-                    showNotification('Successfully logged out');
-                })
-                .catch((error) => {
-                    console.error('Logout error:', error);
-                });
-        }
-
+function handleLogout() {
+    // Clean up notification manager before logout
+    if (notificationManager) {
+        notificationManager.cleanup();
+        notificationManager = null;
+    }
+    
+    // Remove the user opportunities listener
+    if (userOpportunitiesListener) {
+        userOpportunitiesListener();
+        userOpportunitiesListener = null;
+    }
+    
+    // Clear user data
+    userOpportunities = {
+        pending: [],
+        completed: []
+    };
+    
+    // Sign out from Firebase
+    signOut(auth)
+        .then(() => {
+            showNotification('Successfully logged out');
+        })
+        .catch((error) => {
+            console.error('Logout error:', error);
+        });
+}
         // Save opportunity to user's dashboard
         function saveOpportunity(userId, opportunity) {
             const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
