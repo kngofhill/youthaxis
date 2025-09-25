@@ -1363,6 +1363,106 @@
             gap: 10px;
         }
 
+        /* Duplicate Warning Modal */
+        .duplicate-warning-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .duplicate-warning-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .duplicate-warning-content h3 {
+            color: var(--warning);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .duplicate-warning-content h3 i {
+            font-size: 1.5rem;
+        }
+
+        .existing-opportunity-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            border-left: 4px solid var(--warning);
+        }
+
+        .existing-opportunity-info h4 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .duplicate-warning-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .duplicate-warning-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-duplicate-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .view-existing-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .force-add-btn {
+            background: var(--success);
+            color: white;
+        }
+
+        /* Check Duplicates Button */
+        .check-duplicates-btn {
+            background: var(--warning);
+            color: #000;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .check-duplicates-btn:hover {
+            background: #e0a800;
+        }
+
         @media (max-width: 480px) {
             .notification-system {
                 width: 90%;
@@ -1398,6 +1498,14 @@
             .details-actions .left-actions, .details-actions .right-actions {
                 width: 100%;
                 justify-content: space-between;
+            }
+
+            .duplicate-warning-actions {
+                flex-direction: column;
+            }
+
+            .duplicate-warning-actions button {
+                width: 100%;
             }
         }
     </style>
@@ -1599,6 +1707,9 @@
                 <h2>Admin Panel</h2>
                 <div class="admin-actions">
                     <button class="apply-btn" id="addOpportunityBtn">Add New Opportunity</button>
+                    <button class="check-duplicates-btn" id="checkDuplicatesBtn">
+                        <i class="fas fa-clone"></i> Check All Duplicates
+                    </button>
                 </div>
             </div>
             
@@ -1610,6 +1721,7 @@
                         <th>Type</th>
                         <th>Format</th>
                         <th>Deadline</th>
+                        <th>Added By</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -1624,6 +1736,10 @@
     <div class="admin-modal" id="adminModal">
         <div class="admin-modal-content">
             <h2 id="adminModalTitle">Add New Opportunity</h2>
+            
+            <button class="check-duplicates-btn" id="checkDuplicateBtn">
+                <i class="fas fa-search"></i> Check for Duplicates Before Submitting
+            </button>
             
             <form id="adminOpportunityForm">
                 <input type="hidden" id="opportunityId">
@@ -2074,6 +2190,9 @@
         }
         if (opportunity.language) {
             additionalInfo += `<p><strong>Language:</strong> ${opportunity.language}</p>`;
+        }
+        if (opportunity.addedByName) {
+            additionalInfo += `<p><strong>Added by:</strong> ${opportunity.addedByName}</p>`;
         }
         
         detailsAdditionalInfo.innerHTML = additionalInfo || '<p>No additional information provided.</p>';
@@ -2742,6 +2861,252 @@
         }
     }
 
+    // DUPLICATE DETECTION FUNCTIONS
+    // Fuzzy string matching function
+    function fuzzyMatch(str1, str2, threshold = 0.8) {
+        if (!str1 || !str2) return 0;
+        
+        const longer = str1.length > str2.length ? str1 : str2;
+        const shorter = str1.length > str2.length ? str2 : str1;
+        
+        if (longer.length === 0) return 1.0;
+        
+        // Simple similarity calculation
+        const longerLower = longer.toLowerCase();
+        const shorterLower = shorter.toLowerCase();
+        
+        if (longerLower.includes(shorterLower)) return 1.0;
+        
+        // Simple character matching (for demo - consider using Levenshtein distance)
+        let matches = 0;
+        for (let i = 0; i < shorterLower.length; i++) {
+            if (longerLower.includes(shorterLower[i])) matches++;
+        }
+        
+        return matches / longerLower.length;
+    }
+
+    // Enhanced duplicate check with fuzzy matching
+    async function checkForDuplicateOpportunity(opportunityData) {
+        const opportunitiesRef = ref(database, 'opportunities');
+        const snapshot = await get(opportunitiesRef);
+        
+        if (!snapshot.exists()) return { isDuplicate: false };
+        
+        const opportunities = snapshot.val();
+        const duplicates = [];
+        
+        for (const key in opportunities) {
+            const existingOpp = opportunities[key];
+            let similarityScore = 0;
+            let reason = "";
+            
+            // Title similarity (most important)
+            const titleSimilarity = fuzzyMatch(existingOpp.title, opportunityData.title);
+            
+            // Organization similarity
+            const orgSimilarity = fuzzyMatch(existingOpp.organization, opportunityData.organization);
+            
+            // Check for exact matches first
+            if (existingOpp.applyLink === opportunityData.applyLink) {
+                duplicates.push({
+                    existingOpportunity: existingOpp,
+                    reason: "Exact same application link",
+                    confidence: 100
+                });
+                continue;
+            }
+            
+            // High similarity in both title and organization
+            if (titleSimilarity > 0.9 && orgSimilarity > 0.9) {
+                duplicates.push({
+                    existingOpportunity: existingOpp,
+                    reason: "Very similar title and organization",
+                    confidence: Math.round((titleSimilarity + orgSimilarity) / 2 * 100)
+                });
+            }
+            // High title similarity with same organization
+            else if (titleSimilarity > 0.85 && existingOpp.organization.toLowerCase() === opportunityData.organization.toLowerCase()) {
+                duplicates.push({
+                    existingOpportunity: existingOpp,
+                    reason: "Similar title with same organization",
+                    confidence: Math.round(titleSimilarity * 100)
+                });
+            }
+        }
+        
+        if (duplicates.length > 0) {
+            // Return the highest confidence duplicate
+            const bestMatch = duplicates.reduce((prev, current) => 
+                (prev.confidence > current.confidence) ? prev : current
+            );
+            
+            return {
+                isDuplicate: true,
+                existingOpportunity: bestMatch.existingOpportunity,
+                reason: bestMatch.reason,
+                confidence: bestMatch.confidence,
+                allDuplicates: duplicates
+            };
+        }
+        
+        return { isDuplicate: false };
+    }
+
+    // Show duplicate warning modal
+    function showDuplicateWarning(duplicateCheck, newOpportunity) {
+        // Create a custom modal for duplicate handling
+        const duplicateModal = document.createElement('div');
+        duplicateModal.className = 'duplicate-warning-modal';
+        duplicateModal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        `;
+        
+        duplicateModal.innerHTML = `
+            <div class="duplicate-warning-content">
+                <h3><i class="fas fa-exclamation-triangle"></i> Possible Duplicate Found</h3>
+                <p><strong>Reason:</strong> ${duplicateCheck.reason}</p>
+                <p><strong>Confidence:</strong> ${duplicateCheck.confidence}% match</p>
+                
+                <div class="existing-opportunity-info">
+                    <h4>Existing Opportunity:</h4>
+                    <p><strong>Title:</strong> ${duplicateCheck.existingOpportunity.title}</p>
+                    <p><strong>Organization:</strong> ${duplicateCheck.existingOpportunity.organization}</p>
+                    <p><strong>Deadline:</strong> ${formatDate(duplicateCheck.existingOpportunity.deadline)}</p>
+                    <p><strong>Added by:</strong> ${duplicateCheck.existingOpportunity.addedByName || 'Unknown'}</p>
+                </div>
+                
+                <div class="duplicate-warning-actions">
+                    <button class="cancel-duplicate-btn" id="cancelDuplicate">
+                        Cancel
+                    </button>
+                    <button class="view-existing-btn" id="viewExisting">
+                        View Existing
+                    </button>
+                    <button class="force-add-btn" id="forceAdd">
+                        Add Anyway
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(duplicateModal);
+        
+        // Event listeners for modal buttons
+        document.getElementById('cancelDuplicate').addEventListener('click', () => {
+            document.body.removeChild(duplicateModal);
+        });
+        
+        document.getElementById('viewExisting').addEventListener('click', () => {
+            document.body.removeChild(duplicateModal);
+            // Find and show the existing opportunity
+            const existingOpp = allOpportunities.find(opp => 
+                opp.title === duplicateCheck.existingOpportunity.title &&
+                opp.organization === duplicateCheck.existingOpportunity.organization
+            );
+            if (existingOpp) {
+                closeAdminModal();
+                showOpportunityDetails(existingOpp);
+            }
+        });
+        
+        document.getElementById('forceAdd').addEventListener('click', () => {
+            document.body.removeChild(duplicateModal);
+            saveOpportunityData(null, newOpportunity);
+        });
+    }
+
+    // Save opportunity data to Firebase
+    function saveOpportunityData(opportunityId, opportunityData) {
+        if (opportunityId) {
+            // Update existing
+            update(ref(database, `opportunities/${opportunityId}`), opportunityData)
+                .then(() => {
+                    adminModal.style.display = 'none';
+                    showNotification('Opportunity updated successfully!');
+                })
+                .catch((error) => {
+                    showNotification('Error updating opportunity: ' + error.message, 'error');
+                });
+        } else {
+            // Add new
+            const newOpportunityRef = push(ref(database, 'opportunities'));
+            set(newOpportunityRef, opportunityData)
+                .then(() => {
+                    adminModal.style.display = 'none';
+                    showNotification('Opportunity added successfully!');
+                })
+                .catch((error) => {
+                    showNotification('Error adding opportunity: ' + error.message, 'error');
+                });
+        }
+    }
+
+    // Check all duplicates in the system
+    async function checkAllDuplicates() {
+        showNotification('Scanning for duplicates...', 'warning');
+        
+        const opportunitiesRef = ref(database, 'opportunities');
+        const snapshot = await get(opportunitiesRef);
+        
+        if (!snapshot.exists()) {
+            showNotification('No opportunities found to check.', 'warning');
+            return;
+        }
+        
+        const opportunities = snapshot.val();
+        const opportunityList = Object.values(opportunities);
+        const duplicates = [];
+        
+        // Compare all opportunities with each other
+        for (let i = 0; i < opportunityList.length; i++) {
+            for (let j = i + 1; j < opportunityList.length; j++) {
+                const opp1 = opportunityList[i];
+                const opp2 = opportunityList[j];
+                
+                const titleSimilarity = fuzzyMatch(opp1.title, opp2.title);
+                const orgSimilarity = fuzzyMatch(opp1.organization, opp2.organization);
+                
+                if ((titleSimilarity > 0.9 && orgSimilarity > 0.8) || opp1.applyLink === opp2.applyLink) {
+                    duplicates.push({ 
+                        opp1, 
+                        opp2, 
+                        similarity: Math.round(titleSimilarity * 100),
+                        reason: opp1.applyLink === opp2.applyLink ? "Same application link" : "Similar title and organization"
+                    });
+                }
+            }
+        }
+        
+        if (duplicates.length > 0) {
+            showNotification(`Found ${duplicates.length} potential duplicate pairs`, 'warning');
+            
+            // Create a report
+            let report = `Duplicate Report (${new Date().toLocaleDateString()})\n\n`;
+            report += `Found ${duplicates.length} potential duplicate pairs:\n\n`;
+            
+            duplicates.forEach((dup, index) => {
+                report += `${index + 1}. ${dup.reason} (${dup.similarity}% similarity)\n`;
+                report += `   - "${dup.opp1.title}" by ${dup.opp1.organization}\n`;
+                report += `   - "${dup.opp2.title}" by ${dup.opp2.organization}\n\n`;
+            });
+            
+            // Show the report in an alert (for demo purposes)
+            alert(report);
+        } else {
+            showNotification('No duplicates found in the system!', 'success');
+        }
+    }
+
     // Wait for DOM to be fully loaded before accessing elements
     document.addEventListener('DOMContentLoaded', function() {
         // DOM Elements
@@ -2789,6 +3154,8 @@
         const detailsSaveBtn = document.getElementById('detailsSaveBtn');
         const adminFormat = document.getElementById('adminFormat');
         const locationFieldGroup = document.getElementById('locationFieldGroup');
+        const checkDuplicateBtn = document.getElementById('checkDuplicateBtn');
+        const checkDuplicatesBtn = document.getElementById('checkDuplicatesBtn');
 
         // Event Listeners
         if (loginBtn) loginBtn.addEventListener('click', () => showAuthModal('login'));
@@ -2872,6 +3239,15 @@
         // Format change handler for admin form
         if (adminFormat) {
             adminFormat.addEventListener('change', handleFormatChange);
+        }
+
+        // Duplicate checking buttons
+        if (checkDuplicateBtn) {
+            checkDuplicateBtn.addEventListener('click', handleCheckDuplicate);
+        }
+        
+        if (checkDuplicatesBtn) {
+            checkDuplicatesBtn.addEventListener('click', checkAllDuplicates);
         }
 
         // Close modals when clicking outside
@@ -3119,7 +3495,7 @@
             adminOpportunitiesList.innerHTML = '';
             
             if (allOpportunities.length === 0) {
-                adminOpportunitiesList.innerHTML = '<tr><td colspan="6" style="text-align: center;">No opportunities found</td></tr>';
+                adminOpportunitiesList.innerHTML = '<tr><td colspan="7" style="text-align: center;">No opportunities found</td></tr>';
                 return;
             }
             
@@ -3133,6 +3509,7 @@
                     <td>${getOpportunityTypeText(opp.type)}</td>
                     <td>${getFormatText(opp.format)}</td>
                     <td>${formatDate(opp.deadline)} <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span></td>
+                    <td>${opp.addedByName || 'Unknown'}</td>
                     <td class="admin-actions-cell">
                         <button class="admin-btn edit-btn" data-id="${opp.id}">Edit</button>
                         <button class="admin-btn delete-btn" data-id="${opp.id}">Delete</button>
@@ -3956,36 +4333,27 @@ function handleLogout() {
             adminModal.style.display = 'flex';
         }
 
-        // Handle admin form submission
-        function handleAdminFormSubmit(e) {
-            e.preventDefault();
+        // Handle check duplicate button click
+        async function handleCheckDuplicate() {
+            const opportunityData = gatherFormData();
             
-            // Check if user is admin
-            const user = auth.currentUser;
-            if (!user) {
-                showNotification('Please sign in to access admin features', 'warning');
+            if (!opportunityData.title || !opportunityData.organization) {
+                showNotification('Please fill in at least the title and organization fields', 'warning');
                 return;
             }
             
-            if (!isAdminUser) {
-                showNotification('Access denied. Admin privileges required.', 'error');
-                return;
-            }
+            const duplicateCheck = await checkForDuplicateOpportunity(opportunityData);
             
-            const opportunityId = document.getElementById('opportunityId').value;
-            const title = document.getElementById('adminTitle').value;
-            const organization = document.getElementById('adminOrganization').value;
-            const type = document.getElementById('adminType').value;
-            const field = document.getElementById('adminField').value;
+            if (duplicateCheck.isDuplicate) {
+                showNotification(`Possible duplicate found: ${duplicateCheck.reason} (${duplicateCheck.confidence}% match)`, 'warning');
+            } else {
+                showNotification('No duplicates found. You can safely submit.', 'success');
+            }
+        }
+
+        // Gather form data for duplicate checking
+        function gatherFormData() {
             const format = document.getElementById('adminFormat').value;
-            const description = document.getElementById('adminDescription').value;
-            const deadline = document.getElementById('adminDeadline').value;
-            const applyLink = document.getElementById('adminApplyLink').value;
-            const timeCommitment = document.getElementById('adminTimeCommitment').value;
-            const duration = document.getElementById('adminDuration').value;
-            const language = document.getElementById('adminLanguage').value;
-            
-            // Handle location based on format
             let location = '';
             if (format === 'online') {
                 location = 'Online';
@@ -3993,44 +4361,60 @@ function handleLogout() {
                 location = document.getElementById('adminLocation').value;
             }
             
-            const opportunityData = {
-                title,
-                organization,
-                type,
-                field,
-                format,
-                description,
-                location,
-                deadline,
-                applyLink,
-                timeCommitment,
-                duration,
-                language,
-                createdAt: opportunityId ? allOpportunities.find(opp => opp.id === opportunityId).createdAt : new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+            return {
+                title: document.getElementById('adminTitle').value.trim(),
+                organization: document.getElementById('adminOrganization').value.trim(),
+                type: document.getElementById('adminType').value,
+                field: document.getElementById('adminField').value,
+                format: format,
+                description: document.getElementById('adminDescription').value.trim(),
+                location: location,
+                deadline: document.getElementById('adminDeadline').value,
+                applyLink: document.getElementById('adminApplyLink').value.trim(),
+                timeCommitment: document.getElementById('adminTimeCommitment').value,
+                duration: document.getElementById('adminDuration').value,
+                language: document.getElementById('adminLanguage').value
             };
+        }
+
+        // Handle admin form submission with duplicate checking
+        async function handleAdminFormSubmit(e) {
+            e.preventDefault();
             
-            if (opportunityId) {
-                // Update existing opportunity
-                update(ref(database, `opportunities/${opportunityId}`), opportunityData)
-                    .then(() => {
-                        adminModal.style.display = 'none';
-                        showNotification('Opportunity updated successfully!');
-                    })
-                    .catch((error) => {
-                        showNotification('Error updating opportunity: ' + error.message, 'error');
-                    });
-            } else {
-                // Add new opportunity
-                const newOpportunityRef = push(ref(database, 'opportunities'));
-                set(newOpportunityRef, opportunityData)
-                    .then(() => {
-                        adminModal.style.display = 'none';
-                        showNotification('Opportunity added successfully!');
-                    })
-                    .catch((error) => {
-                        showNotification('Error adding opportunity: ' + error.message, 'error');
-                    });
+            // Check if user is admin
+            const user = auth.currentUser;
+            if (!user || !isAdminUser) {
+                showNotification('Admin privileges required.', 'error');
+                return;
+            }
+            
+            const opportunityId = document.getElementById('opportunityId').value;
+            const opportunityData = gatherFormData();
+            
+            // Add user info to opportunity data
+            opportunityData.addedBy = user.uid;
+            opportunityData.addedByName = user.displayName || user.email;
+            opportunityData.createdAt = opportunityId ? allOpportunities.find(opp => opp.id === opportunityId).createdAt : new Date().toISOString();
+            opportunityData.updatedAt = new Date().toISOString();
+            
+            // Skip duplicate check for edits (unless title/org/link changed significantly)
+            if (!opportunityId) {
+                const duplicateCheck = await checkForDuplicateOpportunity(opportunityData);
+                
+                if (duplicateCheck.isDuplicate) {
+                    showDuplicateWarning(duplicateCheck, opportunityData);
+                    return; // Stop submission
+                }
+            }
+            
+            // Proceed with save/update
+            saveOpportunityData(opportunityId, opportunityData);
+        }
+
+        // Close admin modal
+        function closeAdminModal() {
+            if (adminModal) {
+                adminModal.style.display = 'none';
             }
         }
 
@@ -4073,8 +4457,6 @@ function handleLogout() {
 </script>
 </body>
 </html>
-
-
 
 
 
