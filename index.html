@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -322,6 +323,68 @@
             background-color: var(--light);
         }
         
+        /* Multi-select styles */
+        .multiselect-container {
+            position: relative;
+        }
+        
+        .multiselect-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+        
+        .multiselect-dropdown.show {
+            display: block;
+        }
+        
+        .multiselect-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .multiselect-option:hover {
+            background-color: var(--light);
+        }
+        
+        .multiselect-option input {
+            margin-right: 8px;
+            width: auto;
+        }
+        
+        .multiselect-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .multiselect-tag {
+            background-color: var(--primary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .multiselect-tag i {
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        
         .filter-actions {
             display: flex;
             justify-content: flex-end;
@@ -400,6 +463,31 @@
         .volunteer {
             background-color: #e6f7ed;
             color: #007a41;
+        }
+        
+        .scholarship {
+            background-color: #f0e6ff;
+            color: #6600cc;
+        }
+        
+        .competition {
+            background-color: #fff6e6;
+            color: #cc7700;
+        }
+        
+        .conference {
+            background-color: #e6f7f7;
+            color: #006666;
+        }
+        
+        .fellowship {
+            background-color: #ffe6f2;
+            color: #cc0066;
+        }
+        
+        .workshop {
+            background-color: #f7f7e6;
+            color: #666600;
         }
         
         .format-badge {
@@ -1602,25 +1690,24 @@
             <div class="filter-row">
                 <div class="filter-group">
                     <label for="field">Field of Interest</label>
-                    <select id="field">
-                        <option value="">All Fields</option>
-                        <option value="stem">STEM</option>
-                        <option value="business">Business & Finance</option>
-                        <option value="arts">Arts & Design</option>
-                        <option value="social">Social Sciences</option>
-                        <option value="health">Health & Medicine</option>
-                    </select>
+                    <div class="multiselect-container">
+                        <input type="text" id="fieldInput" placeholder="Select fields..." readonly>
+                        <div class="multiselect-dropdown" id="fieldDropdown">
+                            <!-- Field options will be populated by JavaScript -->
+                        </div>
+                        <div class="multiselect-tags" id="fieldTags"></div>
+                    </div>
                 </div>
                 
                 <div class="filter-group">
                     <label for="type">Opportunity Type</label>
-                    <select id="type">
-                        <option value="">All Types</option>
-                        <option value="internship">Internship</option>
-                        <option value="research">Research</option>
-                        <option value="summer">Summer Program</option>
-                        <option value="volunteer">Volunteer</option>
-                    </select>
+                    <div class="multiselect-container">
+                        <input type="text" id="typeInput" placeholder="Select types..." readonly>
+                        <div class="multiselect-dropdown" id="typeDropdown">
+                            <!-- Type options will be populated by JavaScript -->
+                        </div>
+                        <div class="multiselect-tags" id="typeTags"></div>
+                    </div>
                 </div>
                 
                 <div class="filter-group">
@@ -1754,25 +1841,24 @@
                 
                 <div class="admin-form-group">
                     <label for="adminType">Type *</label>
-                    <select id="adminType" required>
-                        <option value="">Select Type</option>
-                        <option value="internship">Internship</option>
-                        <option value="research">Research</option>
-                        <option value="summer">Summer Program</option>
-                        <option value="volunteer">Volunteer</option>
-                    </select>
+                    <div class="multiselect-container">
+                        <input type="text" id="adminTypeInput" placeholder="Select types..." readonly>
+                        <div class="multiselect-dropdown" id="adminTypeDropdown">
+                            <!-- Type options will be populated by JavaScript -->
+                        </div>
+                        <div class="multiselect-tags" id="adminTypeTags"></div>
+                    </div>
                 </div>
                 
                 <div class="admin-form-group">
                     <label for="adminField">Field *</label>
-                    <select id="adminField" required>
-                        <option value="">Select Field</option>
-                        <option value="stem">STEM</option>
-                        <option value="business">Business & Finance</option>
-                        <option value="arts">Arts & Design</option>
-                        <option value="social">Social Sciences</option>
-                        <option value="health">Health & Medicine</option>
-                    </select>
+                    <div class="multiselect-container">
+                        <input type="text" id="adminFieldInput" placeholder="Select fields..." readonly>
+                        <div class="multiselect-dropdown" id="adminFieldDropdown">
+                            <!-- Field options will be populated by JavaScript -->
+                        </div>
+                        <div class="multiselect-tags" id="adminFieldTags"></div>
+                    </div>
                 </div>
                 
                 <div class="admin-form-group">
@@ -1853,6 +1939,10 @@
                 <div class="details-section">
                     <h3>Type</h3>
                     <p id="detailsType"></p>
+                </div>
+                <div class="details-section">
+                    <h3>Field</h3>
+                    <p id="detailsField"></p>
                 </div>
                 <div class="details-section">
                     <h3>Location</h3>
@@ -2058,15 +2148,60 @@
     let notificationManager = null;
     let currentOpportunityDetails = null;
 
+    // Enhanced field and type options
+    const FIELD_OPTIONS = {
+        'stem': 'STEM',
+        'business': 'Business & Finance',
+        'arts': 'Arts & Design',
+        'social': 'Social Sciences',
+        'health': 'Health & Medicine',
+        'humanities': 'Humanities',
+        'education': 'Education',
+        'law': 'Law & Policy',
+        'engineering': 'Engineering',
+        'environment': 'Environmental Science',
+        'journalism': 'Journalism & Media',
+        'technology': 'Technology & Computer Science',
+        'literature': 'Literature & Writing',
+        'languages': 'Languages & Linguistics',
+        'psychology': 'Psychology',
+        'economics': 'Economics',
+        'mathematics': 'Mathematics',
+        'physics': 'Physics',
+        'chemistry': 'Chemistry',
+        'biology': 'Biology'
+    };
+
+    const TYPE_OPTIONS = {
+        'internship': 'Internship',
+        'research': 'Research',
+        'summer': 'Summer Program',
+        'volunteer': 'Volunteer',
+        'scholarship': 'Scholarship',
+        'competition': 'Competition',
+        'conference': 'Conference',
+        'fellowship': 'Fellowship',
+        'workshop': 'Workshop',
+        'grant': 'Grant',
+        'award': 'Award',
+        'exchange': 'Exchange Program',
+        'mentorship': 'Mentorship Program',
+        'training': 'Training Program'
+    };
+
     // Utility functions (moved to global scope)
     function getOpportunityTypeText(type) {
-        switch(type) {
-            case 'internship': return 'Internship';
-            case 'research': return 'Research';
-            case 'summer': return 'Summer Program';
-            case 'volunteer': return 'Volunteer';
-            default: return type;
+        if (Array.isArray(type)) {
+            return type.map(t => TYPE_OPTIONS[t] || t).join(', ');
         }
+        return TYPE_OPTIONS[type] || type;
+    }
+
+    function getFieldText(field) {
+        if (Array.isArray(field)) {
+            return field.map(f => FIELD_OPTIONS[f] || f).join(', ');
+        }
+        return FIELD_OPTIONS[field] || field;
     }
 
     function getFormatBadge(format) {
@@ -2145,6 +2280,7 @@
         const detailsDescription = document.getElementById('detailsDescription');
         const detailsOrganization = document.getElementById('detailsOrganization');
         const detailsType = document.getElementById('detailsType');
+        const detailsField = document.getElementById('detailsField');
         const detailsLocation = document.getElementById('detailsLocation');
         const detailsDeadline = document.getElementById('detailsDeadline');
         const detailsAdditionalInfo = document.getElementById('detailsAdditionalInfo');
@@ -2158,6 +2294,7 @@
         detailsDescription.textContent = opportunity.description;
         detailsOrganization.textContent = opportunity.organization;
         detailsType.textContent = getOpportunityTypeText(opportunity.type);
+        detailsField.textContent = getFieldText(opportunity.field);
         
         // Set location based on format
         if (opportunity.format === 'online') {
@@ -2907,6 +3044,150 @@
         }
     }
 
+    // Multi-Select Functionality
+    class MultiSelect {
+        constructor(inputId, dropdownId, tagsId, options) {
+            this.input = document.getElementById(inputId);
+            this.dropdown = document.getElementById(dropdownId);
+            this.tags = document.getElementById(tagsId);
+            this.options = options;
+            this.selected = [];
+            this.init();
+        }
+
+        init() {
+            // Populate dropdown with options
+            this.populateDropdown();
+
+            // Add event listeners
+            this.input.addEventListener('click', () => {
+                this.toggleDropdown();
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!this.input.contains(e.target) && !this.dropdown.contains(e.target)) {
+                    this.hideDropdown();
+                }
+            });
+
+            // Update input placeholder based on selection
+            this.updateInputPlaceholder();
+        }
+
+        populateDropdown() {
+            this.dropdown.innerHTML = '';
+            
+            for (const [key, value] of Object.entries(this.options)) {
+                const option = document.createElement('div');
+                option.className = 'multiselect-option';
+                option.innerHTML = `
+                    <input type="checkbox" id="${key}" value="${key}">
+                    <label for="${key}">${value}</label>
+                `;
+                
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const checkbox = option.querySelector('input');
+                    checkbox.checked = !checkbox.checked;
+                    
+                    if (checkbox.checked) {
+                        this.selectOption(key, value);
+                    } else {
+                        this.deselectOption(key);
+                    }
+                });
+                
+                this.dropdown.appendChild(option);
+            }
+        }
+
+        selectOption(key, value) {
+            if (!this.selected.includes(key)) {
+                this.selected.push(key);
+                this.renderTags();
+                this.updateInputPlaceholder();
+            }
+        }
+
+        deselectOption(key) {
+            this.selected = this.selected.filter(item => item !== key);
+            this.renderTags();
+            this.updateInputPlaceholder();
+        }
+
+        renderTags() {
+            this.tags.innerHTML = '';
+            
+            this.selected.forEach(key => {
+                const tag = document.createElement('div');
+                tag.className = 'multiselect-tag';
+                tag.innerHTML = `
+                    ${this.options[key]}
+                    <i class="fas fa-times" data-value="${key}"></i>
+                `;
+                
+                tag.querySelector('i').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.deselectOption(key);
+                });
+                
+                this.tags.appendChild(tag);
+            });
+        }
+
+        updateInputPlaceholder() {
+            if (this.selected.length === 0) {
+                this.input.placeholder = 'Select options...';
+            } else {
+                this.input.placeholder = `${this.selected.length} selected`;
+            }
+        }
+
+        toggleDropdown() {
+            this.dropdown.classList.toggle('show');
+        }
+
+        hideDropdown() {
+            this.dropdown.classList.remove('show');
+        }
+
+        getSelected() {
+            return this.selected;
+        }
+
+        setSelected(values) {
+            if (Array.isArray(values)) {
+                this.selected = values;
+            } else {
+                this.selected = values ? [values] : [];
+            }
+            this.renderTags();
+            this.updateInputPlaceholder();
+            
+            // Update checkboxes in dropdown
+            const checkboxes = this.dropdown.querySelectorAll('input');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.selected.includes(checkbox.value);
+            });
+        }
+
+        clear() {
+            this.selected = [];
+            this.renderTags();
+            this.updateInputPlaceholder();
+            
+            // Uncheck all checkboxes
+            const checkboxes = this.dropdown.querySelectorAll('input');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+    }
+
+    // Initialize multi-select components
+    let fieldMultiSelect, typeMultiSelect, adminFieldMultiSelect, adminTypeMultiSelect;
+
     // DUPLICATE DETECTION FUNCTIONS
     function fuzzyMatch(str1, str2, threshold = 0.8) {
         if (!str1 || !str2) return 0;
@@ -3230,6 +3511,12 @@
         const footerDashboard = document.querySelector('.footer-dashboard');
         const footerResources = document.querySelectorAll('.footer-resources');
 
+        // Initialize multi-select components
+        fieldMultiSelect = new MultiSelect('fieldInput', 'fieldDropdown', 'fieldTags', FIELD_OPTIONS);
+        typeMultiSelect = new MultiSelect('typeInput', 'typeDropdown', 'typeTags', TYPE_OPTIONS);
+        adminFieldMultiSelect = new MultiSelect('adminFieldInput', 'adminFieldDropdown', 'adminFieldTags', FIELD_OPTIONS);
+        adminTypeMultiSelect = new MultiSelect('adminTypeInput', 'adminTypeDropdown', 'adminTypeTags', TYPE_OPTIONS);
+
         // Event Listeners
         if (loginBtn) loginBtn.addEventListener('click', () => showAuthModal('login'));
         if (signupBtn) signupBtn.addEventListener('click', () => showAuthModal('signup'));
@@ -3508,11 +3795,14 @@
                 const isUrgent = isDeadlineUrgent(opp.deadline);
                 const timeRemaining = calculateTimeRemaining(opp.deadline);
                 
+                // Get the first type for styling
+                const firstType = Array.isArray(opp.type) ? opp.type[0] : opp.type;
+                
                 const opportunityCard = document.createElement('div');
                 opportunityCard.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
                 opportunityCard.innerHTML = `
                     <div class="card-header">
-                        <span class="opportunity-type ${opp.type}">${getOpportunityTypeText(opp.type)}</span>
+                        <span class="opportunity-type ${firstType}">${getOpportunityTypeText(opp.type)}</span>
                         ${getFormatBadge(opp.format)}
                         <h3>${opp.title}</h3>
                         <p class="organization">${opp.organization}</p>
@@ -4095,11 +4385,14 @@
             const isUrgent = isDeadlineUrgent(opportunity.deadline);
             const timeRemaining = calculateTimeRemaining(opportunity.deadline);
             
+            // Get the first type for styling
+            const firstType = Array.isArray(opportunity.type) ? opportunity.type[0] : opportunity.type;
+            
             const element = document.createElement('div');
             element.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
             element.innerHTML = `
                 <div class="card-header">
-                    <span class="opportunity-type ${opportunity.type}">${getOpportunityTypeText(opportunity.type)}</span>
+                    <span class="opportunity-type ${firstType}">${getOpportunityTypeText(opportunity.type)}</span>
                     ${getFormatBadge(opportunity.format)}
                     <h3>${opportunity.title}</h3>
                     <p class="organization">${opportunity.organization}</p>
@@ -4175,19 +4468,27 @@
 
         // Apply filters
         function applyFilters() {
-            const fieldFilter = document.getElementById('field').value;
-            const typeFilter = document.getElementById('type').value;
+            const selectedFields = fieldMultiSelect.getSelected();
+            const selectedTypes = typeMultiSelect.getSelected();
             const formatFilter = document.getElementById('format').value;
             const deadlineFilter = document.getElementById('deadline').value;
             const languageFilter = document.getElementById('language').value;
             const searchTerm = searchInput.value.toLowerCase();
             
             filteredOpportunities = allOpportunities.filter(opp => {
-                // Field filter
-                if (fieldFilter && opp.field !== fieldFilter) return false;
+                // Field filter - check if any selected field matches any of the opportunity's fields
+                if (selectedFields.length > 0) {
+                    const oppFields = Array.isArray(opp.field) ? opp.field : [opp.field];
+                    const hasMatchingField = selectedFields.some(field => oppFields.includes(field));
+                    if (!hasMatchingField) return false;
+                }
                 
-                // Type filter
-                if (typeFilter && opp.type !== typeFilter) return false;
+                // Type filter - check if any selected type matches any of the opportunity's types
+                if (selectedTypes.length > 0) {
+                    const oppTypes = Array.isArray(opp.type) ? opp.type : [opp.type];
+                    const hasMatchingType = selectedTypes.some(type => oppTypes.includes(type));
+                    if (!hasMatchingType) return false;
+                }
                 
                 // Format filter
                 if (formatFilter && opp.format !== formatFilter) return false;
@@ -4200,7 +4501,9 @@
                     (opp.title && opp.title.toLowerCase().includes(searchTerm)) ||
                     (opp.organization && opp.organization.toLowerCase().includes(searchTerm)) ||
                     (opp.description && opp.description.toLowerCase().includes(searchTerm)) ||
-                    (opp.field && opp.field.toLowerCase().includes(searchTerm))
+                    (opp.field && (Array.isArray(opp.field) ? 
+                        opp.field.some(f => FIELD_OPTIONS[f] && FIELD_OPTIONS[f].toLowerCase().includes(searchTerm)) : 
+                        FIELD_OPTIONS[opp.field] && FIELD_OPTIONS[opp.field].toLowerCase().includes(searchTerm)))
                 )) return false;
                 
                 // Deadline filter - check if deadline is within specified timeframe
@@ -4233,8 +4536,8 @@
 
         // Reset filters
         function resetFilters() {
-            document.getElementById('field').value = '';
-            document.getElementById('type').value = '';
+            fieldMultiSelect.clear();
+            typeMultiSelect.clear();
             document.getElementById('format').value = '';
             document.getElementById('deadline').value = '';
             document.getElementById('language').value = '';
@@ -4369,8 +4672,8 @@
                 document.getElementById('opportunityId').value = opportunity.id;
                 document.getElementById('adminTitle').value = opportunity.title;
                 document.getElementById('adminOrganization').value = opportunity.organization;
-                document.getElementById('adminType').value = opportunity.type;
-                document.getElementById('adminField').value = opportunity.field;
+                adminTypeMultiSelect.setSelected(opportunity.type);
+                adminFieldMultiSelect.setSelected(opportunity.field);
                 document.getElementById('adminFormat').value = opportunity.format;
                 document.getElementById('adminDescription').value = opportunity.description;
                 document.getElementById('adminLocation').value = opportunity.location;
@@ -4387,6 +4690,8 @@
                 adminModalTitle.textContent = 'Add New Opportunity';
                 adminOpportunityForm.reset();
                 document.getElementById('opportunityId').value = '';
+                adminTypeMultiSelect.clear();
+                adminFieldMultiSelect.clear();
                 
                 // Set default format to show location field
                 handleFormatChange();
@@ -4426,8 +4731,8 @@
             return {
                 title: document.getElementById('adminTitle').value.trim(),
                 organization: document.getElementById('adminOrganization').value.trim(),
-                type: document.getElementById('adminType').value,
-                field: document.getElementById('adminField').value,
+                type: adminTypeMultiSelect.getSelected(),
+                field: adminFieldMultiSelect.getSelected(),
                 format: format,
                 description: document.getElementById('adminDescription').value.trim(),
                 location: location,
@@ -4521,6 +4826,3 @@
 </script>
 </body>
 </html>
-
-
-
