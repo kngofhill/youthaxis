@@ -2364,24 +2364,27 @@ function formatDate(dateString) {
         detailsApplyLink.href = opportunity.applyLink || '#';
         
         // Build additional info section
-        let additionalInfo = '';
-        if (opportunity.format) {
-            additionalInfo += `<p><strong>Format:</strong> ${getFormatText(opportunity.format)}</p>`;
-        }
-        if (opportunity.timeCommitment) {
-            additionalInfo += `<p><strong>Time Commitment:</strong> ${opportunity.timeCommitment}</p>`;
-        }
-        if (opportunity.duration) {
-            additionalInfo += `<p><strong>Duration:</strong> ${opportunity.duration}</p>`;
-        }
-        if (opportunity.language) {
-            additionalInfo += `<p><strong>Language:</strong> ${opportunity.language}</p>`;
-        }
-        if (opportunity.addedByName) {
-            additionalInfo += `<p><strong>Added by:</strong> ${opportunity.addedByName}</p>`;
-        }
-        
-        detailsAdditionalInfo.innerHTML = additionalInfo || '<p>No additional information provided.</p>';
+let additionalInfo = '';
+if (opportunity.format) {
+    additionalInfo += `<p><strong>Format:</strong> ${getFormatText(opportunity.format)}</p>`;
+}
+if (opportunity.timeCommitment) {
+    additionalInfo += `<p><strong>Time Commitment:</strong> ${opportunity.timeCommitment}</p>`;
+}
+if (opportunity.duration) {
+    additionalInfo += `<p><strong>Duration:</strong> ${opportunity.duration}</p>`;
+}
+if (opportunity.language) {
+    additionalInfo += `<p><strong>Language:</strong> ${opportunity.language}</p>`;
+}
+if (opportunity.ageRestrictions) { // Add this block
+    additionalInfo += `<p><strong>Age Restrictions:</strong> ${opportunity.ageRestrictions}</p>`;
+}
+if (opportunity.addedByName) {
+    additionalInfo += `<p><strong>Added by:</strong> ${opportunity.addedByName}</p>`;
+}
+document.getElementById('detailsAgeRestrictions').textContent = opportunity.ageRestrictions || 'No age restrictions specified';
+detailsAdditionalInfo.innerHTML = additionalInfo || '<p>No additional information provided.</p>';
         
         // Check if opportunity is already saved
         const isSaved = userOpportunities.pending.some(item => item.id === opportunity.id) || 
