@@ -4823,20 +4823,21 @@ function formatDate(dateString) {
                 location = document.getElementById('adminLocation').value;
             }
             
-            return {
-                title: document.getElementById('adminTitle').value.trim(),
-                organization: document.getElementById('adminOrganization').value.trim(),
-                type: adminTypeMultiSelect.getSelected(),
-                field: adminFieldMultiSelect.getSelected(),
-                format: format,
-                description: document.getElementById('adminDescription').value.trim(),
-                location: location,
-                deadline: document.getElementById('adminDeadline').value,
-                applyLink: document.getElementById('adminApplyLink').value.trim(),
-                timeCommitment: document.getElementById('adminTimeCommitment').value,
-                duration: document.getElementById('adminDuration').value,
-                language: document.getElementById('adminLanguage').value
-            };
+return {
+    title: document.getElementById('adminTitle').value.trim(),
+    organization: document.getElementById('adminOrganization').value.trim(),
+    type: adminTypeMultiSelect.getSelected(),
+    field: adminFieldMultiSelect.getSelected(),
+    format: format,
+    description: document.getElementById('adminDescription').value.trim(),
+    location: location,
+    deadline: document.getElementById('adminDeadline').value,
+    applyLink: document.getElementById('adminApplyLink').value.trim(),
+    timeCommitment: document.getElementById('adminTimeCommitment').value,
+    duration: document.getElementById('adminDuration').value,
+    language: document.getElementById('adminLanguage').value,
+    ageRestrictions: document.getElementById('adminAgeRestrictions').value // Add this line
+};
         }
 
         // Handle admin form submission with duplicate checking
