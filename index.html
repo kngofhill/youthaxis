@@ -1573,6 +1573,38 @@
         .check-duplicates-btn:hover {
             background: #e0a800;
         }
+        
+        /* No results message */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+            font-size: 1.1rem;
+            grid-column: 1 / -1;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--gray);
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .divider::before {
+            margin-right: 10px;
+        }
+        
+        .divider::after {
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -2126,8 +2158,9 @@
     let currentOpportunityDetails = null;
     let lastScrollPosition = 0;
 
-    // Enhanced field and type options
+    // Enhanced field and type options - FIXED: Added "any" field option
     const FIELD_OPTIONS = {
+        'any': 'Any Field', // Added this line to fix the issue
         'stem': 'STEM',
         'business': 'Business & Finance',
         'arts': 'Arts & Design',
@@ -2148,7 +2181,6 @@
         'physics': 'Physics',
         'chemistry': 'Chemistry',
         'biology': 'Biology'
-       
     };
 
     const TYPE_OPTIONS = {
@@ -2168,8 +2200,10 @@
         'training': 'Training Program'
     };
 
-    // Utility functions (moved to global scope)
+    // Utility functions
     function getOpportunityTypeText(type) {
+        if (!type) return 'Not specified';
+        
         if (Array.isArray(type)) {
             return type.map(t => TYPE_OPTIONS[t] || t).join(', ');
         }
@@ -2177,9 +2211,21 @@
     }
 
     function getFieldText(field) {
+        if (!field) return 'Any Field';
+        
         if (Array.isArray(field)) {
+            // If array contains "any", show "Any Field"
+            if (field.includes('any')) {
+                return 'Any Field';
+            }
             return field.map(f => FIELD_OPTIONS[f] || f).join(', ');
         }
+        
+        // If single field is "any", show "Any Field"
+        if (field === 'any') {
+            return 'Any Field';
+        }
+        
         return FIELD_OPTIONS[field] || field;
     }
 
@@ -2197,60 +2243,84 @@
             case 'online': return 'Online';
             case 'onsite': return 'On-site';
             case 'hybrid': return 'Hybrid';
-            default: return format;
+            default: return format || 'Not specified';
         }
     }
 
     function formatDate(dateString) {
-        const options = { year: 'numeric', month: 'short', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        if (!dateString) return 'No deadline';
+        
+        try {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        } catch (e) {
+            return 'Invalid date';
+        }
     }
 
     function calculateTimeRemaining(deadline) {
-        const now = new Date();
-        const deadlineDate = new Date(deadline);
-        const diffTime = deadlineDate - now;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (!deadline) return { text: 'No deadline', class: 'normal' };
         
-        if (diffDays < 0) {
-            return { text: 'Expired', class: 'expired' };
-        } else if (diffDays === 0) {
-            return { text: 'Today', class: 'urgent' };
-        } else if (diffDays === 1) {
-            return { text: '1 day', class: 'urgent' };
-        } else if (diffDays < 7) {
-            return { text: `${diffDays} days`, class: 'urgent' };
-        } else if (diffDays < 30) {
-            const weeks = Math.floor(diffDays / 7);
-            const days = diffDays % 7;
-            let text = `${weeks} week${weeks > 1 ? 's' : ''}`;
-            if (days > 0) {
-                text += `, ${days} day${days > 1 ? 's' : ''}`;
+        try {
+            const now = new Date();
+            const deadlineDate = new Date(deadline);
+            const diffTime = deadlineDate - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) {
+                return { text: 'Expired', class: 'expired' };
+            } else if (diffDays === 0) {
+                return { text: 'Today', class: 'urgent' };
+            } else if (diffDays === 1) {
+                return { text: '1 day', class: 'urgent' };
+            } else if (diffDays < 7) {
+                return { text: `${diffDays} days`, class: 'urgent' };
+            } else if (diffDays < 30) {
+                const weeks = Math.floor(diffDays / 7);
+                const days = diffDays % 7;
+                let text = `${weeks} week${weeks > 1 ? 's' : ''}`;
+                if (days > 0) {
+                    text += `, ${days} day${days > 1 ? 's' : ''}`;
+                }
+                return { text, class: 'warning' };
+            } else {
+                const months = Math.floor(diffDays / 30);
+                const days = diffDays % 30;
+                let text = `${months} month${months > 1 ? 's' : ''}`;
+                if (days > 0) {
+                    text += `, ${days} day${days > 1 ? 's' : ''}`;
+                }
+                return { text, class: 'normal' };
             }
-            return { text, class: 'warning' };
-        } else {
-            const months = Math.floor(diffDays / 30);
-            const days = diffDays % 30;
-            let text = `${months} month${months > 1 ? 's' : ''}`;
-            if (days > 0) {
-                text += `, ${days} day${days > 1 ? 's' : ''}`;
-            }
-            return { text, class: 'normal' };
+        } catch (e) {
+            return { text: 'Invalid date', class: 'normal' };
         }
     }
 
     function isOpportunityExpired(deadline) {
-        const today = new Date();
-        const deadlineDate = new Date(deadline);
-        return deadlineDate < today;
+        if (!deadline) return false;
+        
+        try {
+            const today = new Date();
+            const deadlineDate = new Date(deadline);
+            return deadlineDate < today;
+        } catch (e) {
+            return false;
+        }
     }
 
     function isDeadlineUrgent(deadline) {
-        const today = new Date();
-        const deadlineDate = new Date(deadline);
-        const diffTime = deadlineDate - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays <= 7 && diffDays >= 0;
+        if (!deadline) return false;
+        
+        try {
+            const today = new Date();
+            const deadlineDate = new Date(deadline);
+            const diffTime = deadlineDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays <= 7 && diffDays >= 0;
+        } catch (e) {
+            return false;
+        }
     }
 
     function showOpportunityDetails(opportunity) {
@@ -2268,10 +2338,10 @@
         
         if (!detailsModal) return;
         
-        // Set opportunity details
-        detailsTitle.textContent = opportunity.title;
-        detailsDescription.textContent = opportunity.description;
-        detailsOrganization.textContent = opportunity.organization;
+        // Set opportunity details with fallbacks for missing data
+        detailsTitle.textContent = opportunity.title || 'No title';
+        detailsDescription.textContent = opportunity.description || 'No description available';
+        detailsOrganization.textContent = opportunity.organization || 'Unknown organization';
         detailsType.textContent = getOpportunityTypeText(opportunity.type);
         detailsField.textContent = getFieldText(opportunity.field);
         
@@ -2283,7 +2353,7 @@
         }
         
         detailsDeadline.textContent = formatDate(opportunity.deadline);
-        detailsApplyLink.href = opportunity.applyLink;
+        detailsApplyLink.href = opportunity.applyLink || '#';
         
         // Build additional info section
         let additionalInfo = '';
@@ -2332,7 +2402,7 @@
         }
     }
 
-    // Global notification function - FIXED VERSION
+    // Global notification function
     function showNotification(message, type = 'success') {
         // First try to use the notification manager if available
         if (notificationManager && notificationManager.addNotification) {
@@ -2358,7 +2428,7 @@
         showPopupNotification(message, type);
     }
 
-    // Show popup notification (fixed version)
+    // Show popup notification
     function showPopupNotification(message, type = 'success') {
         const notification = document.getElementById('notification');
         if (!notification) return;
@@ -3644,7 +3714,7 @@
             lastScrollPosition = currentScrollPosition;
         });
 
-        // Check auth state - FIXED VERSION
+        // Check auth state
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 // User is signed in
@@ -3681,7 +3751,7 @@
                 // Load user's saved opportunities
                 loadUserOpportunities(user.uid);
                 
-                // Always show home page when logging in - FIXED
+                // Always show home page when logging in
                 setTimeout(() => {
                     showHome();
                     renderOpportunities(); // Ensure opportunities are rendered
@@ -3723,7 +3793,7 @@
                 if (dashboard) dashboard.style.display = 'none';
                 if (adminPanel) adminPanel.style.display = 'none';
                 
-                // Always show home page when logging out - FIXED
+                // Always show home page when logging out
                 setTimeout(() => {
                     showHome();
                     renderOpportunities(); // Ensure opportunities are rendered
@@ -3761,6 +3831,13 @@
                             ...data[key]
                         });
                     }
+                    
+                    // Fix for existing opportunities without fields - set them to 'any'
+                    allOpportunities.forEach(opp => {
+                        if (!opp.field || (Array.isArray(opp.field) && opp.field.length === 0)) {
+                            opp.field = ['any'];
+                        }
+                    });
                 }
                 
                 // Apply current filters and render opportunities
@@ -3773,7 +3850,7 @@
             });
         }
 
-        // Render opportunities to the grid
+        // Render opportunities to the grid - FIXED: Handles "any" field properly
         function renderOpportunities() {
             if (!opportunitiesGrid) return;
             
@@ -3803,8 +3880,8 @@
                         <span class="opportunity-badge type-badge">${getOpportunityTypeText(opp.type)}</span>
                         <span class="opportunity-badge field-badge">${getFieldText(opp.field)}</span>
                         ${getFormatBadge(opp.format)}
-                        <h3>${opp.title}</h3>
-                        <p class="organization">${opp.organization}</p>
+                        <h3>${opp.title || 'Untitled Opportunity'}</h3>
+                        <p class="organization">${opp.organization || 'Unknown Organization'}</p>
                     </div>
                     
                     <div class="card-body">
@@ -3814,7 +3891,7 @@
                                 <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
                             </span>
                         </div>
-                        <p>${opp.description.substring(0, 150)}${opp.description.length > 150 ? '...' : ''}</p>
+                        <p>${(opp.description || 'No description available').substring(0, 150)}${opp.description && opp.description.length > 150 ? '...' : ''}</p>
                     </div>
                     
                     <div class="card-footer">
@@ -3826,7 +3903,7 @@
                             </div>
                             <div class="right-actions">
                                 <button class="details-btn" data-id="${opp.id}">View Details</button>
-                                <a href="${opp.applyLink}" target="_blank" class="apply-link">Apply Now</a>
+                                <a href="${opp.applyLink || '#'}" target="_blank" class="apply-link">Apply Now</a>
                             </div>
                         </div>
                     </div>
@@ -3893,8 +3970,8 @@
                 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${opp.title}</td>
-                    <td>${opp.organization}</td>
+                    <td>${opp.title || 'Untitled'}</td>
+                    <td>${opp.organization || 'Unknown'}</td>
                     <td>${getOpportunityTypeText(opp.type)}</td>
                     <td>${getFormatText(opp.format)}</td>
                     <td>${formatDate(opp.deadline)} <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span></td>
@@ -4391,8 +4468,8 @@
                     <span class="opportunity-badge type-badge">${getOpportunityTypeText(opportunity.type)}</span>
                     <span class="opportunity-badge field-badge">${getFieldText(opportunity.field)}</span>
                     ${getFormatBadge(opportunity.format)}
-                    <h3>${opportunity.title}</h3>
-                    <p class="organization">${opportunity.organization}</p>
+                    <h3>${opportunity.title || 'Untitled Opportunity'}</h3>
+                    <p class="organization">${opportunity.organization || 'Unknown Organization'}</p>
                 </div>
                 
                 <div class="card-body">
@@ -4402,7 +4479,7 @@
                             <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
                         </span>
                     </div>
-                    <p>${opportunity.description}</p>
+                    <p>${opportunity.description || 'No description available'}</p>
                 </div>
                 
                 <div class="card-footer">
@@ -4414,7 +4491,7 @@
                         </div>
                         <div class="right-actions">
                             <button class="details-btn" data-id="${opportunity.id}">View Details</button>
-                            <a href="${opportunity.applyLink}" target="_blank" class="apply-link">Apply Now</a>
+                            <a href="${opportunity.applyLink || '#'}" target="_blank" class="apply-link">Apply Now</a>
                             ${status === 'pending' ? 
                             `<button class="apply-link complete-btn" data-id="${opportunity.id}">Mark as Complete</button>` : 
                             `<span class="completed-badge">Completed</span>`}
@@ -4463,7 +4540,7 @@
             .catch((error) => console.error('Error updating opportunity:', error));
         }
 
-        // Apply filters
+        // Apply filters - FIXED: Handles "any" field properly
         function applyFilters() {
             const selectedFields = fieldMultiSelect.getSelected();
             const selectedTypes = typeMultiSelect.getSelected();
@@ -4473,17 +4550,24 @@
             const searchTerm = searchInput.value.toLowerCase();
             
             filteredOpportunities = allOpportunities.filter(opp => {
-                // Field filter - check if any selected field matches any of the opportunity's fields
+                // Field filter - FIXED: Check if any selected field matches any of the opportunity's fields
                 if (selectedFields.length > 0) {
                     const oppFields = Array.isArray(opp.field) ? opp.field : [opp.field];
-                    const hasMatchingField = selectedFields.some(field => oppFields.includes(field));
-                    if (!hasMatchingField) return false;
+                    
+                    // If opportunity has "any" field, it should match all field filters
+                    const hasAnyField = oppFields.includes('any');
+                    
+                    // If it doesn't have "any" field, check for matching fields
+                    const hasMatchingField = oppFields.some(field => selectedFields.includes(field));
+                    
+                    // Show opportunity if it has "any" field OR has a matching field
+                    if (!hasAnyField && !hasMatchingField) return false;
                 }
                 
                 // Type filter - check if any selected type matches any of the opportunity's types
                 if (selectedTypes.length > 0) {
                     const oppTypes = Array.isArray(opp.type) ? opp.type : [opp.type];
-                    const hasMatchingType = selectedTypes.some(type => oppTypes.includes(type));
+                    const hasMatchingType = oppTypes.some(type => selectedTypes.includes(type));
                     if (!hasMatchingType) return false;
                 }
                 
@@ -4499,8 +4583,14 @@
                     (opp.organization && opp.organization.toLowerCase().includes(searchTerm)) ||
                     (opp.description && opp.description.toLowerCase().includes(searchTerm)) ||
                     (opp.field && (Array.isArray(opp.field) ? 
-                        opp.field.some(f => FIELD_OPTIONS[f] && FIELD_OPTIONS[f].toLowerCase().includes(searchTerm)) : 
-                        FIELD_OPTIONS[opp.field] && FIELD_OPTIONS[opp.field].toLowerCase().includes(searchTerm)))
+                        opp.field.some(f => {
+                            // Include "Any Field" in search results for any search term
+                            if (f === 'any') return true;
+                            return FIELD_OPTIONS[f] && FIELD_OPTIONS[f].toLowerCase().includes(searchTerm);
+                        }) : 
+                        // For single field, include if it's "any" or matches the search
+                        (opp.field === 'any' || (FIELD_OPTIONS[opp.field] && FIELD_OPTIONS[opp.field].toLowerCase().includes(searchTerm)))
+                    ))
                 )) return false;
                 
                 // Deadline filter - check if deadline is within specified timeframe
@@ -4647,7 +4737,7 @@
             }
         }
 
-        // Show admin modal for adding/editing opportunities
+        // Show admin modal for adding/editing opportunities - FIXED: Default to "any" field
         function showAdminModal(opportunity = null) {
             if (!adminModal) return;
             
@@ -4683,12 +4773,12 @@
                 // Handle format-specific UI
                 handleFormatChange();
             } else {
-                // Adding new opportunity
+                // Adding new opportunity - FIXED: Default to "any" field
                 adminModalTitle.textContent = 'Add New Opportunity';
                 adminOpportunityForm.reset();
                 document.getElementById('opportunityId').value = '';
                 adminTypeMultiSelect.clear();
-                adminFieldMultiSelect.clear();
+                adminFieldMultiSelect.setSelected(['any']); // Default to "any" field
                 
                 // Set default format to show location field
                 handleFormatChange();
