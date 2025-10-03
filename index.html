@@ -2247,16 +2247,16 @@
         }
     }
 
-    function formatDate(dateString) {
-        if (!dateString) return 'No deadline';
-        
-        try {
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString(undefined, options);
-        } catch (e) {
-            return 'Invalid date';
-        }
+function formatDate(dateString) {
+    if (!dateString) return 'No deadline';
+    
+    try {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('en-US', options);
+    } catch (e) {
+        return 'Invalid date';
     }
+}
 
     function calculateTimeRemaining(deadline) {
         if (!deadline) return { text: 'No deadline', class: 'normal' };
