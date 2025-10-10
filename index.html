@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpportunityHub - Find Your Next Challenge</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="manifest" href="site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
     <style>
         :root {
             --primary: #4361ee;
@@ -1699,69 +1699,70 @@
     <!-- Main Content -->
     <main class="container">
         <!-- Filters -->
-        <section class="filters" id="filtersSection">
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="field">Field of Interest</label>
-                    <div class="multiselect-container">
-                        <input type="text" id="fieldInput" placeholder="Select fields..." readonly>
-                        <div class="multiselect-dropdown" id="fieldDropdown">
-                            <!-- Field options will be populated by JavaScript -->
-                        </div>
-                        <div class="multiselect-tags" id="fieldTags"></div>
-                    </div>
+      <!-- Filters Section - FIXED LABELS -->
+<section class="filters" id="filtersSection">
+    <div class="filter-row">
+        <div class="filter-group">
+            <label for="fieldInput">Field of Interest</label> <!-- FIXED: for="fieldInput" -->
+            <div class="multiselect-container">
+                <input type="text" id="fieldInput" placeholder="Select fields..." readonly>
+                <div class="multiselect-dropdown" id="fieldDropdown">
+                    <!-- Field options will be populated by JavaScript -->
                 </div>
-                
-                <div class="filter-group">
-                    <label for="type">Opportunity Type</label>
-                    <div class="multiselect-container">
-                        <input type="text" id="typeInput" placeholder="Select types..." readonly>
-                        <div class="multiselect-dropdown" id="typeDropdown">
-                            <!-- Type options will be populated by JavaScript -->
-                        </div>
-                        <div class="multiselect-tags" id="typeTags"></div>
-                    </div>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="format">Format</label>
-                    <select id="format">
-                        <option value="">All Formats</option>
-                        <option value="online">Online</option>
-                        <option value="onsite">On-site</option>
-                        <option value="hybrid">Hybrid</option>
-                    </select>
-                </div>
+                <div class="multiselect-tags" id="fieldTags"></div>
             </div>
-            
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label for="deadline">Deadline Within</label>
-                    <select id="deadline">
-                        <option value="">Any Time</option>
-                        <option value="week">1 Week</option>
-                        <option value="month">1 Month</option>
-                        <option value="3months">3 Months</option>
-                    </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="typeInput">Opportunity Type</label> <!-- FIXED: for="typeInput" -->
+            <div class="multiselect-container">
+                <input type="text" id="typeInput" placeholder="Select types..." readonly>
+                <div class="multiselect-dropdown" id="typeDropdown">
+                    <!-- Type options will be populated by JavaScript -->
                 </div>
-                
-                <div class="filter-group">
-                    <label for="language">Language</label>
-                    <select id="language">
-                        <option value="">Any Language</option>
-                        <option value="english">English</option>
-                        <option value="russian">Russian</option>
-                        <option value="uzbek">Uzbek</option>
-                        <option value="english-russian">English/Russian</option>
-                    </select>
-                </div>
+                <div class="multiselect-tags" id="typeTags"></div>
             </div>
-            
-            <div class="filter-actions">
-                <button class="reset-btn" id="resetFilters">Reset Filters</button>
-                <button class="apply-btn" id="applyFilters">Apply Filters</button>
-            </div>
-        </section>
+        </div>
+        
+        <div class="filter-group">
+            <label for="format">Format</label>
+            <select id="format">
+                <option value="">All Formats</option>
+                <option value="online">Online</option>
+                <option value="onsite">On-site</option>
+                <option value="hybrid">Hybrid</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="filter-row">
+        <div class="filter-group">
+            <label for="deadline">Deadline Within</label>
+            <select id="deadline">
+                <option value="">Any Time</option>
+                <option value="week">1 Week</option>
+                <option value="month">1 Month</option>
+                <option value="3months">3 Months</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label for="language">Language</label>
+            <select id="language">
+                <option value="">Any Language</option>
+                <option value="english">English</option>
+                <option value="russian">Russian</option>
+                <option value="uzbek">Uzbek</option>
+                <option value="english-russian">English/Russian</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="filter-actions">
+        <button class="reset-btn" id="resetFilters">Reset Filters</button>
+        <button class="apply-btn" id="applyFilters">Apply Filters</button>
+    </div>
+</section>
         
         <!-- Opportunities Grid -->
         <h2 id="opportunitiesTitle">Featured Opportunities</h2>
@@ -1853,7 +1854,7 @@
                 </div>
                 
                 <div class="admin-form-group">
-                    <label for="adminType">Type *</label>
+                    <label for="adminTypeInput">Type *</label>
                     <div class="multiselect-container">
                         <input type="text" id="adminTypeInput" placeholder="Select types..." readonly>
                         <div class="multiselect-dropdown" id="adminTypeDropdown">
@@ -1864,7 +1865,7 @@
                 </div>
                 
                 <div class="admin-form-group">
-                    <label for="adminField">Field *</label>
+                    <label for="adminFieldInput">Field *</label>
                     <div class="multiselect-container">
                         <input type="text" id="adminFieldInput" placeholder="Select fields..." readonly>
                         <div class="multiselect-dropdown" id="adminFieldDropdown">
