@@ -3821,16 +3821,26 @@ detailsAdditionalInfo.innerHTML = additionalInfo || '<p>No additional informatio
         });
 
         // Check if user is admin using Firebase rules
-        async function checkAdminStatus(userId) {
-            try {
-                const adminRef = ref(database, `admins/${userId}`);
-                const snapshot = await get(adminRef);
-                return snapshot.exists();
-            } catch (error) {
-                console.error('Error checking admin status:', error);
-                return false;
-            }
-        }
+async function checkAdminStatus(userId) {
+  try {
+    const adminRef = ref(database, `admins/${userId}`);
+    const snapshot = await get(adminRef);
+    
+    if (snapshot.exists()) {
+      const adminData = snapshot.val();
+      return {
+        isAdmin: true,
+        role: adminData.role || ADMIN_ROLES.ADMIN,
+        permissions: adminData.permissions || getDefaultPermissions(adminData.role)
+      };
+    }
+    return { isAdmin: false, role: null, permissions: null };
+  } catch (error) {
+    console.error('Error checking admin status:', error);
+    return { isAdmin: false, role: null, permissions: null };
+  }
+}
+
 
         // Load opportunities from Firebase
         function loadOpportunitiesFromFirebase() {
