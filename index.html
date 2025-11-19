@@ -3860,7 +3860,34 @@ async function checkAdminStatus(userId) {
     return { isAdmin: false, role: null, permissions: null };
   }
 }
-
+async function canUserModifyOpportunity(opportunityId) {
+  const user = auth.currentUser;
+  if (!user) return false;
+  
+  const adminStatus = await checkAdminStatus(user.uid);
+  
+  // Super admins can modify anything
+  if (adminStatus.role === ADMIN_ROLES.SUPER_ADMIN) {
+    return true;
+  }
+  
+  // Regular admins can only modify their own opportunities
+  if (adminStatus.isAdmin) {
+    try {
+      const opportunityRef = ref(database, `opportunities/${opportunityId}`);
+      const snapshot = await get(opportunityRef);
+      
+      if (snapshot.exists()) {
+        const opportunity = snapshot.val();
+        return opportunity.addedBy === user.uid;
+      }
+    } catch (error) {
+      console.error('Error checking opportunity ownership:', error);
+    }
+  }
+  
+  return false;
+}
 
         // Load opportunities from Firebase
         function loadOpportunitiesFromFirebase() {
