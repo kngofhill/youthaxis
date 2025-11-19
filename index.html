@@ -3819,6 +3819,26 @@ detailsAdditionalInfo.innerHTML = additionalInfo || '<p>No additional informatio
                 isAdminUser = false;
             }
         });
+// Default permissions based on role - ADD THIS FIRST
+function getDefaultPermissions(role) {
+  if (role === ADMIN_ROLES.SUPER_ADMIN) {
+    return {
+      canManageAllOpportunities: true,
+      canManageUsers: true,
+      canManageAdmins: true,
+      canDeleteAny: true,
+      canEditAny: true
+    };
+  } else {
+    return {
+      canManageAllOpportunities: false,
+      canManageUsers: false,
+      canManageAdmins: false,
+      canDeleteAny: false,
+      canEditAny: false
+    };
+  }
+}
 
         // Check if user is admin using Firebase rules
 async function checkAdminStatus(userId) {
