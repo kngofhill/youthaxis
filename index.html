@@ -4337,8 +4337,8 @@ function renderAdminOpportunities() {
       const user = userCredential.user;
       
       // Define super admin emails
-      const superAdminEmails = ['boymirzayevismoiljon@gmail.com', 'ibaymirzayev@gmail.com'];
-      const isSuperAdmin = superAdminEmails.includes(email);
+   //   const superAdminEmails = ['boymirzayevismoiljon@gmail.com', 'ibaymirzayev@gmail.com'];
+     // const isSuperAdmin = superAdminEmails.includes(email);
       
       // Save user profile
       set(ref(database, 'users/' + user.uid), {
@@ -4348,7 +4348,7 @@ function renderAdminOpportunities() {
       });
 
       // Add to admins if it's an admin email
-      if (isSuperAdmin || email.includes('@yourdomain.com')) { // Adjust this condition as needed
+    /*  if (isSuperAdmin || email.includes('@yourdomain.com')) { // Adjust this condition as needed
         const adminData = {
           email: email,
           name: name,
@@ -4358,7 +4358,7 @@ function renderAdminOpportunities() {
         };
         
         set(ref(database, `admins/${user.uid}`), adminData);
-      }
+      }*/
 
       if (authModal) authModal.style.display = 'none';
       showNotification('Account created successfully!');
