@@ -3731,49 +3731,35 @@ detailsAdditionalInfo.innerHTML = additionalInfo || '<p>No additional informatio
         });
 
         // Check auth state
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // User is signed in
-                if (loginBtn) loginBtn.style.display = 'none';
-                if (signupBtn) signupBtn.style.display = 'none';
-                if (logoutBtn) logoutBtn.style.display = 'block';
-                if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'block';
-                
-                // Check admin status
-                try {
-                    isAdminUser = await checkAdminStatus(user.uid);
-                    console.log('User is admin:', isAdminUser);
-                    
-                    if (navAdmin) {
-                        navAdmin.style.display = isAdminUser ? 'list-item' : 'none';
-                    }
-                } catch (error) {
-                    console.error('Error checking admin status:', error);
-                    isAdminUser = false;
-                }
-                
-                // Show notification bell
-                const notificationBell = document.getElementById('notificationBell');
-                if (notificationBell) {
-                    notificationBell.style.display = 'list-item';
-                }
-                
-                // Initialize notification manager (clean up old one first)
-                if (notificationManager) {
-                    notificationManager.cleanup();
-                }
-                notificationManager = new NotificationManager();
-                
-                // Load user's saved opportunities
-                loadUserOpportunities(user.uid);
-                
-                // Always show home page when logging in
-                setTimeout(() => {
-                    showHome();
-                    renderOpportunities(); // Ensure opportunities are rendered
-                }, 100);
-                
-            } else {
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    // User is signed in
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (signupBtn) signupBtn.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'block';
+    if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'block';
+    
+    // Check admin status with role information
+    try {
+      const adminStatus = await checkAdminStatus(user.uid);
+      isAdminUser = adminStatus.isAdmin;
+      
+      if (navAdmin) {
+        navAdmin.style.display = isAdminUser ? 'list-item' : 'none';
+        
+        // Add role badge to admin nav item if user is admin
+        if (isAdminUser) {
+          const roleBadge = adminStatus.role === ADMIN_ROLES.SUPER_ADMIN ? ' (Super Admin)' : ' (Admin)';
+          navAdmin.innerHTML = `Admin${roleBadge}`;
+        }
+      }
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      isAdminUser = false;
+    }
+    
+    // Rest of your existing code...
+  } else {
                 // User is signed out - Reset everything
                 if (loginBtn) loginBtn.style.display = 'block';
                 if (signupBtn) signupBtn.style.display = 'block';
