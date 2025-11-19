@@ -4890,50 +4890,34 @@ function renderAdminOpportunities() {
         }
 
         // Show admin panel
-        function showAdminPanel() {
-            const user = auth.currentUser;
-            if (user) {
-                // Check admin status using the stored variable
-                if (isAdminUser) {
-                    // Hide other sections and show admin panel
-                    if (heroSection) heroSection.style.display = 'none';
-                    if (filtersSection) filtersSection.style.display = 'none';
-                    if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
-                    if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
-                    if (dashboard) dashboard.style.display = 'none';
-                    if (adminPanel) adminPanel.style.display = 'block';
-                    
-                    // Render admin opportunities
-                    renderAdminOpportunities();
-                } else {
-                    // Double-check admin status in case it wasn't loaded yet
-                    checkAdminStatus(user.uid).then(adminStatus => {
-                        if (adminStatus) {
-                            isAdminUser = true;
-                            if (navAdmin) navAdmin.style.display = 'list-item';
-                            
-                            // Hide other sections and show admin panel
-                            if (heroSection) heroSection.style.display = 'none';
-                            if (filtersSection) filtersSection.style.display = 'none';
-                            if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
-                            if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
-                            if (dashboard) dashboard.style.display = 'none';
-                            if (adminPanel) adminPanel.style.display = 'block';
-                            
-                            // Render admin opportunities
-                            renderAdminOpportunities();
-                        } else {
-                            showNotification('Access denied. Admin privileges required.', 'error');
-                        }
-                    }).catch(error => {
-                        console.error('Error checking admin status:', error);
-                        showNotification('Error checking admin status', 'error');
-                    });
-                }
-            } else {
-                showNotification('Please sign in to access admin panel', 'warning');
-            }
+       function showAdminPanel() {
+  const user = auth.currentUser;
+  if (user) {
+    checkAdminStatus(user.uid).then(adminStatus => {
+      if (adminStatus.isAdmin) {
+        // Hide other sections and show admin panel
+        if (heroSection) heroSection.style.display = 'none';
+        if (filtersSection) filtersSection.style.display = 'none';
+        if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
+        if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
+        if (dashboard) dashboard.style.display = 'none';
+        if (adminPanel) adminPanel.style.display = 'block';
+        
+        // Render admin opportunities
+        renderAdminOpportunities();
+        
+        // Only show admin management for super admins
+        if (adminStatus.role === ADMIN_ROLES.SUPER_ADMIN) {
+          renderAdminManagement();
         }
+      } else {
+        showNotification('Access denied. Admin privileges required.', 'error');
+      }
+    });
+  } else {
+    showNotification('Please sign in to access admin panel', 'warning');
+  }
+}
 
         // Switch dashboard tab
         function switchDashboardTab(tabName) {
