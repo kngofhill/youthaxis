@@ -4028,50 +4028,60 @@ async function canUserModifyOpportunity(opportunityId) {
         }
 
         // Render admin opportunities
-        function renderAdminOpportunities() {
-            if (!adminOpportunitiesList) return;
-            
-            adminOpportunitiesList.innerHTML = '';
-            
-            if (allOpportunities.length === 0) {
-                adminOpportunitiesList.innerHTML = '<tr><td colspan="7" style="text-align: center;">No opportunities found</td></tr>';
-                return;
-            }
-            
-            allOpportunities.forEach(opp => {
-                const timeRemaining = calculateTimeRemaining(opp.deadline);
-                
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${opp.title || 'Untitled'}</td>
-                    <td>${opp.organization || 'Unknown'}</td>
-                    <td>${getOpportunityTypeText(opp.type)}</td>
-                    <td>${getFormatText(opp.format)}</td>
-                    <td>${formatDate(opp.deadline)} <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span></td>
-                    <td>${opp.addedByName || 'Unknown'}</td>
-                    <td class="admin-actions-cell">
-                        <button class="admin-btn edit-btn" data-id="${opp.id}">Edit</button>
-                        <button class="admin-btn delete-btn" data-id="${opp.id}">Delete</button>
-                    </td>
-                `;
-                
-                adminOpportunitiesList.appendChild(row);
-                
-                // Add event listeners to edit and delete buttons
-                const editButton = row.querySelector('.edit-btn');
-                editButton.addEventListener('click', function() {
-                    const oppId = this.getAttribute('data-id');
-                    const opportunity = allOpportunities.find(opp => opp.id === oppId);
-                    showAdminModal(opportunity);
-                });
-                
-                const deleteButton = row.querySelector('.delete-btn');
-                deleteButton.addEventListener('click', function() {
-                    const oppId = this.getAttribute('data-id');
-                    deleteOpportunity(oppId);
-                });
-            });
-        }
+function renderAdminOpportunities() {
+  if (!adminOpportunitiesList) return;
+  
+  adminOpportunitiesList.innerHTML = '';
+  
+  if (allOpportunities.length === 0) {
+    adminOpportunitiesList.innerHTML = '<tr><td colspan="8" style="text-align: center;">No opportunities found</td></tr>';
+    return;
+  }
+  
+  allOpportunities.forEach(async (opp) => {
+    const timeRemaining = calculateTimeRemaining(opp.deadline);
+    const canModify = await canUserModifyOpportunity(opp.id);
+    
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${opp.title || 'Untitled'}</td>
+      <td>${opp.organization || 'Unknown'}</td>
+      <td>${getOpportunityTypeText(opp.type)}</td>
+      <td>${getFormatText(opp.format)}</td>
+      <td>${formatDate(opp.deadline)} <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span></td>
+      <td>${opp.addedByName || 'Unknown'}</td>
+      <td>${opp.addedBy === auth.currentUser?.uid ? 'You' : 'Other Admin'}</td>
+      <td class="admin-actions-cell">
+        <button class="admin-btn edit-btn" data-id="${opp.id}" ${!canModify ? 'disabled' : ''}>Edit</button>
+        <button class="admin-btn delete-btn" data-id="${opp.id}" ${!canModify ? 'disabled' : ''}>Delete</button>
+      </td>
+    `;
+    
+    adminOpportunitiesList.appendChild(row);
+    
+    // Add event listeners to edit and delete buttons
+    const editButton = row.querySelector('.edit-btn');
+    editButton.addEventListener('click', function() {
+      if (this.disabled) {
+        showNotification('You can only edit opportunities that you created', 'warning');
+        return;
+      }
+      const oppId = this.getAttribute('data-id');
+      const opportunity = allOpportunities.find(opp => opp.id === oppId);
+      showAdminModal(opportunity);
+    });
+    
+    const deleteButton = row.querySelector('.delete-btn');
+    deleteButton.addEventListener('click', function() {
+      if (this.disabled) {
+        showNotification('You can only delete opportunities that you created', 'warning');
+        return;
+      }
+      const oppId = this.getAttribute('data-id');
+      deleteOpportunity(oppId);
+    });
+  });
+}
 
         // Show auth modal
         function showAuthModal(tab) {
