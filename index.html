@@ -1,3 +1,6 @@
+You're right! Here's the **complete code** with the curator system fully integrated:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1609,6 +1612,208 @@
         .divider::after {
             margin-left: 10px;
         }
+
+        /* CURATOR SYSTEM STYLES */
+        .curator-profile {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--primary);
+        }
+
+        .curator-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .badges-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 1.5rem 0;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge.bronze {
+            background: linear-gradient(135deg, #cd7f32, #b08d57);
+        }
+
+        .badge.silver {
+            background: linear-gradient(135deg, #c0c0c0, #a8a8a8);
+        }
+
+        .badge.gold {
+            background: linear-gradient(135deg, #ffd700, #daa520);
+        }
+
+        /* Leaderboard Styles */
+        .leaderboard-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .leaderboard-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .leaderboard-tab {
+            padding: 10px 20px;
+            background: var(--light-gray);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            transform: translateX(5px);
+            background: #e9ecef;
+        }
+
+        .rank {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            width: 40px;
+            text-align: center;
+        }
+
+        .rank-1 { color: #ffd700; }
+        .rank-2 { color: #c0c0c0; }
+        .rank-3 { color: #cd7f32; }
+
+        .curator-info {
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .curator-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .curator-stats-small {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .view-curator-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .view-curator-btn:hover {
+            background: var(--secondary);
+        }
+
+        /* Navigation updates */
+        .nav-curator {
+            display: none;
+        }
+
+        /* Responsive updates */
+        @media (max-width: 768px) {
+            .curator-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .leaderboard-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .curator-info {
+                margin-left: 0;
+            }
+            
+            .curator-stats-small {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1625,6 +1830,7 @@
                     <li><a href="#" class="nav-home">Home</a></li>
                     <li><a href="#" class="nav-opportunities">Opportunities</a></li>
                     <li><a href="#" class="nav-dashboard">Dashboard</a></li>
+                    <li><a href="#" class="nav-curator">My Curator Profile</a></li>
                     <li><a href="#" class="nav-admin" style="display: none;">Admin</a></li>
                     <li class="notification-bell" id="notificationBell" style="display: none;">
                         <i class="fas fa-bell"></i>
@@ -1698,71 +1904,121 @@
     
     <!-- Main Content -->
     <main class="container">
-        <!-- Filters -->
-      <!-- Filters Section - FIXED LABELS -->
-<section class="filters" id="filtersSection">
-    <div class="filter-row">
-        <div class="filter-group">
-            <label for="fieldInput">Field of Interest</label> <!-- FIXED: for="fieldInput" -->
-            <div class="multiselect-container">
-                <input type="text" id="fieldInput" placeholder="Select fields..." readonly>
-                <div class="multiselect-dropdown" id="fieldDropdown">
-                    <!-- Field options will be populated by JavaScript -->
+        <!-- Curator Profile Section -->
+        <div class="curator-profile" id="curatorProfile" style="display: none;">
+            <h2>My Curator Profile</h2>
+            <div class="curator-stats">
+                <div class="stat-card">
+                    <span class="stat-number" id="opportunitiesCreated">0</span>
+                    <span class="stat-label">Opportunities Created</span>
                 </div>
-                <div class="multiselect-tags" id="fieldTags"></div>
+                <div class="stat-card">
+                    <span class="stat-number" id="totalSaves">0</span>
+                    <span class="stat-label">Total Saves by Students</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="uniqueSavers">0</span>
+                    <span class="stat-label">Unique Students Reached</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="curatorRank">-</span>
+                    <span class="stat-label">Leaderboard Rank</span>
+                </div>
+            </div>
+            
+            <h3>Your Badges</h3>
+            <div class="badges-container" id="badgesContainer">
+                <!-- Badges will be dynamically added here -->
+            </div>
+            
+            <h3>Your Top Opportunities</h3>
+            <div id="topOpportunitiesList">
+                <!-- Top opportunities will be dynamically added here -->
             </div>
         </div>
-        
-        <div class="filter-group">
-            <label for="typeInput">Opportunity Type</label> <!-- FIXED: for="typeInput" -->
-            <div class="multiselect-container">
-                <input type="text" id="typeInput" placeholder="Select types..." readonly>
-                <div class="multiselect-dropdown" id="typeDropdown">
-                    <!-- Type options will be populated by JavaScript -->
-                </div>
-                <div class="multiselect-tags" id="typeTags"></div>
+
+        <!-- Leaderboard Section -->
+        <div class="leaderboard-section" id="leaderboardSection" style="display: none;">
+            <div class="leaderboard-header">
+                <h2>Top Curators</h2>
+                <span id="leaderboardUpdateTime"></span>
+            </div>
+            
+            <div class="leaderboard-tabs">
+                <button class="leaderboard-tab active" data-period="all">All Time</button>
+                <button class="leaderboard-tab" data-period="month">This Month</button>
+                <button class="leaderboard-tab" data-period="week">This Week</button>
+            </div>
+            
+            <div class="leaderboard-list" id="leaderboardList">
+                <!-- Leaderboard items will be dynamically added here -->
             </div>
         </div>
-        
-        <div class="filter-group">
-            <label for="format">Format</label>
-            <select id="format">
-                <option value="">All Formats</option>
-                <option value="online">Online</option>
-                <option value="onsite">On-site</option>
-                <option value="hybrid">Hybrid</option>
-            </select>
-        </div>
-    </div>
-    
-    <div class="filter-row">
-        <div class="filter-group">
-            <label for="deadline">Deadline Within</label>
-            <select id="deadline">
-                <option value="">Any Time</option>
-                <option value="week">1 Week</option>
-                <option value="month">1 Month</option>
-                <option value="3months">3 Months</option>
-            </select>
-        </div>
-        
-        <div class="filter-group">
-            <label for="language">Language</label>
-            <select id="language">
-                <option value="">Any Language</option>
-                <option value="english">English</option>
-                <option value="russian">Russian</option>
-                <option value="uzbek">Uzbek</option>
-                <option value="english-russian">English/Russian</option>
-            </select>
-        </div>
-    </div>
-    
-    <div class="filter-actions">
-        <button class="reset-btn" id="resetFilters">Reset Filters</button>
-        <button class="apply-btn" id="applyFilters">Apply Filters</button>
-    </div>
-</section>
+
+        <!-- Filters Section -->
+        <section class="filters" id="filtersSection">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="fieldInput">Field of Interest</label>
+                    <div class="multiselect-container">
+                        <input type="text" id="fieldInput" placeholder="Select fields..." readonly>
+                        <div class="multiselect-dropdown" id="fieldDropdown">
+                            <!-- Field options will be populated by JavaScript -->
+                        </div>
+                        <div class="multiselect-tags" id="fieldTags"></div>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="typeInput">Opportunity Type</label>
+                    <div class="multiselect-container">
+                        <input type="text" id="typeInput" placeholder="Select types..." readonly>
+                        <div class="multiselect-dropdown" id="typeDropdown">
+                            <!-- Type options will be populated by JavaScript -->
+                        </div>
+                        <div class="multiselect-tags" id="typeTags"></div>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="format">Format</label>
+                    <select id="format">
+                        <option value="">All Formats</option>
+                        <option value="online">Online</option>
+                        <option value="onsite">On-site</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="deadline">Deadline Within</label>
+                    <select id="deadline">
+                        <option value="">Any Time</option>
+                        <option value="week">1 Week</option>
+                        <option value="month">1 Month</option>
+                        <option value="3months">3 Months</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="language">Language</label>
+                    <select id="language">
+                        <option value="">Any Language</option>
+                        <option value="english">English</option>
+                        <option value="russian">Russian</option>
+                        <option value="uzbek">Uzbek</option>
+                        <option value="english-russian">English/Russian</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="filter-actions">
+                <button class="reset-btn" id="resetFilters">Reset Filters</button>
+                <button class="apply-btn" id="applyFilters">Apply Filters</button>
+            </div>
+        </section>
         
         <!-- Opportunities Grid -->
         <h2 id="opportunitiesTitle">Featured Opportunities</h2>
@@ -2171,6 +2427,18 @@
     let currentOpportunityDetails = null;
     let lastScrollPosition = 0;
 
+    // CURATOR SYSTEM VARIABLES
+    let curatorStats = {
+        opportunitiesCreated: 0,
+        totalSaves: 0,
+        uniqueSavers: 0,
+        curatorRank: '-',
+        badges: []
+    };
+
+    let leaderboardData = [];
+    let userSaveStats = {}; // Track saves per opportunity
+
     // Enhanced field and type options - FIXED: Added "any" field option
     const FIELD_OPTIONS = {
         'any': 'Any Field', // Added this line to fix the issue
@@ -2338,6 +2606,279 @@ function formatDate(dateString) {
         } catch (e) {
             return false;
         }
+    }
+
+    // CURATOR SYSTEM FUNCTIONS
+    function initCuratorSystem() {
+        trackOpportunitySaves();
+        loadCuratorStats();
+        loadLeaderboard();
+        
+        // Update curator nav visibility
+        const user = auth.currentUser;
+        if (user) {
+            document.querySelector('.nav-curator').style.display = 'list-item';
+        }
+    }
+
+    // Track when opportunities are saved
+    function trackOpportunitySaves() {
+        const userOppRef = ref(database, 'userOpportunities');
+        onValue(userOppRef, (snapshot) => {
+            const data = snapshot.val();
+            userSaveStats = {};
+            
+            if (data) {
+                // Count saves per opportunity
+                for (const userId in data) {
+                    for (const oppId in data[userId]) {
+                        if (!userSaveStats[oppId]) {
+                            userSaveStats[oppId] = new Set();
+                        }
+                        userSaveStats[oppId].add(userId);
+                    }
+                }
+                
+                // Update curator stats if user is logged in
+                const user = auth.currentUser;
+                if (user) {
+                    loadCuratorStats();
+                }
+            }
+        });
+    }
+
+    // Load curator statistics for current user
+    function loadCuratorStats() {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        // Count opportunities created by user
+        const userOpportunities = allOpportunities.filter(opp => opp.addedBy === user.uid);
+        curatorStats.opportunitiesCreated = userOpportunities.length;
+
+        // Calculate total saves and unique savers
+        let totalSaves = 0;
+        let uniqueSavers = new Set();
+        
+        userOpportunities.forEach(opp => {
+            if (userSaveStats[opp.id]) {
+                totalSaves += userSaveStats[opp.id].size;
+                userSaveStats[opp.id].forEach(saverId => uniqueSavers.add(saverId));
+            }
+        });
+
+        curatorStats.totalSaves = totalSaves;
+        curatorStats.uniqueSavers = uniqueSavers.size;
+
+        // Calculate rank
+        calculateUserRank(user.uid);
+
+        // Update badges
+        updateBadges();
+
+        // Update UI
+        updateCuratorProfileUI();
+    }
+
+    // Calculate user's rank in leaderboard
+    function calculateUserRank(userId) {
+        const userStats = leaderboardData.find(user => user.id === userId);
+        if (userStats) {
+            curatorStats.curatorRank = userStats.rank;
+        } else {
+            curatorStats.curatorRank = '-';
+        }
+    }
+
+    // Update badges based on achievements
+    function updateBadges() {
+        const badges = [];
+        
+        // Bronze Curator - Created 10+ opportunities
+        if (curatorStats.opportunitiesCreated >= 10) {
+            badges.push({ name: 'Bronze Curator', level: 'bronze', icon: '🥉' });
+        }
+        
+        // Silver Curator - Created 25+ opportunities and 50+ saves
+        if (curatorStats.opportunitiesCreated >= 25 && curatorStats.totalSaves >= 50) {
+            badges.push({ name: 'Silver Curator', level: 'silver', icon: '🥈' });
+        }
+        
+        // Gold Curator - Created 50+ opportunities and 200+ saves
+        if (curatorStats.opportunitiesCreated >= 50 && curatorStats.totalSaves >= 200) {
+            badges.push({ name: 'Gold Curator', level: 'gold', icon: '🥇' });
+        }
+        
+        // Community Builder - Reached 100+ unique students
+        if (curatorStats.uniqueSavers >= 100) {
+            badges.push({ name: 'Community Builder', level: 'gold', icon: '👥' });
+        }
+        
+        // Rising Star - Top 10 in leaderboard
+        if (curatorStats.curatorRank <= 10 && curatorStats.curatorRank !== '-') {
+            badges.push({ name: 'Rising Star', level: 'silver', icon: '⭐' });
+        }
+        
+        curatorStats.badges = badges;
+    }
+
+    // Update curator profile UI
+    function updateCuratorProfileUI() {
+        document.getElementById('opportunitiesCreated').textContent = curatorStats.opportunitiesCreated;
+        document.getElementById('totalSaves').textContent = curatorStats.totalSaves;
+        document.getElementById('uniqueSavers').textContent = curatorStats.uniqueSavers;
+        document.getElementById('curatorRank').textContent = curatorStats.curatorRank;
+
+        // Update badges
+        const badgesContainer = document.getElementById('badgesContainer');
+        badgesContainer.innerHTML = '';
+        
+        curatorStats.badges.forEach(badge => {
+            const badgeElement = document.createElement('div');
+            badgeElement.className = `badge ${badge.level}`;
+            badgeElement.innerHTML = `
+                ${badge.icon} ${badge.name}
+            `;
+            badgesContainer.appendChild(badgeElement);
+        });
+
+        // Update top opportunities
+        updateTopOpportunities();
+    }
+
+    // Show user's top opportunities by saves
+    function updateTopOpportunities() {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const userOpportunities = allOpportunities.filter(opp => opp.addedBy === user.uid);
+        
+        // Sort by number of saves (descending)
+        userOpportunities.sort((a, b) => {
+            const savesA = userSaveStats[a.id] ? userSaveStats[a.id].size : 0;
+            const savesB = userSaveStats[b.id] ? userSaveStats[b.id].size : 0;
+            return savesB - savesA;
+        });
+
+        const topOpportunitiesList = document.getElementById('topOpportunitiesList');
+        topOpportunitiesList.innerHTML = '';
+
+        // Show top 5 opportunities
+        const topOpps = userOpportunities.slice(0, 5);
+        topOpps.forEach(opp => {
+            const saves = userSaveStats[opp.id] ? userSaveStats[opp.id].size : 0;
+            const oppElement = document.createElement('div');
+            oppElement.className = 'opportunity-card';
+            oppElement.innerHTML = `
+                <div class="card-header">
+                    <h3>${opp.title}</h3>
+                    <p class="organization">${opp.organization}</p>
+                </div>
+                <div class="card-body">
+                    <p>Saved by <strong>${saves}</strong> students</p>
+                </div>
+            `;
+            topOpportunitiesList.appendChild(oppElement);
+        });
+    }
+
+    // Load and display leaderboard
+    function loadLeaderboard() {
+        // Group opportunities by creator and calculate stats
+        const creatorStats = {};
+        
+        allOpportunities.forEach(opp => {
+            if (!creatorStats[opp.addedBy]) {
+                creatorStats[opp.addedBy] = {
+                    id: opp.addedBy,
+                    name: opp.addedByName || 'Unknown Curator',
+                    opportunities: 0,
+                    totalSaves: 0,
+                    uniqueSavers: new Set()
+                };
+            }
+            
+            creatorStats[opp.addedBy].opportunities++;
+            
+            if (userSaveStats[opp.id]) {
+                creatorStats[opp.addedBy].totalSaves += userSaveStats[opp.id].size;
+                userSaveStats[opp.id].forEach(saverId => {
+                    creatorStats[opp.addedBy].uniqueSavers.add(saverId);
+                });
+            }
+        });
+
+        // Convert to array and calculate score
+        leaderboardData = Object.values(creatorStats).map(creator => {
+            const score = creator.opportunities * 2 + creator.totalSaves + creator.uniqueSavers.size * 3;
+            return {
+                ...creator,
+                uniqueSavers: creator.uniqueSavers.size,
+                score: score
+            };
+        });
+
+        // Sort by score (descending)
+        leaderboardData.sort((a, b) => b.score - a.score);
+
+        // Add ranks
+        leaderboardData.forEach((creator, index) => {
+            creator.rank = index + 1;
+        });
+
+        updateLeaderboardUI();
+    }
+
+    // Update leaderboard UI
+    function updateLeaderboardUI() {
+        const leaderboardList = document.getElementById('leaderboardList');
+        leaderboardList.innerHTML = '';
+
+        // Show top 20 curators
+        const topCurators = leaderboardData.slice(0, 20);
+        
+        topCurators.forEach(creator => {
+            const item = document.createElement('div');
+            item.className = 'leaderboard-item';
+            item.innerHTML = `
+                <div class="rank rank-${creator.rank}">${creator.rank}</div>
+                <div class="curator-info">
+                    <div class="curator-name">${creator.name}</div>
+                    <div class="curator-stats-small">
+                        <span>${creator.opportunities} opportunities</span>
+                        <span>${creator.totalSaves} saves</span>
+                        <span>${creator.uniqueSavers} students reached</span>
+                    </div>
+                </div>
+                <button class="view-curator-btn" data-userid="${creator.id}">
+                    View Profile
+                </button>
+            `;
+            leaderboardList.appendChild(item);
+        });
+
+        // Update timestamp
+        document.getElementById('leaderboardUpdateTime').textContent = 
+            `Last updated: ${new Date().toLocaleTimeString()}`;
+    }
+
+    // Show curator profile
+    function showCuratorProfile() {
+        document.getElementById('curatorProfile').style.display = 'block';
+        document.getElementById('leaderboardSection').style.display = 'block';
+        
+        // Hide other sections
+        document.getElementById('heroSection').style.display = 'none';
+        document.getElementById('filtersSection').style.display = 'none';
+        document.getElementById('opportunitiesTitle').style.display = 'none';
+        document.getElementById('opportunitiesGrid').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'none';
+        
+        // Load fresh data
+        loadCuratorStats();
+        loadLeaderboard();
     }
 
     function showOpportunityDetails(opportunity) {
@@ -3548,6 +4089,7 @@ detailsAdditionalInfo.innerHTML = additionalInfo || '<p>No additional informatio
         const navDashboard = document.querySelector('.nav-dashboard');
         const navHome = document.querySelector('.nav-home');
         const navOpportunities = document.querySelector('.nav-opportunities');
+        const navCurator = document.querySelector('.nav-curator');
         const navAdmin = document.querySelector('.nav-admin');
         const heroSection = document.getElementById('heroSection');
         const filtersSection = document.getElementById('filtersSection');
@@ -3622,6 +4164,13 @@ detailsAdditionalInfo.innerHTML = additionalInfo || '<p>No additional informatio
             navOpportunities.addEventListener('click', (e) => {
                 e.preventDefault();
                 showOpportunities();
+            });
+        }
+        
+        if (navCurator) {
+            navCurator.addEventListener('click', (e) => {
+                e.preventDefault();
+                showCuratorProfile();
             });
         }
         
@@ -3704,6 +4253,17 @@ detailsAdditionalInfo.innerHTML = additionalInfo || '<p>No additional informatio
             });
         }
 
+        // Leaderboard tab switching
+        const leaderboardTabs = document.querySelectorAll('.leaderboard-tab');
+        leaderboardTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                leaderboardTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                // You can implement time-based filtering here
+                loadLeaderboard();
+            });
+        });
+
         // Close modals when clicking outside
         window.addEventListener('click', (e) => {
             if (e.target === authModal) {
@@ -3743,6 +4303,9 @@ onAuthStateChanged(auth, async (user) => {
     if (logoutBtn) logoutBtn.style.display = 'block';
     if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'block';
     
+    // Show curator navigation
+    document.querySelector('.nav-curator').style.display = 'list-item';
+    
     // Check admin status with role information
     try {
       const adminStatus = await checkAdminStatus(user.uid);
@@ -3762,6 +4325,9 @@ onAuthStateChanged(auth, async (user) => {
       isAdminUser = false;
     }
     
+    // Initialize curator system
+    initCuratorSystem();
+    
     // Rest of your existing code...
   } else {
                 // User is signed out - Reset everything
@@ -3770,6 +4336,7 @@ onAuthStateChanged(auth, async (user) => {
                 if (logoutBtn) logoutBtn.style.display = 'none';
                 if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'none';
                 if (navAdmin) navAdmin.style.display = 'none';
+                if (navCurator) navCurator.style.display = 'none';
                 
                 // Hide notification bell
                 const notificationBell = document.getElementById('notificationBell');
@@ -3798,6 +4365,8 @@ onAuthStateChanged(auth, async (user) => {
                 // Hide dashboard and admin panel
                 if (dashboard) dashboard.style.display = 'none';
                 if (adminPanel) adminPanel.style.display = 'none';
+                if (document.getElementById('curatorProfile')) document.getElementById('curatorProfile').style.display = 'none';
+                if (document.getElementById('leaderboardSection')) document.getElementById('leaderboardSection').style.display = 'none';
                 
                 // Always show home page when logging out
                 setTimeout(() => {
@@ -3809,6 +4378,7 @@ onAuthStateChanged(auth, async (user) => {
                 isAdminUser = false;
             }
         });
+
 // Default permissions based on role - ADD THIS FIRST
 function getDefaultPermissions(role) {
   if (role === ADMIN_ROLES.SUPER_ADMIN) {
@@ -3850,6 +4420,7 @@ async function checkAdminStatus(userId) {
     return { isAdmin: false, role: null, permissions: null };
   }
 }
+
 async function canUserModifyOpportunity(opportunityId) {
   const user = auth.currentUser;
   if (!user) return false;
@@ -3878,6 +4449,7 @@ async function canUserModifyOpportunity(opportunityId) {
   
   return false;
 }
+
         function renderAdminManagement() {
   const adminPanel = document.getElementById('adminPanel');
   
@@ -4022,1071 +4594,1091 @@ async function removeAdmin(userId) {
             
             onValue(opportunitiesRef, (snapshot) => {
                 const data = snapshot.val();
-                allOpportunities = [];
-                
-                if (data) {
-                    for (const key in data) {
-                        allOpportunities.push({
-                            id: key,
-                            ...data[key]
-                        });
-                    }
-                    
-                    // Fix for existing opportunities without fields - set them to 'any'
-                    allOpportunities.forEach(opp => {
-                        if (!opp.field || (Array.isArray(opp.field) && opp.field.length === 0)) {
-                            opp.field = ['any'];
-                        }
-                    });
-                }
-                
-                // Apply current filters and render opportunities
-                applyFilters();
-                
-                // Render admin opportunities if admin panel is visible
-                if (adminPanel.style.display === 'block') {
-                    renderAdminOpportunities();
-                }
+// ... (previous code continues from where it left off)
+
+onValue(opportunitiesRef, (snapshot) => {
+    const data = snapshot.val();
+    allOpportunities = [];
+    
+    if (data) {
+        for (const key in data) {
+            allOpportunities.push({
+                id: key,
+                ...data[key]
             });
         }
-
-        // Render opportunities to the grid - FIXED: Handles "any" field properly
-        function renderOpportunities() {
-            if (!opportunitiesGrid) return;
-            
-            opportunitiesGrid.innerHTML = '';
-            
-            if (filteredOpportunities.length === 0) {
-                opportunitiesGrid.innerHTML = '<p class="no-results">No opportunities match your filters. Try adjusting your search criteria.</p>';
-                return;
+        
+        // Fix for existing opportunities without fields - set them to 'any'
+        allOpportunities.forEach(opp => {
+            if (!opp.field || (Array.isArray(opp.field) && opp.field.length === 0)) {
+                opp.field = ['any'];
             }
-            
-            filteredOpportunities.forEach(opp => {
-                const isSaved = userOpportunities.pending.some(item => item.id === opp.id) || 
-                               userOpportunities.completed.some(item => item.id === opp.id);
-                
-                const isExpired = isOpportunityExpired(opp.deadline);
-                const isUrgent = isDeadlineUrgent(opp.deadline);
-                const timeRemaining = calculateTimeRemaining(opp.deadline);
-                
-                // Get the first type for styling
-                const firstType = Array.isArray(opp.type) ? opp.type[0] : opp.type;
-                const firstField = Array.isArray(opp.field) ? opp.field[0] : opp.field;
-                
-                const opportunityCard = document.createElement('div');
-                opportunityCard.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
-                opportunityCard.innerHTML = `
-                    <div class="card-header">
-                        <span class="opportunity-badge type-badge">${getOpportunityTypeText(opp.type)}</span>
-                        <span class="opportunity-badge field-badge">${getFieldText(opp.field)}</span>
-                        ${getFormatBadge(opp.format)}
-                        <h3>${opp.title || 'Untitled Opportunity'}</h3>
-                        <p class="organization">${opp.organization || 'Unknown Organization'}</p>
-                    </div>
-                    
-                    <div class="card-body">
-                        <div class="detail">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.deadline)} 
-                                <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
-                            </span>
-                        </div>
-                        <p>${(opp.description || 'No description available').substring(0, 150)}${opp.description && opp.description.length > 150 ? '...' : ''}</p>
-                    </div>
-                    
-                    <div class="card-footer">
-                        <div class="card-actions">
-                            <div class="left-actions">
-                                <button class="save-btn ${isSaved ? 'saved' : ''}" data-id="${opp.id}" title="${isSaved ? 'Remove from dashboard' : 'Save to dashboard'}">
-                                    <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i>
-                                </button>
-                            </div>
-                            <div class="right-actions">
-                                <button class="details-btn" data-id="${opp.id}">View Details</button>
-                                <a href="${opp.applyLink || '#'}" target="_blank" class="apply-link">Apply Now</a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                opportunitiesGrid.appendChild(opportunityCard);
-                
-                // Add event listeners to save buttons
-                const saveButton = opportunityCard.querySelector('.save-btn');
-                saveButton.addEventListener('click', function() {
-                    const user = auth.currentUser;
-                    if (user) {
-                        const oppId = this.getAttribute('data-id');
-                        const opportunity = allOpportunities.find(opp => opp.id === oppId);
-                        if (this.classList.contains('saved')) {
-                            removeOpportunity(user.uid, opportunity);
-                        } else {
-                            saveOpportunity(user.uid, opportunity);
-                        }
-                    } else {
-                        showAuthModal('login');
-                        showNotification('Please sign in to save opportunities', 'warning');
-                    }
-                });
-                
-                // Add event listener to details button
-                const detailsButton = opportunityCard.querySelector('.details-btn');
-                detailsButton.addEventListener('click', function() {
-                    const oppId = this.getAttribute('data-id');
-                    const opportunity = allOpportunities.find(opp => opp.id === oppId);
-                    showOpportunityDetails(opportunity);
-                });
-            });
-        }
+        });
+    }
+    
+    // Apply current filters and render opportunities
+    applyFilters();
+    
+    // Render admin opportunities if admin panel is visible
+    if (adminPanel.style.display === 'block') {
+        renderAdminOpportunities();
+    }
+    
+    // Update curator system with new opportunities data
+    if (auth.currentUser) {
+        loadCuratorStats();
+        loadLeaderboard();
+    }
+});
 
-        // Handle details modal save button
-        function handleDetailsSave() {
+// Render opportunities to the grid
+function renderOpportunities() {
+    if (!opportunitiesGrid) return;
+    
+    opportunitiesGrid.innerHTML = '';
+    
+    if (filteredOpportunities.length === 0) {
+        opportunitiesGrid.innerHTML = '<p class="no-results">No opportunities match your filters. Try adjusting your search criteria.</p>';
+        return;
+    }
+    
+    filteredOpportunities.forEach(opp => {
+        const isSaved = userOpportunities.pending.some(item => item.id === opp.id) || 
+                       userOpportunities.completed.some(item => item.id === opp.id);
+        
+        const isExpired = isOpportunityExpired(opp.deadline);
+        const isUrgent = isDeadlineUrgent(opp.deadline);
+        const timeRemaining = calculateTimeRemaining(opp.deadline);
+        
+        // Get the first type for styling
+        const firstType = Array.isArray(opp.type) ? opp.type[0] : opp.type;
+        const firstField = Array.isArray(opp.field) ? opp.field[0] : opp.field;
+        
+        const opportunityCard = document.createElement('div');
+        opportunityCard.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
+        opportunityCard.innerHTML = `
+            <div class="card-header">
+                <span class="opportunity-badge type-badge">${getOpportunityTypeText(opp.type)}</span>
+                <span class="opportunity-badge field-badge">${getFieldText(opp.field)}</span>
+                ${getFormatBadge(opp.format)}
+                <h3>${opp.title || 'Untitled Opportunity'}</h3>
+                <p class="organization">${opp.organization || 'Unknown Organization'}</p>
+            </div>
+            
+            <div class="card-body">
+                <div class="detail">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.deadline)} 
+                        <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
+                    </span>
+                </div>
+                <p>${(opp.description || 'No description available').substring(0, 150)}${opp.description && opp.description.length > 150 ? '...' : ''}</p>
+            </div>
+            
+            <div class="card-footer">
+                <div class="card-actions">
+                    <div class="left-actions">
+                        <button class="save-btn ${isSaved ? 'saved' : ''}" data-id="${opp.id}" title="${isSaved ? 'Remove from dashboard' : 'Save to dashboard'}">
+                            <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i>
+                        </button>
+                    </div>
+                    <div class="right-actions">
+                        <button class="details-btn" data-id="${opp.id}">View Details</button>
+                        <a href="${opp.applyLink || '#'}" target="_blank" class="apply-link">Apply Now</a>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        opportunitiesGrid.appendChild(opportunityCard);
+        
+        // Add event listeners to save buttons
+        const saveButton = opportunityCard.querySelector('.save-btn');
+        saveButton.addEventListener('click', function() {
             const user = auth.currentUser;
-            if (user && currentOpportunityDetails) {
-                if (detailsSaveBtn.classList.contains('saved')) {
-                    removeOpportunity(user.uid, currentOpportunityDetails);
+            if (user) {
+                const oppId = this.getAttribute('data-id');
+                const opportunity = allOpportunities.find(opp => opp.id === oppId);
+                if (this.classList.contains('saved')) {
+                    removeOpportunity(user.uid, opportunity);
                 } else {
-                    saveOpportunity(user.uid, currentOpportunityDetails);
+                    saveOpportunity(user.uid, opportunity);
                 }
             } else {
                 showAuthModal('login');
                 showNotification('Please sign in to save opportunities', 'warning');
             }
-        }
-
-        // Render admin opportunities
-function renderAdminOpportunities() {
-  if (!adminOpportunitiesList) return;
-  
-  adminOpportunitiesList.innerHTML = '';
-  
-  if (allOpportunities.length === 0) {
-    adminOpportunitiesList.innerHTML = '<tr><td colspan="8" style="text-align: center;">No opportunities found</td></tr>';
-    return;
-  }
-  
-  allOpportunities.forEach(async (opp) => {
-    const timeRemaining = calculateTimeRemaining(opp.deadline);
-    const canModify = await canUserModifyOpportunity(opp.id);
-    
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${opp.title || 'Untitled'}</td>
-      <td>${opp.organization || 'Unknown'}</td>
-      <td>${getOpportunityTypeText(opp.type)}</td>
-      <td>${getFormatText(opp.format)}</td>
-      <td>${formatDate(opp.deadline)} <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span></td>
-      <td>${opp.addedByName || 'Unknown'}</td>
-      <td>${opp.addedBy === auth.currentUser?.uid ? 'You' : 'Other Admin'}</td>
-      <td class="admin-actions-cell">
-        <button class="admin-btn edit-btn" data-id="${opp.id}" ${!canModify ? 'disabled' : ''}>Edit</button>
-        <button class="admin-btn delete-btn" data-id="${opp.id}" ${!canModify ? 'disabled' : ''}>Delete</button>
-      </td>
-    `;
-    
-    adminOpportunitiesList.appendChild(row);
-    
-    // Add event listeners to edit and delete buttons
-    const editButton = row.querySelector('.edit-btn');
-    editButton.addEventListener('click', function() {
-      if (this.disabled) {
-        showNotification('You can only edit opportunities that you created', 'warning');
-        return;
-      }
-      const oppId = this.getAttribute('data-id');
-      const opportunity = allOpportunities.find(opp => opp.id === oppId);
-      showAdminModal(opportunity);
+        });
+        
+        // Add event listener to details button
+        const detailsButton = opportunityCard.querySelector('.details-btn');
+        detailsButton.addEventListener('click', function() {
+            const oppId = this.getAttribute('data-id');
+            const opportunity = allOpportunities.find(opp => opp.id === oppId);
+            showOpportunityDetails(opportunity);
+        });
     });
-    
-    const deleteButton = row.querySelector('.delete-btn');
-    deleteButton.addEventListener('click', function() {
-      if (this.disabled) {
-        showNotification('You can only delete opportunities that you created', 'warning');
-        return;
-      }
-      const oppId = this.getAttribute('data-id');
-      deleteOpportunity(oppId);
-    });
-  });
 }
 
-        // Show auth modal
-        function showAuthModal(tab) {
-            if (!authModal) return;
-            authModal.style.display = 'flex';
-            switchAuthTab(tab);
+// Handle details modal save button
+function handleDetailsSave() {
+    const user = auth.currentUser;
+    if (user && currentOpportunityDetails) {
+        if (detailsSaveBtn.classList.contains('saved')) {
+            removeOpportunity(user.uid, currentOpportunityDetails);
+        } else {
+            saveOpportunity(user.uid, currentOpportunityDetails);
         }
+    } else {
+        showAuthModal('login');
+        showNotification('Please sign in to save opportunities', 'warning');
+    }
+}
 
-        // Switch auth tab
-        function switchAuthTab(tabName) {
-            if (!authTabs || !loginForm || !signupForm) return;
-            
-            // Update tabs
-            authTabs.forEach(tab => {
-                if (tab.getAttribute('data-tab') === tabName) {
-                    tab.classList.add('active');
-                } else {
-                    tab.classList.remove('active');
-                }
-            });
-            
-            // Update forms
-            if (tabName === 'login') {
-                loginForm.classList.add('active');
-                signupForm.classList.remove('active');
-            } else {
-                loginForm.classList.remove('active');
-                signupForm.classList.add('active');
-            }
-            
-            // Clear errors
-            if (loginError) loginError.style.display = 'none';
-            if (signupError) signupError.style.display = 'none';
-        }
-
-        // Handle format change in admin form
-        function handleFormatChange() {
-            const format = adminFormat.value;
-            const locationInput = document.getElementById('adminLocation');
-            
-            if (format === 'online') {
-                locationFieldGroup.style.display = 'none';
-                locationInput.required = false;
-                locationInput.value = 'Online';
-            } else {
-                locationFieldGroup.style.display = 'block';
-                locationInput.required = true;
-                if (locationInput.value === 'Online') {
-                    locationInput.value = '';
-                }
-            }
-        }
-
-        // Handle login
-        function handleLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            if (!email || !password) {
-                if (loginError) {
-                    loginError.textContent = 'Please enter both email and password';
-                    loginError.style.display = 'block';
-                }
+// Render admin opportunities
+function renderAdminOpportunities() {
+    if (!adminOpportunitiesList) return;
+    
+    adminOpportunitiesList.innerHTML = '';
+    
+    if (allOpportunities.length === 0) {
+        adminOpportunitiesList.innerHTML = '<tr><td colspan="8" style="text-align: center;">No opportunities found</td></tr>';
+        return;
+    }
+    
+    allOpportunities.forEach(async (opp) => {
+        const timeRemaining = calculateTimeRemaining(opp.deadline);
+        const canModify = await canUserModifyOpportunity(opp.id);
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${opp.title || 'Untitled'}</td>
+            <td>${opp.organization || 'Unknown'}</td>
+            <td>${getOpportunityTypeText(opp.type)}</td>
+            <td>${getFormatText(opp.format)}</td>
+            <td>${formatDate(opp.deadline)} <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span></td>
+            <td>${opp.addedByName || 'Unknown'}</td>
+            <td>${opp.addedBy === auth.currentUser?.uid ? 'You' : 'Other Admin'}</td>
+            <td class="admin-actions-cell">
+                <button class="admin-btn edit-btn" data-id="${opp.id}" ${!canModify ? 'disabled' : ''}>Edit</button>
+                <button class="admin-btn delete-btn" data-id="${opp.id}" ${!canModify ? 'disabled' : ''}>Delete</button>
+            </td>
+        `;
+        
+        adminOpportunitiesList.appendChild(row);
+        
+        // Add event listeners to edit and delete buttons
+        const editButton = row.querySelector('.edit-btn');
+        editButton.addEventListener('click', function() {
+            if (this.disabled) {
+                showNotification('You can only edit opportunities that you created', 'warning');
                 return;
             }
-            
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Signed in 
-                    if (authModal) authModal.style.display = 'none';
-                    showNotification('Successfully logged in!');
-                })
-                .catch((error) => {
-                    if (loginError) {
-                        let errorMessage = error.message;
-                        // Make error messages more user-friendly
-                        if (error.code === 'auth/invalid-email') {
-                            errorMessage = 'Invalid email address format';
-                        } else if (error.code === 'auth/user-not-found') {
-                            errorMessage = 'No account found with this email';
-                        } else if (error.code === 'auth/wrong-password') {
-                            errorMessage = 'Incorrect password';
-                        } else if (error.code === 'auth/invalid-credential') {
-                            errorMessage = 'Invalid credentials';
-                        }
-                        loginError.textContent = errorMessage;
-                        loginError.style.display = 'block';
-                    }
-                });
-        }
-
-        // Handle signup
-   function handleSignup() {
-  const name = document.getElementById('signupName').value;
-  const email = document.getElementById('signupEmail').value;
-  const password = document.getElementById('signupPassword').value;
-  const confirm = document.getElementById('signupConfirm').value;
-  
-  // Basic validation (your existing code)
-  if (!name || !email || !password || !confirm) {
-    if (signupError) {
-      signupError.textContent = 'Please fill in all fields';
-      signupError.style.display = 'block';
-    }
-    return;
-  }
-  
-  if (password !== confirm) {
-    if (signupError) {
-      signupError.textContent = 'Passwords do not match';
-      signupError.style.display = 'block';
-    }
-    return;
-  }
-  
-  if (password.length < 6) {
-    if (signupError) {
-      signupError.textContent = 'Password should be at least 6 characters';
-      signupError.style.display = 'block';
-    }
-    return;
-  }
-  
-createUserWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    const user = userCredential.user;
-    
-    // Save user profile
-    set(ref(database, 'users/' + user.uid), {
-      name: name,
-      email: email,
-      createdAt: new Date().toISOString()
+            const oppId = this.getAttribute('data-id');
+            const opportunity = allOpportunities.find(opp => opp.id === oppId);
+            showAdminModal(opportunity);
+        });
+        
+        const deleteButton = row.querySelector('.delete-btn');
+        deleteButton.addEventListener('click', function() {
+            if (this.disabled) {
+                showNotification('You can only delete opportunities that you created', 'warning');
+                return;
+            }
+            const oppId = this.getAttribute('data-id');
+            deleteOpportunity(oppId);
+        });
     });
+}
 
-    if (authModal) authModal.style.display = 'none';
-    showNotification('Account created successfully!');
-  })
-  .catch((error) => {
-    if (signupError) {
-      let errorMessage = error.message;
-      // Make error messages more user-friendly
-      if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'An account with this email already exists';
-      } else if (error.code === 'auth/invalid-email') {
-        errorMessage = 'Invalid email address format';
-      } else if (error.code === 'auth/weak-password') {
-        errorMessage = 'Password is too weak';
-      }
-      signupError.textContent = errorMessage;
-      signupError.style.display = 'block';
+// Show auth modal
+function showAuthModal(tab) {
+    if (!authModal) return;
+    authModal.style.display = 'flex';
+    switchAuthTab(tab);
+}
+
+// Switch auth tab
+function switchAuthTab(tabName) {
+    if (!authTabs || !loginForm || !signupForm) return;
+    
+    // Update tabs
+    authTabs.forEach(tab => {
+        if (tab.getAttribute('data-tab') === tabName) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
+        }
+    });
+    
+    // Update forms
+    if (tabName === 'login') {
+        loginForm.classList.add('active');
+        signupForm.classList.remove('active');
+    } else {
+        loginForm.classList.remove('active');
+        signupForm.classList.add('active');
     }
-  });
+    
+    // Clear errors
+    if (loginError) loginError.style.display = 'none';
+    if (signupError) signupError.style.display = 'none';
+}
+
+// Handle format change in admin form
+function handleFormatChange() {
+    const format = adminFormat.value;
+    const locationInput = document.getElementById('adminLocation');
+    
+    if (format === 'online') {
+        locationFieldGroup.style.display = 'none';
+        locationInput.required = false;
+        locationInput.value = 'Online';
+    } else {
+        locationFieldGroup.style.display = 'block';
+        locationInput.required = true;
+        if (locationInput.value === 'Online') {
+            locationInput.value = '';
+        }
+    }
+}
+
+// Handle login
+function handleLogin() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    if (!email || !password) {
+        if (loginError) {
+            loginError.textContent = 'Please enter both email and password';
+            loginError.style.display = 'block';
+        }
+        return;
+    }
+    
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Signed in 
+            if (authModal) authModal.style.display = 'none';
+            showNotification('Successfully logged in!');
+        })
+        .catch((error) => {
+            if (loginError) {
+                let errorMessage = error.message;
+                // Make error messages more user-friendly
+                if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email address format';
+                } else if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'No account found with this email';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Incorrect password';
+                } else if (error.code === 'auth/invalid-credential') {
+                    errorMessage = 'Invalid credentials';
+                }
+                loginError.textContent = errorMessage;
+                loginError.style.display = 'block';
+            }
+        });
+}
+
+// Handle signup
+function handleSignup() {
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('signupConfirm').value;
+    
+    // Basic validation
+    if (!name || !email || !password || !confirm) {
+        if (signupError) {
+            signupError.textContent = 'Please fill in all fields';
+            signupError.style.display = 'block';
+        }
+        return;
+    }
+    
+    if (password !== confirm) {
+        if (signupError) {
+            signupError.textContent = 'Passwords do not match';
+            signupError.style.display = 'block';
+        }
+        return;
+    }
+    
+    if (password.length < 6) {
+        if (signupError) {
+            signupError.textContent = 'Password should be at least 6 characters';
+            signupError.style.display = 'block';
+        }
+        return;
+    }
+    
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            const user = userCredential.user;
+            
+            // Save user profile
+            set(ref(database, 'users/' + user.uid), {
+                name: name,
+                email: email,
+                createdAt: new Date().toISOString()
+            });
+
+            if (authModal) authModal.style.display = 'none';
+            showNotification('Account created successfully!');
+        })
+        .catch((error) => {
+            if (signupError) {
+                let errorMessage = error.message;
+                // Make error messages more user-friendly
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'An account with this email already exists';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email address format';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Password is too weak';
+                }
+                signupError.textContent = errorMessage;
+                signupError.style.display = 'block';
+            }
+        });
 }
 
 // Handle Google Sign-In
 function handleGoogleSignIn() {
-  signInWithPopup(auth, googleProvider)
-    .then((result) => {
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      const user = result.user;
-      
-      const userRef = ref(database, 'users/' + user.uid);
-      
-      get(userRef).then((snapshot) => {
-        if (!snapshot.exists()) {
-          // User doesn't exist, create a new user record
-          set(userRef, {
-            name: user.displayName,
-            email: user.email,
-            createdAt: new Date().toISOString(),
-            isGoogleUser: true
-          });
-          
-          // Note: Admin roles are managed exclusively in Firebase database
-          // No automatic admin assignment - all admin management done via Firebase
+    signInWithPopup(auth, googleProvider)
+        .then((result) => {
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+            const user = result.user;
+            
+            const userRef = ref(database, 'users/' + user.uid);
+            
+            get(userRef).then((snapshot) => {
+                if (!snapshot.exists()) {
+                    // User doesn't exist, create a new user record
+                    set(userRef, {
+                        name: user.displayName,
+                        email: user.email,
+                        createdAt: new Date().toISOString(),
+                        isGoogleUser: true
+                    });
+                    
+                    // Note: Admin roles are managed exclusively in Firebase database
+                    // No automatic admin assignment - all admin management done via Firebase
+                }
+                
+                if (authModal) authModal.style.display = 'none';
+                showNotification('Successfully signed in with Google!');
+            });
+        })
+        .catch((error) => {
+            // Handle Errors here
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            const email = error.customData?.email;
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            
+            // Show error in appropriate form
+            const currentTab = document.querySelector('.auth-tab.active').getAttribute('data-tab');
+            if (currentTab === 'login' && loginError) {
+                loginError.textContent = errorMessage;
+                loginError.style.display = 'block';
+            } else if (currentTab === 'signup' && signupError) {
+                signupError.textContent = errorMessage;
+                signupError.style.display = 'block';
+            }
+        });
+}
+
+// Check if email exists
+async function checkEmailExists(email) {
+    try {
+        const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+        return signInMethods.length > 0;
+    } catch (error) {
+        console.error('Error checking email:', error);
+        return false;
+    }
+}
+
+// Handle password reset
+async function handlePasswordReset() {
+    const email = document.getElementById('loginEmail').value;
+    
+    if (!email) {
+        showNotification('Please enter your email address first', 'warning');
+        return;
+    }
+    
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        if (loginError) {
+            loginError.textContent = 'Please enter a valid email address';
+            loginError.style.display = 'block';
+        }
+        return;
+    }
+    
+    try {
+        // Check if email exists in Firebase Auth
+        const emailExists = await checkEmailExists(email);
+        
+        if (!emailExists) {
+            if (loginError) {
+                loginError.textContent = 'This email is not registered with us';
+                loginError.style.display = 'block';
+            }
+            return;
         }
         
-        if (authModal) authModal.style.display = 'none';
-        showNotification('Successfully signed in with Google!');
-      });
+        // If email exists, send password reset email
+        await sendPasswordResetEmail(auth, email);
+        showNotification('Password reset email sent. Check your inbox or spam folder.', 'success');
+        
+        // Clear any previous errors
+        if (loginError) {
+            loginError.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Password reset error:', error);
+        if (loginError) {
+            loginError.textContent = error.message;
+            loginError.style.display = 'block';
+        }
+    }
+}
+
+// Handle logout
+function handleLogout() {
+    // Clean up notification manager before logout
+    if (notificationManager) {
+        notificationManager.cleanup();
+        notificationManager = null;
+    }
+    
+    // Remove the user opportunities listener
+    if (userOpportunitiesListener) {
+        userOpportunitiesListener();
+        userOpportunitiesListener = null;
+    }
+    
+    // Clear user data
+    userOpportunities = {
+        pending: [],
+        completed: []
+    };
+    
+    // Sign out from Firebase
+    signOut(auth)
+        .then(() => {
+            showNotification('Successfully logged out');
+        })
+        .catch((error) => {
+            console.error('Logout error:', error);
+        });
+}
+
+// Save opportunity to user's dashboard
+function saveOpportunity(userId, opportunity) {
+    const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+    
+    // Check if already saved in local state
+    const alreadySaved = userOpportunities.pending.some(opp => opp.id === opportunity.id) || 
+                        userOpportunities.completed.some(opp => opp.id === opportunity.id);
+    
+    if (alreadySaved) {
+        showNotification('This opportunity is already in your dashboard!', 'warning');
+        return;
+    }
+    
+    // Store only a reference to the opportunity, not the full object
+    set(userOppRef, {
+        opportunityId: opportunity.id,
+        savedAt: new Date().toISOString(),
+        status: 'pending'
+    })
+    .then(() => {
+        showNotification('Opportunity saved to your dashboard!');
+        
+        // Update the details modal save button if it's open for this opportunity
+        if (currentOpportunityDetails && currentOpportunityDetails.id === opportunity.id) {
+            const detailsSaveBtn = document.getElementById('detailsSaveBtn');
+            if (detailsSaveBtn) {
+                detailsSaveBtn.innerHTML = '<i class="fas fa-bookmark"></i> Remove from Dashboard';
+                detailsSaveBtn.classList.add('saved');
+            }
+        }
     })
     .catch((error) => {
-      // Handle Errors here
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      const email = error.customData?.email;
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      
-      // Show error in appropriate form
-      const currentTab = document.querySelector('.auth-tab.active').getAttribute('data-tab');
-      if (currentTab === 'login' && loginError) {
-        loginError.textContent = errorMessage;
-        loginError.style.display = 'block';
-      } else if (currentTab === 'signup' && signupError) {
-        signupError.textContent = errorMessage;
-        signupError.style.display = 'block';
-      }
+        console.error('Error saving opportunity:', error);
     });
 }
-        // Check if email exists
-        async function checkEmailExists(email) {
-            try {
-                const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-                return signInMethods.length > 0;
-            } catch (error) {
-                console.error('Error checking email:', error);
-                return false;
+
+// Remove opportunity from user's dashboard
+function removeOpportunity(userId, opportunity) {
+    const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+    
+    remove(userOppRef)
+    .then(() => {
+        showNotification('Opportunity removed from your dashboard');
+        
+        // Update the details modal save button if it's open for this opportunity
+        if (currentOpportunityDetails && currentOpportunityDetails.id === opportunity.id) {
+            const detailsSaveBtn = document.getElementById('detailsSaveBtn');
+            if (detailsSaveBtn) {
+                detailsSaveBtn.innerHTML = '<i class="far fa-bookmark"></i> Save to Dashboard';
+                detailsSaveBtn.classList.remove('saved');
             }
         }
+    })
+    .catch((error) => {
+        console.error('Error removing opportunity:', error);
+    });
+}
 
-        // Handle password reset
-        async function handlePasswordReset() {
-            const email = document.getElementById('loginEmail').value;
-            
-            if (!email) {
-                showNotification('Please enter your email address first', 'warning');
-                return;
-            }
-            
-            // Basic email format validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                if (loginError) {
-                    loginError.textContent = 'Please enter a valid email address';
-                    loginError.style.display = 'block';
-                }
-                return;
-            }
-            
-            try {
-                // Check if email exists in Firebase Auth
-                const emailExists = await checkEmailExists(email);
-                
-                if (!emailExists) {
-                    if (loginError) {
-                        loginError.textContent = 'This email is not registered with us';
-                        loginError.style.display = 'block';
-                    }
-                    return;
-                }
-                
-                // If email exists, send password reset email
-                await sendPasswordResetEmail(auth, email);
-                showNotification('Password reset email sent. Check your inbox or spam folder.', 'success');
-                
-                // Clear any previous errors
-                if (loginError) {
-                    loginError.style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Password reset error:', error);
-                if (loginError) {
-                    loginError.textContent = error.message;
-                    loginError.style.display = 'block';
-                }
-            }
-        }
-
-        // Handle logout
-        function handleLogout() {
-            // Clean up notification manager before logout
-            if (notificationManager) {
-                notificationManager.cleanup();
-                notificationManager = null;
-            }
-            
-            // Remove the user opportunities listener
-            if (userOpportunitiesListener) {
-                userOpportunitiesListener();
-                userOpportunitiesListener = null;
-            }
-            
-            // Clear user data
-            userOpportunities = {
-                pending: [],
-                completed: []
-            };
-            
-            // Sign out from Firebase
-            signOut(auth)
-                .then(() => {
-                    showNotification('Successfully logged out');
-                })
-                .catch((error) => {
-                    console.error('Logout error:', error);
-                });
-        }
-
-        // Save opportunity to user's dashboard
-        function saveOpportunity(userId, opportunity) {
-            const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-            
-            // Check if already saved in local state
-            const alreadySaved = userOpportunities.pending.some(opp => opp.id === opportunity.id) || 
-                                userOpportunities.completed.some(opp => opp.id === opportunity.id);
-            
-            if (alreadySaved) {
-                showNotification('This opportunity is already in your dashboard!', 'warning');
-                return;
-            }
-            
-            // Store only a reference to the opportunity, not the full object
-            set(userOppRef, {
-                opportunityId: opportunity.id,
-                savedAt: new Date().toISOString(),
-                status: 'pending'
-            })
-            .then(() => {
-                showNotification('Opportunity saved to your dashboard!');
-                
-                // Update the details modal save button if it's open for this opportunity
-                if (currentOpportunityDetails && currentOpportunityDetails.id === opportunity.id) {
-                    const detailsSaveBtn = document.getElementById('detailsSaveBtn');
-                    if (detailsSaveBtn) {
-                        detailsSaveBtn.innerHTML = '<i class="fas fa-bookmark"></i> Remove from Dashboard';
-                        detailsSaveBtn.classList.add('saved');
-                    }
-                }
-            })
-            .catch((error) => {
-                console.error('Error saving opportunity:', error);
+// Load user's saved opportunities
+function loadUserOpportunities(userId) {
+    // Remove previous listener if it exists
+    if (userOpportunitiesListener) {
+        userOpportunitiesListener();
+    }
+    
+    const userOppRef = ref(database, `userOpportunities/${userId}`);
+    
+    // Set up the listener and store it for potential cleanup
+    userOpportunitiesListener = onValue(userOppRef, (snapshot) => {
+        const data = snapshot.val();
+        
+        // Always reset the arrays completely
+        userOpportunities.pending = [];
+        userOpportunities.completed = [];
+        
+        if (data) {
+            // Create a map of all opportunities for quick lookup
+            const opportunityMap = {};
+            allOpportunities.forEach(opp => {
+                opportunityMap[opp.id] = opp;
             });
-        }
-
-        // Remove opportunity from user's dashboard
-        function removeOpportunity(userId, opportunity) {
-            const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
             
-            remove(userOppRef)
-            .then(() => {
-                showNotification('Opportunity removed from your dashboard');
+            for (const key in data) {
+                const savedOpp = data[key];
+                const opportunityId = savedOpp.opportunityId || key;
+                const fullOpportunity = opportunityMap[opportunityId];
                 
-                // Update the details modal save button if it's open for this opportunity
-                if (currentOpportunityDetails && currentOpportunityDetails.id === opportunity.id) {
-                    const detailsSaveBtn = document.getElementById('detailsSaveBtn');
-                    if (detailsSaveBtn) {
-                        detailsSaveBtn.innerHTML = '<i class="far fa-bookmark"></i> Save to Dashboard';
-                        detailsSaveBtn.classList.remove('saved');
-                    }
-                }
-            })
-            .catch((error) => {
-                console.error('Error removing opportunity:', error);
-            });
-        }
-
-        // Load user's saved opportunities
-        function loadUserOpportunities(userId) {
-            // Remove previous listener if it exists
-            if (userOpportunitiesListener) {
-                userOpportunitiesListener();
-            }
-            
-            const userOppRef = ref(database, `userOpportunities/${userId}`);
-            
-            // Set up the listener and store it for potential cleanup
-            userOpportunitiesListener = onValue(userOppRef, (snapshot) => {
-                const data = snapshot.val();
-                
-                // Always reset the arrays completely
-                userOpportunities.pending = [];
-                userOpportunities.completed = [];
-                
-                if (data) {
-                    // Create a map of all opportunities for quick lookup
-                    const opportunityMap = {};
-                    allOpportunities.forEach(opp => {
-                        opportunityMap[opp.id] = opp;
-                    });
+                if (fullOpportunity) {
+                    const opportunityWithStatus = {
+                        ...fullOpportunity,
+                        savedAt: savedOpp.savedAt,
+                        status: savedOpp.status || 'pending'
+                    };
                     
-                    for (const key in data) {
-                        const savedOpp = data[key];
-                        const opportunityId = savedOpp.opportunityId || key;
-                        const fullOpportunity = opportunityMap[opportunityId];
-                        
-                        if (fullOpportunity) {
-                            const opportunityWithStatus = {
-                                ...fullOpportunity,
-                                savedAt: savedOpp.savedAt,
-                                status: savedOpp.status || 'pending'
-                            };
-                            
-                            if (savedOpp.status === 'completed') {
-                                userOpportunities.completed.push(opportunityWithStatus);
-                            } else {
-                                userOpportunities.pending.push(opportunityWithStatus);
-                            }
-                        }
+                    if (savedOpp.status === 'completed') {
+                        userOpportunities.completed.push(opportunityWithStatus);
+                    } else {
+                        userOpportunities.pending.push(opportunityWithStatus);
                     }
                 }
-                
-                renderOpportunities();
-                renderDashboardOpportunities();
-            });
-        }
-
-        // Render dashboard opportunities
-        function renderDashboardOpportunities() {
-            // Render pending opportunities
-            if (pendingOpportunities) {
-                if (userOpportunities.pending.length === 0) {
-                    pendingOpportunities.innerHTML = `
-                        <div class="empty-state">
-                            <i class="far fa-bookmark"></i>
-                            <h3>No pending opportunities</h3>
-                            <p>Save opportunities to your dashboard to track them here</p>
-                        </div>
-                    `;
-                } else {
-                    pendingOpportunities.innerHTML = '';
-                    userOpportunities.pending.forEach(opp => {
-                        const oppElement = createDashboardOpportunityElement(opp, 'pending');
-                        pendingOpportunities.appendChild(oppElement);
-                    });
-                }
-            }
-            
-            // Render completed opportunities
-            if (completedOpportunities) {
-                if (userOpportunities.completed.length === 0) {
-                    completedOpportunities.innerHTML = `
-                        <div class="empty-state">
-                            <i class="far fa-check-circle"></i>
-                            <h3>No completed opportunities</h3>
-                            <p>Mark opportunities as complete to track your achievements</p>
-                        </div>
-                    `;
-                } else {
-                    completedOpportunities.innerHTML = '';
-                    userOpportunities.completed.forEach(opp => {
-                        const oppElement = createDashboardOpportunityElement(opp, 'completed');
-                        completedOpportunities.appendChild(oppElement);
-                    });
-                }
             }
         }
+        
+        renderOpportunities();
+        renderDashboardOpportunities();
+    });
+}
 
-        // Create dashboard opportunity element
-        function createDashboardOpportunityElement(opportunity, status) {
-            const isExpired = isOpportunityExpired(opportunity.deadline);
-            const isUrgent = isDeadlineUrgent(opportunity.deadline);
-            const timeRemaining = calculateTimeRemaining(opportunity.deadline);
-            
-            const element = document.createElement('div');
-            element.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
-            element.innerHTML = `
-                <div class="card-header">
-                    <span class="opportunity-badge type-badge">${getOpportunityTypeText(opportunity.type)}</span>
-                    <span class="opportunity-badge field-badge">${getFieldText(opportunity.field)}</span>
-                    ${getFormatBadge(opportunity.format)}
-                    <h3>${opportunity.title || 'Untitled Opportunity'}</h3>
-                    <p class="organization">${opportunity.organization || 'Unknown Organization'}</p>
-                </div>
-                
-                <div class="card-body">
-                    <div class="detail">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opportunity.deadline)} 
-                            <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
-                        </span>
-                    </div>
-                    <p>${opportunity.description || 'No description available'}</p>
-                </div>
-                
-                <div class="card-footer">
-                    <div class="card-actions">
-                        <div class="left-actions">
-                            <button class="save-btn saved" data-id="${opportunity.id}" title="Remove from dashboard">
-                                <i class="fas fa-bookmark"></i>
-                            </button>
-                        </div>
-                        <div class="right-actions">
-                            <button class="details-btn" data-id="${opportunity.id}">View Details</button>
-                            <a href="${opportunity.applyLink || '#'}" target="_blank" class="apply-link">Apply Now</a>
-                            ${status === 'pending' ? 
-                            `<button class="apply-link complete-btn" data-id="${opportunity.id}">Mark as Complete</button>` : 
-                            `<span class="completed-badge">Completed</span>`}
-                        </div>
-                    </div>
+// Render dashboard opportunities
+function renderDashboardOpportunities() {
+    // Render pending opportunities
+    if (pendingOpportunities) {
+        if (userOpportunities.pending.length === 0) {
+            pendingOpportunities.innerHTML = `
+                <div class="empty-state">
+                    <i class="far fa-bookmark"></i>
+                    <h3>No pending opportunities</h3>
+                    <p>Save opportunities to your dashboard to track them here</p>
                 </div>
             `;
-            
-            // Add event listener to remove button
-            const removeBtn = element.querySelector('.save-btn');
-            removeBtn.addEventListener('click', function() {
-                const user = auth.currentUser;
-                if (user) {
-                    removeOpportunity(user.uid, opportunity);
-                }
+        } else {
+            pendingOpportunities.innerHTML = '';
+            userOpportunities.pending.forEach(opp => {
+                const oppElement = createDashboardOpportunityElement(opp, 'pending');
+                pendingOpportunities.appendChild(oppElement);
             });
-            
-            // Add event listener to details button
-            const detailsBtn = element.querySelector('.details-btn');
-            detailsBtn.addEventListener('click', function() {
-                showOpportunityDetails(opportunity);
+        }
+    }
+    
+    // Render completed opportunities
+    if (completedOpportunities) {
+        if (userOpportunities.completed.length === 0) {
+            completedOpportunities.innerHTML = `
+                <div class="empty-state">
+                    <i class="far fa-check-circle"></i>
+                    <h3>No completed opportunities</h3>
+                    <p>Mark opportunities as complete to track your achievements</p>
+                </div>
+            `;
+        } else {
+            completedOpportunities.innerHTML = '';
+            userOpportunities.completed.forEach(opp => {
+                const oppElement = createDashboardOpportunityElement(opp, 'completed');
+                completedOpportunities.appendChild(oppElement);
             });
-            
-            // Add event listener to complete button
-            if (status === 'pending') {
-                const completeBtn = element.querySelector('.complete-btn');
-                completeBtn.addEventListener('click', function() {
-                    const user = auth.currentUser;
-                    if (user) {
-                        markAsComplete(user.uid, opportunity);
-                    }
-                });
-            }
-            
-            return element;
         }
+    }
+}
 
-        // Mark opportunity as complete
-        function markAsComplete(userId, opportunity) {
-            const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-            update(userOppRef, {
-                status: 'completed',
-                completedAt: new Date().toISOString()
-            })
-            .then(() => showNotification('Opportunity marked as complete!'))
-            .catch((error) => console.error('Error updating opportunity:', error));
+// Create dashboard opportunity element
+function createDashboardOpportunityElement(opportunity, status) {
+    const isExpired = isOpportunityExpired(opportunity.deadline);
+    const isUrgent = isDeadlineUrgent(opportunity.deadline);
+    const timeRemaining = calculateTimeRemaining(opportunity.deadline);
+    
+    const element = document.createElement('div');
+    element.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
+    element.innerHTML = `
+        <div class="card-header">
+            <span class="opportunity-badge type-badge">${getOpportunityTypeText(opportunity.type)}</span>
+            <span class="opportunity-badge field-badge">${getFieldText(opportunity.field)}</span>
+            ${getFormatBadge(opportunity.format)}
+            <h3>${opportunity.title || 'Untitled Opportunity'}</h3>
+            <p class="organization">${opportunity.organization || 'Unknown Organization'}</p>
+        </div>
+        
+        <div class="card-body">
+            <div class="detail">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opportunity.deadline)} 
+                    <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
+                </span>
+            </div>
+            <p>${opportunity.description || 'No description available'}</p>
+        </div>
+        
+        <div class="card-footer">
+            <div class="card-actions">
+                <div class="left-actions">
+                    <button class="save-btn saved" data-id="${opportunity.id}" title="Remove from dashboard">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                </div>
+                <div class="right-actions">
+                    <button class="details-btn" data-id="${opportunity.id}">View Details</button>
+                    <a href="${opportunity.applyLink || '#'}" target="_blank" class="apply-link">Apply Now</a>
+                    ${status === 'pending' ? 
+                    `<button class="apply-link complete-btn" data-id="${opportunity.id}">Mark as Complete</button>` : 
+                    `<span class="completed-badge">Completed</span>`}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add event listener to remove button
+    const removeBtn = element.querySelector('.save-btn');
+    removeBtn.addEventListener('click', function() {
+        const user = auth.currentUser;
+        if (user) {
+            removeOpportunity(user.uid, opportunity);
         }
-
-        // Apply filters - FIXED: Handles "any" field properly
-        function applyFilters() {
-            const selectedFields = fieldMultiSelect.getSelected();
-            const selectedTypes = typeMultiSelect.getSelected();
-            const formatFilter = document.getElementById('format').value;
-            const deadlineFilter = document.getElementById('deadline').value;
-            const languageFilter = document.getElementById('language').value;
-            const searchTerm = searchInput.value.toLowerCase();
-            
-            filteredOpportunities = allOpportunities.filter(opp => {
-                // Field filter - FIXED: Check if any selected field matches any of the opportunity's fields
-                if (selectedFields.length > 0) {
-                    const oppFields = Array.isArray(opp.field) ? opp.field : [opp.field];
-                    
-                    // If opportunity has "any" field, it should match all field filters
-                    const hasAnyField = oppFields.includes('any');
-                    
-                    // If it doesn't have "any" field, check for matching fields
-                    const hasMatchingField = oppFields.some(field => selectedFields.includes(field));
-                    
-                    // Show opportunity if it has "any" field OR has a matching field
-                    if (!hasAnyField && !hasMatchingField) return false;
-                }
-                
-                // Type filter - check if any selected type matches any of the opportunity's types
-                if (selectedTypes.length > 0) {
-                    const oppTypes = Array.isArray(opp.type) ? opp.type : [opp.type];
-                    const hasMatchingType = oppTypes.some(type => selectedTypes.includes(type));
-                    if (!hasMatchingType) return false;
-                }
-                
-                // Format filter
-                if (formatFilter && opp.format !== formatFilter) return false;
-                
-                // Language filter
-                if (languageFilter && opp.language && opp.language !== languageFilter) return false;
-                
-                // Search term filter
-                if (searchTerm && !(
-                    (opp.title && opp.title.toLowerCase().includes(searchTerm)) ||
-                    (opp.organization && opp.organization.toLowerCase().includes(searchTerm)) ||
-                    (opp.description && opp.description.toLowerCase().includes(searchTerm)) ||
-                    (opp.field && (Array.isArray(opp.field) ? 
-                        opp.field.some(f => {
-                            // Include "Any Field" in search results for any search term
-                            if (f === 'any') return true;
-                            return FIELD_OPTIONS[f] && FIELD_OPTIONS[f].toLowerCase().includes(searchTerm);
-                        }) : 
-                        // For single field, include if it's "any" or matches the search
-                        (opp.field === 'any' || (FIELD_OPTIONS[opp.field] && FIELD_OPTIONS[opp.field].toLowerCase().includes(searchTerm)))
-                    ))
-                )) return false;
-                
-                // Deadline filter - check if deadline is within specified timeframe
-                if (deadlineFilter && opp.deadline) {
-                    const today = new Date();
-                    const oppDeadline = new Date(opp.deadline);
-                    
-                    // Skip expired opportunities for deadline filter
-                    if (oppDeadline < today) return false;
-                    
-                    const diffTime = oppDeadline - today;
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    if (deadlineFilter === 'week' && diffDays > 7) return false;
-                    if (deadlineFilter === 'month' && diffDays > 30) return false;
-                    if (deadlineFilter === '3months' && diffDays > 90) return false;
-                }
-                
-                return true;
-            });
-            
-            renderOpportunities();
-            showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
-        }
-
-        // Apply search filter
-        function applySearchFilter() {
-            applyFilters();
-        }
-
-        // Reset filters
-        function resetFilters() {
-            fieldMultiSelect.clear();
-            typeMultiSelect.clear();
-            document.getElementById('format').value = '';
-            document.getElementById('deadline').value = '';
-            document.getElementById('language').value = '';
-            if (searchInput) searchInput.value = '';
-            
-            filteredOpportunities = [...allOpportunities];
-            renderOpportunities();
-            showNotification('Filters reset');
-        }
-
-        // Show dashboard
-        function showDashboard() {
+    });
+    
+    // Add event listener to details button
+    const detailsBtn = element.querySelector('.details-btn');
+    detailsBtn.addEventListener('click', function() {
+        showOpportunityDetails(opportunity);
+    });
+    
+    // Add event listener to complete button
+    if (status === 'pending') {
+        const completeBtn = element.querySelector('.complete-btn');
+        completeBtn.addEventListener('click', function() {
             const user = auth.currentUser;
             if (user) {
-                // Hide other sections and show dashboard
-                if (heroSection) heroSection.style.display = 'none';
-                if (filtersSection) filtersSection.style.display = 'none';
-                if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
-                if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
-                if (adminPanel) adminPanel.style.display = 'none';
-                if (dashboard) dashboard.style.display = 'block';
-            } else {
-                showAuthModal('login');
-                showNotification('Please sign in to view your dashboard', 'warning');
+                markAsComplete(user.uid, opportunity);
             }
-        }
+        });
+    }
+    
+    return element;
+}
 
-        // Show home page
-        function showHome() {
-            // Show all sections and hide dashboard and admin panel
-            if (heroSection) heroSection.style.display = 'block';
-            if (filtersSection) filtersSection.style.display = 'block';
-            if (opportunitiesTitle) opportunitiesTitle.style.display = 'block';
-            if (opportunitiesGrid) opportunitiesGrid.style.display = 'grid';
-            if (dashboard) dashboard.style.display = 'none';
-            if (adminPanel) adminPanel.style.display = 'none';
-        }
+// Mark opportunity as complete
+function markAsComplete(userId, opportunity) {
+    const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+    update(userOppRef, {
+        status: 'completed',
+        completedAt: new Date().toISOString()
+    })
+    .then(() => showNotification('Opportunity marked as complete!'))
+    .catch((error) => console.error('Error updating opportunity:', error));
+}
 
-        // Show opportunities page
-        function showOpportunities() {
-            showHome();
+// Apply filters - FIXED: Handles "any" field properly
+function applyFilters() {
+    const selectedFields = fieldMultiSelect.getSelected();
+    const selectedTypes = typeMultiSelect.getSelected();
+    const formatFilter = document.getElementById('format').value;
+    const deadlineFilter = document.getElementById('deadline').value;
+    const languageFilter = document.getElementById('language').value;
+    const searchTerm = searchInput.value.toLowerCase();
+    
+    filteredOpportunities = allOpportunities.filter(opp => {
+        // Field filter - FIXED: Check if any selected field matches any of the opportunity's fields
+        if (selectedFields.length > 0) {
+            const oppFields = Array.isArray(opp.field) ? opp.field : [opp.field];
+            
+            // If opportunity has "any" field, it should match all field filters
+            const hasAnyField = oppFields.includes('any');
+            
+            // If it doesn't have "any" field, check for matching fields
+            const hasMatchingField = oppFields.some(field => selectedFields.includes(field));
+            
+            // Show opportunity if it has "any" field OR has a matching field
+            if (!hasAnyField && !hasMatchingField) return false;
         }
+        
+        // Type filter - check if any selected type matches any of the opportunity's types
+        if (selectedTypes.length > 0) {
+            const oppTypes = Array.isArray(opp.type) ? opp.type : [opp.type];
+            const hasMatchingType = oppTypes.some(type => selectedTypes.includes(type));
+            if (!hasMatchingType) return false;
+        }
+        
+        // Format filter
+        if (formatFilter && opp.format !== formatFilter) return false;
+        
+        // Language filter
+        if (languageFilter && opp.language && opp.language !== languageFilter) return false;
+        
+        // Search term filter
+        if (searchTerm && !(
+            (opp.title && opp.title.toLowerCase().includes(searchTerm)) ||
+            (opp.organization && opp.organization.toLowerCase().includes(searchTerm)) ||
+            (opp.description && opp.description.toLowerCase().includes(searchTerm)) ||
+            (opp.field && (Array.isArray(opp.field) ? 
+                opp.field.some(f => {
+                    // Include "Any Field" in search results for any search term
+                    if (f === 'any') return true;
+                    return FIELD_OPTIONS[f] && FIELD_OPTIONS[f].toLowerCase().includes(searchTerm);
+                }) : 
+                // For single field, include if it's "any" or matches the search
+                (opp.field === 'any' || (FIELD_OPTIONS[opp.field] && FIELD_OPTIONS[opp.field].toLowerCase().includes(searchTerm)))
+            ))
+        )) return false;
+        
+        // Deadline filter - check if deadline is within specified timeframe
+        if (deadlineFilter && opp.deadline) {
+            const today = new Date();
+            const oppDeadline = new Date(opp.deadline);
+            
+            // Skip expired opportunities for deadline filter
+            if (oppDeadline < today) return false;
+            
+            const diffTime = oppDeadline - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (deadlineFilter === 'week' && diffDays > 7) return false;
+            if (deadlineFilter === 'month' && diffDays > 30) return false;
+            if (deadlineFilter === '3months' && diffDays > 90) return false;
+        }
+        
+        return true;
+    });
+    
+    renderOpportunities();
+    showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
+}
 
-        // Show admin panel
-       function showAdminPanel() {
-  const user = auth.currentUser;
-  if (user) {
-    checkAdminStatus(user.uid).then(adminStatus => {
-      if (adminStatus.isAdmin) {
-        // Hide other sections and show admin panel
+// Apply search filter
+function applySearchFilter() {
+    applyFilters();
+}
+
+// Reset filters
+function resetFilters() {
+    fieldMultiSelect.clear();
+    typeMultiSelect.clear();
+    document.getElementById('format').value = '';
+    document.getElementById('deadline').value = '';
+    document.getElementById('language').value = '';
+    if (searchInput) searchInput.value = '';
+    
+    filteredOpportunities = [...allOpportunities];
+    renderOpportunities();
+    showNotification('Filters reset');
+}
+
+// Show dashboard
+function showDashboard() {
+    const user = auth.currentUser;
+    if (user) {
+        // Hide other sections and show dashboard
         if (heroSection) heroSection.style.display = 'none';
         if (filtersSection) filtersSection.style.display = 'none';
         if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
         if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
-        if (dashboard) dashboard.style.display = 'none';
-        if (adminPanel) adminPanel.style.display = 'block';
-        
-        // Render admin opportunities
-        renderAdminOpportunities();
-        
-        // Only show admin management for super admins
-        if (adminStatus.role === ADMIN_ROLES.SUPER_ADMIN) {
-          renderAdminManagement();
-        }
-      } else {
-        showNotification('Access denied. Admin privileges required.', 'error');
-      }
-    });
-  } else {
-    showNotification('Please sign in to access admin panel', 'warning');
-  }
+        if (adminPanel) adminPanel.style.display = 'none';
+        if (dashboard) dashboard.style.display = 'block';
+        if (document.getElementById('curatorProfile')) document.getElementById('curatorProfile').style.display = 'none';
+        if (document.getElementById('leaderboardSection')) document.getElementById('leaderboardSection').style.display = 'none';
+    } else {
+        showAuthModal('login');
+        showNotification('Please sign in to view your dashboard', 'warning');
+    }
 }
 
-        // Switch dashboard tab
-        function switchDashboardTab(tabName) {
-            if (!dashboardTabs) return;
-            
-            // Update tabs
-            dashboardTabs.forEach(tab => {
-                if (tab.getAttribute('data-tab') === tabName) {
-                    tab.classList.add('active');
-                } else {
-                    tab.classList.remove('active');
+// Show home page
+function showHome() {
+    // Show all sections and hide dashboard and admin panel
+    if (heroSection) heroSection.style.display = 'block';
+    if (filtersSection) filtersSection.style.display = 'block';
+    if (opportunitiesTitle) opportunitiesTitle.style.display = 'block';
+    if (opportunitiesGrid) opportunitiesGrid.style.display = 'grid';
+    if (dashboard) dashboard.style.display = 'none';
+    if (adminPanel) adminPanel.style.display = 'none';
+    if (document.getElementById('curatorProfile')) document.getElementById('curatorProfile').style.display = 'none';
+    if (document.getElementById('leaderboardSection')) document.getElementById('leaderboardSection').style.display = 'none';
+}
+
+// Show opportunities page
+function showOpportunities() {
+    showHome();
+}
+
+// Show admin panel
+function showAdminPanel() {
+    const user = auth.currentUser;
+    if (user) {
+        checkAdminStatus(user.uid).then(adminStatus => {
+            if (adminStatus.isAdmin) {
+                // Hide other sections and show admin panel
+                if (heroSection) heroSection.style.display = 'none';
+                if (filtersSection) filtersSection.style.display = 'none';
+                if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
+                if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
+                if (dashboard) dashboard.style.display = 'none';
+                if (adminPanel) adminPanel.style.display = 'block';
+                if (document.getElementById('curatorProfile')) document.getElementById('curatorProfile').style.display = 'none';
+                if (document.getElementById('leaderboardSection')) document.getElementById('leaderboardSection').style.display = 'none';
+                
+                // Render admin opportunities
+                renderAdminOpportunities();
+                
+                // Only show admin management for super admins
+                if (adminStatus.role === ADMIN_ROLES.SUPER_ADMIN) {
+                    renderAdminManagement();
                 }
-            });
-            
-            // Update content
-            if (tabName === 'pending') {
-                document.getElementById('pendingContent').classList.add('active');
-                document.getElementById('completedContent').classList.remove('active');
             } else {
-                document.getElementById('pendingContent').classList.remove('active');
-                document.getElementById('completedContent').classList.add('active');
-            }
-        }
-
-        // Show admin modal for adding/editing opportunities - FIXED: Default to "any" field
-        function showAdminModal(opportunity = null) {
-            if (!adminModal) return;
-            
-            // Check if user is admin
-            const user = auth.currentUser;
-            if (!user) {
-                showNotification('Please sign in to access admin features', 'warning');
-                return;
-            }
-            
-            if (!isAdminUser) {
                 showNotification('Access denied. Admin privileges required.', 'error');
-                return;
             }
-            
-            if (opportunity) {
-                // Editing existing opportunity
-                adminModalTitle.textContent = 'Edit Opportunity';
-                document.getElementById('opportunityId').value = opportunity.id;
-                document.getElementById('adminTitle').value = opportunity.title;
-                document.getElementById('adminOrganization').value = opportunity.organization;
-                adminTypeMultiSelect.setSelected(opportunity.type);
-                adminFieldMultiSelect.setSelected(opportunity.field);
-                document.getElementById('adminFormat').value = opportunity.format;
-                document.getElementById('adminDescription').value = opportunity.description;
-                document.getElementById('adminLocation').value = opportunity.location;
-                document.getElementById('adminDeadline').value = opportunity.deadline;
-                document.getElementById('adminApplyLink').value = opportunity.applyLink;
-                document.getElementById('adminTimeCommitment').value = opportunity.timeCommitment || '';
-                document.getElementById('adminDuration').value = opportunity.duration || '';
-                document.getElementById('adminLanguage').value = opportunity.language || '';
-                
-                // Handle format-specific UI
-                handleFormatChange();
-            } else {
-                // Adding new opportunity - FIXED: Default to "any" field
-                adminModalTitle.textContent = 'Add New Opportunity';
-                adminOpportunityForm.reset();
-                document.getElementById('opportunityId').value = '';
-                adminTypeMultiSelect.clear();
-                adminFieldMultiSelect.setSelected(['any']); // Default to "any" field
-                
-                // Set default format to show location field
-                handleFormatChange();
-            }
-            
-            adminModal.style.display = 'flex';
-        }
+        });
+    } else {
+        showNotification('Please sign in to access admin panel', 'warning');
+    }
+}
 
-        // Handle check duplicate button click
-        async function handleCheckDuplicate() {
-            const opportunityData = gatherFormData();
-            
-            if (!opportunityData.title || !opportunityData.organization) {
-                showNotification('Please fill in at least the title and organization fields', 'warning');
-                return;
-            }
-            
-            const duplicateCheck = await checkForDuplicateOpportunity(opportunityData);
-            
-            if (duplicateCheck.isDuplicate) {
-                showNotification(`Possible duplicate found: ${duplicateCheck.reason} (${duplicateCheck.confidence}% match)`, 'warning');
-            } else {
-                showNotification('No duplicates found. You can safely submit.', 'success');
-            }
+// Switch dashboard tab
+function switchDashboardTab(tabName) {
+    if (!dashboardTabs) return;
+    
+    // Update tabs
+    dashboardTabs.forEach(tab => {
+        if (tab.getAttribute('data-tab') === tabName) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
         }
-
-        // Gather form data for duplicate checking
-        function gatherFormData() {
-            const format = document.getElementById('adminFormat').value;
-            let location = '';
-            if (format === 'online') {
-                location = 'Online';
-            } else {
-                location = document.getElementById('adminLocation').value;
-            }
-            
-return {
-    title: document.getElementById('adminTitle').value.trim(),
-    organization: document.getElementById('adminOrganization').value.trim(),
-    type: adminTypeMultiSelect.getSelected(),
-    field: adminFieldMultiSelect.getSelected(),
-    format: format,
-    description: document.getElementById('adminDescription').value.trim(),
-    location: location,
-    deadline: document.getElementById('adminDeadline').value,
-    applyLink: document.getElementById('adminApplyLink').value.trim(),
-    timeCommitment: document.getElementById('adminTimeCommitment').value,
-    duration: document.getElementById('adminDuration').value,
-    language: document.getElementById('adminLanguage').value,
-    ageRestrictions: document.getElementById('adminAgeRestrictions').value // Add this line
-};
-        }
-
-        // Handle admin form submission with duplicate checking
-        async function handleAdminFormSubmit(e) {
-            e.preventDefault();
-            
-            // Check if user is admin
-            const user = auth.currentUser;
-            if (!user || !isAdminUser) {
-                showNotification('Admin privileges required.', 'error');
-                return;
-            }
-            
-            const opportunityId = document.getElementById('opportunityId').value;
-            const opportunityData = gatherFormData();
-            
-            // Add user info to opportunity data
-            opportunityData.addedBy = user.uid;
-            opportunityData.addedByName = user.displayName || user.email;
-            opportunityData.createdAt = opportunityId ? allOpportunities.find(opp => opp.id === opportunityId).createdAt : new Date().toISOString();
-            opportunityData.updatedAt = new Date().toISOString();
-            
-            // Skip duplicate check for edits (unless title/org/link changed significantly)
-            if (!opportunityId) {
-                const duplicateCheck = await checkForDuplicateOpportunity(opportunityData);
-                
-                if (duplicateCheck.isDuplicate) {
-                    showDuplicateWarning(duplicateCheck, opportunityData);
-                    return; // Stop submission
-                }
-            }
-            
-            // Proceed with save/update
-            saveOpportunityData(opportunityId, opportunityData);
-        }
-
-        // Close admin modal
-        function closeAdminModal() {
-            if (adminModal) {
-                adminModal.style.display = 'none';
-            }
-        }
-
-        // Delete opportunity
-        function deleteOpportunity(opportunityId) {
-            // Check if user is admin
-            const user = auth.currentUser;
-            if (!user) {
-                showNotification('Please sign in to access admin features', 'warning');
-                return;
-            }
-            
-            if (!isAdminUser) {
-                showNotification('Access denied. Admin privileges required.', 'error');
-                return;
-            }
-            
-            if (confirm('Are you sure you want to delete this opportunity?')) {
-                remove(ref(database, `opportunities/${opportunityId}`))
-                    .then(() => {
-                        showNotification('Opportunity deleted successfully!');
-                    })
-                    .catch((error) => {
-                        showNotification('Error deleting opportunity: ' + error.message, 'error');
-                    });
-            }
-        }
-
-        // Initialize the app
-        function initApp() {
-            loadOpportunitiesFromFirebase();
-            
-            // Clean up expired notification markers
-            if (notificationManager) {
-                notificationManager.cleanupExpiredMarkers();
-            }
-        }
-
-        // Initialize the app
-        initApp();
     });
+    
+    // Update content
+    if (tabName === 'pending') {
+        document.getElementById('pendingContent').classList.add('active');
+        document.getElementById('completedContent').classList.remove('active');
+    } else {
+        document.getElementById('pendingContent').classList.remove('active');
+        document.getElementById('completedContent').classList.add('active');
+    }
+}
+
+// Show admin modal for adding/editing opportunities - FIXED: Default to "any" field
+function showAdminModal(opportunity = null) {
+    if (!adminModal) return;
+    
+    // Check if user is admin
+    const user = auth.currentUser;
+    if (!user) {
+        showNotification('Please sign in to access admin features', 'warning');
+        return;
+    }
+    
+    if (!isAdminUser) {
+        showNotification('Access denied. Admin privileges required.', 'error');
+        return;
+    }
+    
+    if (opportunity) {
+        // Editing existing opportunity
+        adminModalTitle.textContent = 'Edit Opportunity';
+        document.getElementById('opportunityId').value = opportunity.id;
+        document.getElementById('adminTitle').value = opportunity.title;
+        document.getElementById('adminOrganization').value = opportunity.organization;
+        adminTypeMultiSelect.setSelected(opportunity.type);
+        adminFieldMultiSelect.setSelected(opportunity.field);
+        document.getElementById('adminFormat').value = opportunity.format;
+        document.getElementById('adminDescription').value = opportunity.description;
+        document.getElementById('adminLocation').value = opportunity.location;
+        document.getElementById('adminDeadline').value = opportunity.deadline;
+        document.getElementById('adminApplyLink').value = opportunity.applyLink;
+        document.getElementById('adminTimeCommitment').value = opportunity.timeCommitment || '';
+        document.getElementById('adminDuration').value = opportunity.duration || '';
+        document.getElementById('adminLanguage').value = opportunity.language || '';
+        
+        // Handle format-specific UI
+        handleFormatChange();
+    } else {
+        // Adding new opportunity - FIXED: Default to "any" field
+        adminModalTitle.textContent = 'Add New Opportunity';
+        adminOpportunityForm.reset();
+        document.getElementById('opportunityId').value = '';
+        adminTypeMultiSelect.clear();
+        adminFieldMultiSelect.setSelected(['any']); // Default to "any" field
+        
+        // Set default format to show location field
+        handleFormatChange();
+    }
+    
+    adminModal.style.display = 'flex';
+}
+
+// Handle check duplicate button click
+async function handleCheckDuplicate() {
+    const opportunityData = gatherFormData();
+    
+    if (!opportunityData.title || !opportunityData.organization) {
+        showNotification('Please fill in at least the title and organization fields', 'warning');
+        return;
+    }
+    
+    const duplicateCheck = await checkForDuplicateOpportunity(opportunityData);
+    
+    if (duplicateCheck.isDuplicate) {
+        showNotification(`Possible duplicate found: ${duplicateCheck.reason} (${duplicateCheck.confidence}% match)`, 'warning');
+    } else {
+        showNotification('No duplicates found. You can safely submit.', 'success');
+    }
+}
+
+// Gather form data for duplicate checking
+function gatherFormData() {
+    const format = document.getElementById('adminFormat').value;
+    let location = '';
+    if (format === 'online') {
+        location = 'Online';
+    } else {
+        location = document.getElementById('adminLocation').value;
+    }
+    
+    return {
+        title: document.getElementById('adminTitle').value.trim(),
+        organization: document.getElementById('adminOrganization').value.trim(),
+        type: adminTypeMultiSelect.getSelected(),
+        field: adminFieldMultiSelect.getSelected(),
+        format: format,
+        description: document.getElementById('adminDescription').value.trim(),
+        location: location,
+        deadline: document.getElementById('adminDeadline').value,
+        applyLink: document.getElementById('adminApplyLink').value.trim(),
+        timeCommitment: document.getElementById('adminTimeCommitment').value,
+        duration: document.getElementById('adminDuration').value,
+        language: document.getElementById('adminLanguage').value,
+        ageRestrictions: document.getElementById('adminAgeRestrictions').value
+    };
+}
+
+// Handle admin form submission with duplicate checking
+async function handleAdminFormSubmit(e) {
+    e.preventDefault();
+    
+    // Check if user is admin
+    const user = auth.currentUser;
+    if (!user || !isAdminUser) {
+        showNotification('Admin privileges required.', 'error');
+        return;
+    }
+    
+    const opportunityId = document.getElementById('opportunityId').value;
+    const opportunityData = gatherFormData();
+    
+    // Add user info to opportunity data
+    opportunityData.addedBy = user.uid;
+    opportunityData.addedByName = user.displayName || user.email;
+    opportunityData.createdAt = opportunityId ? allOpportunities.find(opp => opp.id === opportunityId).createdAt : new Date().toISOString();
+    opportunityData.updatedAt = new Date().toISOString();
+    
+    // Skip duplicate check for edits (unless title/org/link changed significantly)
+    if (!opportunityId) {
+        const duplicateCheck = await checkForDuplicateOpportunity(opportunityData);
+        
+        if (duplicateCheck.isDuplicate) {
+            showDuplicateWarning(duplicateCheck, opportunityData);
+            return; // Stop submission
+        }
+    }
+    
+    // Proceed with save/update
+    saveOpportunityData(opportunityId, opportunityData);
+}
+
+// Close admin modal
+function closeAdminModal() {
+    if (adminModal) {
+        adminModal.style.display = 'none';
+    }
+}
+
+// Delete opportunity
+function deleteOpportunity(opportunityId) {
+    // Check if user is admin
+    const user = auth.currentUser;
+    if (!user) {
+        showNotification('Please sign in to access admin features', 'warning');
+        return;
+    }
+    
+    if (!isAdminUser) {
+        showNotification('Access denied. Admin privileges required.', 'error');
+        return;
+    }
+    
+    if (confirm('Are you sure you want to delete this opportunity?')) {
+        remove(ref(database, `opportunities/${opportunityId}`))
+            .then(() => {
+                showNotification('Opportunity deleted successfully!');
+            })
+            .catch((error) => {
+                showNotification('Error deleting opportunity: ' + error.message, 'error');
+            });
+    }
+}
+
+// Initialize the app
+function initApp() {
+    loadOpportunitiesFromFirebase();
+    
+    // Initialize notification manager
+    notificationManager = new NotificationManager();
+    
+    // Clean up expired notification markers
+    if (notificationManager) {
+        notificationManager.cleanupExpiredMarkers();
+    }
+}
+
+// Initialize the app
+initApp();
+
+// ... (rest of the code)
 </script>
 </body>
 </html>
