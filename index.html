@@ -4332,56 +4332,39 @@ function renderAdminOpportunities() {
     return;
   }
   
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      
-      // Define super admin emails
-   //   const superAdminEmails = ['boymirzayevismoiljon@gmail.com', 'ibaymirzayev@gmail.com'];
-     // const isSuperAdmin = superAdminEmails.includes(email);
-      
-      // Save user profile
-      set(ref(database, 'users/' + user.uid), {
-        name: name,
-        email: email,
-        createdAt: new Date().toISOString()
-      });
+createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    const user = userCredential.user;
+    
+    // Save user profile
+    set(ref(database, 'users/' + user.uid), {
+      name: name,
+      email: email,
+      createdAt: new Date().toISOString()
+    });
 
-      // Add to admins if it's an admin email
-    /*  if (isSuperAdmin || email.includes('@yourdomain.com')) { // Adjust this condition as needed
-        const adminData = {
-          email: email,
-          name: name,
-          role: isSuperAdmin ? ADMIN_ROLES.SUPER_ADMIN : ADMIN_ROLES.ADMIN,
-          addedAt: new Date().toISOString(),
-          addedBy: isSuperAdmin ? 'system' : user.uid
-        };
-        
-        set(ref(database, `admins/${user.uid}`), adminData);
-      }*/
+    if (authModal) authModal.style.display = 'none';
+    showNotification('Account created successfully!');
+  })
+  .catch((error) => {
+    if (signupError) {
+      let errorMessage = error.message;
+      // Make error messages more user-friendly
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'An account with this email already exists';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Invalid email address format';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'Password is too weak';
+      }
+      signupError.textContent = errorMessage;
+      signupError.style.display = 'block';
+    }
+  });
+}
 
-      if (authModal) authModal.style.display = 'none';
-      showNotification('Account created successfully!');
-    })
-    .catch((error) => {
-                    if (signupError) {
-                        let errorMessage = error.message;
-                        // Make error messages more user-friendly
-                        if (error.code === 'auth/email-already-in-use') {
-                            errorMessage = 'An account with this email already exists';
-                        } else if (error.code === 'auth/invalid-email') {
-                            errorMessage = 'Invalid email address format';
-                        } else if (error.code === 'auth/weak-password') {
-                            errorMessage = 'Password is too weak';
-                        }
-                        signupError.textContent = errorMessage;
-                        signupError.style.display = 'block';
-                    }
-                });
-        }
-
-        // Handle Google Sign-In
-      function handleGoogleSignIn() {
+// Handle Google Sign-In
+function handleGoogleSignIn() {
   signInWithPopup(auth, googleProvider)
     .then((result) => {
       const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -4392,10 +4375,6 @@ function renderAdminOpportunities() {
       
       get(userRef).then((snapshot) => {
         if (!snapshot.exists()) {
-          // Define super admin emails
-          const superAdminEmails = ['boymirzayevismoiljon@gmail.com', 'ibaymirzayev@gmail.com'];
-          const isSuperAdmin = superAdminEmails.includes(user.email);
-          
           // User doesn't exist, create a new user record
           set(userRef, {
             name: user.displayName,
@@ -4404,18 +4383,8 @@ function renderAdminOpportunities() {
             isGoogleUser: true
           });
           
-          // Add to admins if it's an admin email
-          if (isSuperAdmin || user.email.includes('@yourdomain.com')) {
-            const adminData = {
-              email: user.email,
-              name: user.displayName,
-              role: isSuperAdmin ? ADMIN_ROLES.SUPER_ADMIN : ADMIN_ROLES.ADMIN,
-              addedAt: new Date().toISOString(),
-              addedBy: isSuperAdmin ? 'system' : user.uid
-            };
-            
-            set(ref(database, `admins/${user.uid}`), adminData);
-          }
+          // Note: Admin roles are managed exclusively in Firebase database
+          // No automatic admin assignment - all admin management done via Firebase
         }
         
         if (authModal) authModal.style.display = 'none';
@@ -4423,25 +4392,23 @@ function renderAdminOpportunities() {
       });
     })
     .catch((error) => {
-      // Your existing error handling
-                    // Handle Errors here
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    const email = error.customData?.email;
-                    const credential = GoogleAuthProvider.credentialFromError(error);
-                    
-                    // Show error in appropriate form
-                    const currentTab = document.querySelector('.auth-tab.active').getAttribute('data-tab');
-                    if (currentTab === 'login' && loginError) {
-                        loginError.textContent = errorMessage;
-                        loginError.style.display = 'block';
-                    } else if (currentTab === 'signup' && signupError) {
-                        signupError.textContent = errorMessage;
-                        signupError.style.display = 'block';
-                    }
-                });
-        }
-
+      // Handle Errors here
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      const email = error.customData?.email;
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      
+      // Show error in appropriate form
+      const currentTab = document.querySelector('.auth-tab.active').getAttribute('data-tab');
+      if (currentTab === 'login' && loginError) {
+        loginError.textContent = errorMessage;
+        loginError.style.display = 'block';
+      } else if (currentTab === 'signup' && signupError) {
+        signupError.textContent = errorMessage;
+        signupError.style.display = 'block';
+      }
+    });
+}
         // Check if email exists
         async function checkEmailExists(email) {
             try {
