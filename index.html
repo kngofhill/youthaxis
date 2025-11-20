@@ -2212,10 +2212,6 @@
         'mentorship': 'Mentorship Program',
         'training': 'Training Program'
     };
-    const ADMIN_ROLES = {
-  SUPER_ADMIN: 'super-admin',
-  ADMIN: 'admin'
-};
 
     // Utility functions
     function getOpportunityTypeText(type) {
@@ -3735,35 +3731,49 @@ detailsAdditionalInfo.innerHTML = additionalInfo || '<p>No additional informatio
         });
 
         // Check auth state
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    // User is signed in
-    if (loginBtn) loginBtn.style.display = 'none';
-    if (signupBtn) signupBtn.style.display = 'none';
-    if (logoutBtn) logoutBtn.style.display = 'block';
-    if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'block';
-    
-    // Check admin status with role information
-    try {
-      const adminStatus = await checkAdminStatus(user.uid);
-      isAdminUser = adminStatus.isAdmin;
-      
-      if (navAdmin) {
-        navAdmin.style.display = isAdminUser ? 'list-item' : 'none';
-        
-        // Add role badge to admin nav item if user is admin
-        if (isAdminUser) {
-          const roleBadge = adminStatus.role === ADMIN_ROLES.SUPER_ADMIN ? ' (Super Admin)' : ' (Admin)';
-          navAdmin.innerHTML = `Admin${roleBadge}`;
-        }
-      }
-    } catch (error) {
-      console.error('Error checking admin status:', error);
-      isAdminUser = false;
-    }
-    
-    // Rest of your existing code...
-  } else {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // User is signed in
+                if (loginBtn) loginBtn.style.display = 'none';
+                if (signupBtn) signupBtn.style.display = 'none';
+                if (logoutBtn) logoutBtn.style.display = 'block';
+                if (notificationSettingsBtn) notificationSettingsBtn.style.display = 'block';
+                
+                // Check admin status
+                try {
+                    isAdminUser = await checkAdminStatus(user.uid);
+                    console.log('User is admin:', isAdminUser);
+                    
+                    if (navAdmin) {
+                        navAdmin.style.display = isAdminUser ? 'list-item' : 'none';
+                    }
+                } catch (error) {
+                    console.error('Error checking admin status:', error);
+                    isAdminUser = false;
+                }
+                
+                // Show notification bell
+                const notificationBell = document.getElementById('notificationBell');
+                if (notificationBell) {
+                    notificationBell.style.display = 'list-item';
+                }
+                
+                // Initialize notification manager (clean up old one first)
+                if (notificationManager) {
+                    notificationManager.cleanup();
+                }
+                notificationManager = new NotificationManager();
+                
+                // Load user's saved opportunities
+                loadUserOpportunities(user.uid);
+                
+                // Always show home page when logging in
+                setTimeout(() => {
+                    showHome();
+                    renderOpportunities(); // Ensure opportunities are rendered
+                }, 100);
+                
+            } else {
                 // User is signed out - Reset everything
                 if (loginBtn) loginBtn.style.display = 'block';
                 if (signupBtn) signupBtn.style.display = 'block';
@@ -3809,212 +3819,18 @@ onAuthStateChanged(auth, async (user) => {
                 isAdminUser = false;
             }
         });
-// Default permissions based on role - ADD THIS FIRST
-function getDefaultPermissions(role) {
-  if (role === ADMIN_ROLES.SUPER_ADMIN) {
-    return {
-      canManageAllOpportunities: true,
-      canManageUsers: true,
-      canManageAdmins: true,
-      canDeleteAny: true,
-      canEditAny: true
-    };
-  } else {
-    return {
-      canManageAllOpportunities: false,
-      canManageUsers: false,
-      canManageAdmins: false,
-      canDeleteAny: false,
-      canEditAny: false
-    };
-  }
-}
 
         // Check if user is admin using Firebase rules
-async function checkAdminStatus(userId) {
-  try {
-    const adminRef = ref(database, `admins/${userId}`);
-    const snapshot = await get(adminRef);
-    
-    if (snapshot.exists()) {
-      const adminData = snapshot.val();
-      return {
-        isAdmin: true,
-        role: adminData.role || ADMIN_ROLES.ADMIN,
-        permissions: adminData.permissions || getDefaultPermissions(adminData.role)
-      };
-    }
-    return { isAdmin: false, role: null, permissions: null };
-  } catch (error) {
-    console.error('Error checking admin status:', error);
-    return { isAdmin: false, role: null, permissions: null };
-  }
-}
-async function canUserModifyOpportunity(opportunityId) {
-  const user = auth.currentUser;
-  if (!user) return false;
-  
-  const adminStatus = await checkAdminStatus(user.uid);
-  
-  // Super admins can modify anything
-  if (adminStatus.role === ADMIN_ROLES.SUPER_ADMIN) {
-    return true;
-  }
-  
-  // Regular admins can only modify their own opportunities
-  if (adminStatus.isAdmin) {
-    try {
-      const opportunityRef = ref(database, `opportunities/${opportunityId}`);
-      const snapshot = await get(opportunityRef);
-      
-      if (snapshot.exists()) {
-        const opportunity = snapshot.val();
-        return opportunity.addedBy === user.uid;
-      }
-    } catch (error) {
-      console.error('Error checking opportunity ownership:', error);
-    }
-  }
-  
-  return false;
-}
-        function renderAdminManagement() {
-  const adminPanel = document.getElementById('adminPanel');
-  
-  // Check if admin management section already exists
-  const existingSection = document.querySelector('.admin-management');
-  if (existingSection) {
-    existingSection.remove();
-  }
-  
-  // Create admin management section
-  const adminManagementSection = document.createElement('div');
-  adminManagementSection.className = 'admin-management';
-  adminManagementSection.innerHTML = `
-    <div class="admin-header">
-      <h2>Admin Management</h2>
-      <button class="apply-btn" id="addAdminBtn">Add New Admin</button>
-    </div>
-    <table class="admin-table" id="adminManagementTable">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Role</th>
-          <th>Added By</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="adminManagementList">
-        <!-- Admin list will be populated here -->
-      </tbody>
-    </table>
-  `;
-  
-  adminPanel.appendChild(adminManagementSection);
-  
-  // Load and render admin list
-  loadAdminList();
-}
-
-async function loadAdminList() {
-  try {
-    const adminsRef = ref(database, 'admins');
-    const snapshot = await get(adminsRef);
-    
-    if (!snapshot.exists()) return;
-    
-    const adminList = document.getElementById('adminManagementList');
-    if (!adminList) return;
-    
-    adminList.innerHTML = '';
-    
-    const admins = snapshot.val();
-    
-    for (const [userId, adminData] of Object.entries(admins)) {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${adminData.name || 'Unknown'}</td>
-        <td>${adminData.email || 'Unknown'}</td>
-        <td>
-          <select class="role-select" data-userid="${userId}">
-            <option value="admin" ${adminData.role === 'admin' ? 'selected' : ''}>Admin</option>
-            <option value="super-admin" ${adminData.role === 'super-admin' ? 'selected' : ''}>Super Admin</option>
-          </select>
-        </td>
-        <td>${adminData.addedBy || 'system'}</td>
-        <td>
-          <button class="admin-btn delete-btn remove-admin-btn" data-userid="${userId}">Remove</button>
-        </td>
-      `;
-      
-      adminList.appendChild(row);
-      
-      // Add event listeners
-      const roleSelect = row.querySelector('.role-select');
-      roleSelect.addEventListener('change', function() {
-        updateAdminRole(this.getAttribute('data-userid'), this.value);
-      });
-      
-      const removeBtn = row.querySelector('.remove-admin-btn');
-      removeBtn.addEventListener('click', function() {
-        removeAdmin(this.getAttribute('data-userid'));
-      });
-    }
-  } catch (error) {
-    console.error('Error loading admin list:', error);
-  }
-}
-
-async function updateAdminRole(userId, newRole) {
-  try {
-    const user = auth.currentUser;
-    const currentAdminStatus = await checkAdminStatus(user.uid);
-    
-    // Only super admins can update roles
-    if (currentAdminStatus.role !== ADMIN_ROLES.SUPER_ADMIN) {
-      showNotification('Only super admins can update admin roles', 'error');
-      return;
-    }
-    
-    await update(ref(database, `admins/${userId}`), {
-      role: newRole
-    });
-    
-    showNotification(`Admin role updated to ${newRole}`);
-  } catch (error) {
-    console.error('Error updating admin role:', error);
-    showNotification('Error updating admin role', 'error');
-  }
-}
-
-async function removeAdmin(userId) {
-  try {
-    const user = auth.currentUser;
-    const currentAdminStatus = await checkAdminStatus(user.uid);
-    
-    // Only super admins can remove admins
-    if (currentAdminStatus.role !== ADMIN_ROLES.SUPER_ADMIN) {
-      showNotification('Only super admins can remove admins', 'error');
-      return;
-    }
-    
-    // Prevent removing yourself
-    if (userId === user.uid) {
-      showNotification('You cannot remove yourself as admin', 'error');
-      return;
-    }
-    
-    if (confirm('Are you sure you want to remove this admin?')) {
-      await remove(ref(database, `admins/${userId}`));
-      showNotification('Admin removed successfully');
-      loadAdminList(); // Refresh the list
-    }
-  } catch (error) {
-    console.error('Error removing admin:', error);
-    showNotification('Error removing admin', 'error');
-  }
-}
+        async function checkAdminStatus(userId) {
+            try {
+                const adminRef = ref(database, `admins/${userId}`);
+                const snapshot = await get(adminRef);
+                return snapshot.exists();
+            } catch (error) {
+                console.error('Error checking admin status:', error);
+                return false;
+            }
+        }
 
         // Load opportunities from Firebase
         function loadOpportunitiesFromFirebase() {
@@ -4155,60 +3971,50 @@ async function removeAdmin(userId) {
         }
 
         // Render admin opportunities
-function renderAdminOpportunities() {
-  if (!adminOpportunitiesList) return;
-  
-  adminOpportunitiesList.innerHTML = '';
-  
-  if (allOpportunities.length === 0) {
-    adminOpportunitiesList.innerHTML = '<tr><td colspan="8" style="text-align: center;">No opportunities found</td></tr>';
-    return;
-  }
-  
-  allOpportunities.forEach(async (opp) => {
-    const timeRemaining = calculateTimeRemaining(opp.deadline);
-    const canModify = await canUserModifyOpportunity(opp.id);
-    
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${opp.title || 'Untitled'}</td>
-      <td>${opp.organization || 'Unknown'}</td>
-      <td>${getOpportunityTypeText(opp.type)}</td>
-      <td>${getFormatText(opp.format)}</td>
-      <td>${formatDate(opp.deadline)} <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span></td>
-      <td>${opp.addedByName || 'Unknown'}</td>
-      <td>${opp.addedBy === auth.currentUser?.uid ? 'You' : 'Other Admin'}</td>
-      <td class="admin-actions-cell">
-        <button class="admin-btn edit-btn" data-id="${opp.id}" ${!canModify ? 'disabled' : ''}>Edit</button>
-        <button class="admin-btn delete-btn" data-id="${opp.id}" ${!canModify ? 'disabled' : ''}>Delete</button>
-      </td>
-    `;
-    
-    adminOpportunitiesList.appendChild(row);
-    
-    // Add event listeners to edit and delete buttons
-    const editButton = row.querySelector('.edit-btn');
-    editButton.addEventListener('click', function() {
-      if (this.disabled) {
-        showNotification('You can only edit opportunities that you created', 'warning');
-        return;
-      }
-      const oppId = this.getAttribute('data-id');
-      const opportunity = allOpportunities.find(opp => opp.id === oppId);
-      showAdminModal(opportunity);
-    });
-    
-    const deleteButton = row.querySelector('.delete-btn');
-    deleteButton.addEventListener('click', function() {
-      if (this.disabled) {
-        showNotification('You can only delete opportunities that you created', 'warning');
-        return;
-      }
-      const oppId = this.getAttribute('data-id');
-      deleteOpportunity(oppId);
-    });
-  });
-}
+        function renderAdminOpportunities() {
+            if (!adminOpportunitiesList) return;
+            
+            adminOpportunitiesList.innerHTML = '';
+            
+            if (allOpportunities.length === 0) {
+                adminOpportunitiesList.innerHTML = '<tr><td colspan="7" style="text-align: center;">No opportunities found</td></tr>';
+                return;
+            }
+            
+            allOpportunities.forEach(opp => {
+                const timeRemaining = calculateTimeRemaining(opp.deadline);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${opp.title || 'Untitled'}</td>
+                    <td>${opp.organization || 'Unknown'}</td>
+                    <td>${getOpportunityTypeText(opp.type)}</td>
+                    <td>${getFormatText(opp.format)}</td>
+                    <td>${formatDate(opp.deadline)} <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span></td>
+                    <td>${opp.addedByName || 'Unknown'}</td>
+                    <td class="admin-actions-cell">
+                        <button class="admin-btn edit-btn" data-id="${opp.id}">Edit</button>
+                        <button class="admin-btn delete-btn" data-id="${opp.id}">Delete</button>
+                    </td>
+                `;
+                
+                adminOpportunitiesList.appendChild(row);
+                
+                // Add event listeners to edit and delete buttons
+                const editButton = row.querySelector('.edit-btn');
+                editButton.addEventListener('click', function() {
+                    const oppId = this.getAttribute('data-id');
+                    const opportunity = allOpportunities.find(opp => opp.id === oppId);
+                    showAdminModal(opportunity);
+                });
+                
+                const deleteButton = row.querySelector('.delete-btn');
+                deleteButton.addEventListener('click', function() {
+                    const oppId = this.getAttribute('data-id');
+                    deleteOpportunity(oppId);
+                });
+            });
+        }
 
         // Show auth modal
         function showAuthModal(tab) {
@@ -4301,114 +4107,132 @@ function renderAdminOpportunities() {
         }
 
         // Handle signup
-   function handleSignup() {
-  const name = document.getElementById('signupName').value;
-  const email = document.getElementById('signupEmail').value;
-  const password = document.getElementById('signupPassword').value;
-  const confirm = document.getElementById('signupConfirm').value;
-  
-  // Basic validation (your existing code)
-  if (!name || !email || !password || !confirm) {
-    if (signupError) {
-      signupError.textContent = 'Please fill in all fields';
-      signupError.style.display = 'block';
-    }
-    return;
-  }
-  
-  if (password !== confirm) {
-    if (signupError) {
-      signupError.textContent = 'Passwords do not match';
-      signupError.style.display = 'block';
-    }
-    return;
-  }
-  
-  if (password.length < 6) {
-    if (signupError) {
-      signupError.textContent = 'Password should be at least 6 characters';
-      signupError.style.display = 'block';
-    }
-    return;
-  }
-  
-createUserWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    const user = userCredential.user;
-    
-    // Save user profile
-    set(ref(database, 'users/' + user.uid), {
-      name: name,
-      email: email,
-      createdAt: new Date().toISOString()
-    });
+        function handleSignup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+            
+            // Basic validation
+            if (!name || !email || !password || !confirm) {
+                if (signupError) {
+                    signupError.textContent = 'Please fill in all fields';
+                    signupError.style.display = 'block';
+                }
+                return;
+            }
+            
+            if (password !== confirm) {
+                if (signupError) {
+                    signupError.textContent = 'Passwords do not match';
+                    signupError.style.display = 'block';
+                }
+                return;
+            }
+            
+            if (password.length < 6) {
+                if (signupError) {
+                    signupError.textContent = 'Password should be at least 6 characters';
+                    signupError.style.display = 'block';
+                }
+                return;
+            }
+            
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed up 
+                    const user = userCredential.user;
+                    
+                    // Save user profile
+                    set(ref(database, 'users/' + user.uid), {
+                        name: name,
+                        email: email,
+                        createdAt: new Date().toISOString()
+                    });
 
-    if (authModal) authModal.style.display = 'none';
-    showNotification('Account created successfully!');
-  })
-  .catch((error) => {
-    if (signupError) {
-      let errorMessage = error.message;
-      // Make error messages more user-friendly
-      if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'An account with this email already exists';
-      } else if (error.code === 'auth/invalid-email') {
-        errorMessage = 'Invalid email address format';
-      } else if (error.code === 'auth/weak-password') {
-        errorMessage = 'Password is too weak';
-      }
-      signupError.textContent = errorMessage;
-      signupError.style.display = 'block';
-    }
-  });
-}
+                    // After creating the user, check if it's an admin account
+                    const adminEmails = ['boymirzayevismoiljon@gmail.com', 'ibaymirzayev@gmail.com'];
+                    
+                    if (adminEmails.includes(email)) {
+                        // Add user ID to the admins list
+                        set(ref(database, `admins/${user.uid}`), true);
+                    }
 
-// Handle Google Sign-In
-function handleGoogleSignIn() {
-  signInWithPopup(auth, googleProvider)
-    .then((result) => {
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      const user = result.user;
-      
-      const userRef = ref(database, 'users/' + user.uid);
-      
-      get(userRef).then((snapshot) => {
-        if (!snapshot.exists()) {
-          // User doesn't exist, create a new user record
-          set(userRef, {
-            name: user.displayName,
-            email: user.email,
-            createdAt: new Date().toISOString(),
-            isGoogleUser: true
-          });
-          
-          // Note: Admin roles are managed exclusively in Firebase database
-          // No automatic admin assignment - all admin management done via Firebase
+                    if (authModal) authModal.style.display = 'none';
+                    showNotification('Account created successfully!');
+                })
+                .catch((error) => {
+                    if (signupError) {
+                        let errorMessage = error.message;
+                        // Make error messages more user-friendly
+                        if (error.code === 'auth/email-already-in-use') {
+                            errorMessage = 'An account with this email already exists';
+                        } else if (error.code === 'auth/invalid-email') {
+                            errorMessage = 'Invalid email address format';
+                        } else if (error.code === 'auth/weak-password') {
+                            errorMessage = 'Password is too weak';
+                        }
+                        signupError.textContent = errorMessage;
+                        signupError.style.display = 'block';
+                    }
+                });
         }
-        
-        if (authModal) authModal.style.display = 'none';
-        showNotification('Successfully signed in with Google!');
-      });
-    })
-    .catch((error) => {
-      // Handle Errors here
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      const email = error.customData?.email;
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      
-      // Show error in appropriate form
-      const currentTab = document.querySelector('.auth-tab.active').getAttribute('data-tab');
-      if (currentTab === 'login' && loginError) {
-        loginError.textContent = errorMessage;
-        loginError.style.display = 'block';
-      } else if (currentTab === 'signup' && signupError) {
-        signupError.textContent = errorMessage;
-        signupError.style.display = 'block';
-      }
-    });
-}
+
+        // Handle Google Sign-In
+        function handleGoogleSignIn() {
+            signInWithPopup(auth, googleProvider)
+                .then((result) => {
+                    // This gives you a Google Access Token
+                    const credential = GoogleAuthProvider.credentialFromResult(result);
+                    const token = credential.accessToken;
+                    
+                    // The signed-in user info
+                    const user = result.user;
+                    
+                    // Check if user exists in database
+                    const userRef = ref(database, 'users/' + user.uid);
+                    
+                    get(userRef).then((snapshot) => {
+                        if (!snapshot.exists()) {
+                            // User doesn't exist, create a new user record
+                            set(userRef, {
+                                name: user.displayName,
+                                email: user.email,
+                                createdAt: new Date().toISOString(),
+                                isGoogleUser: true
+                            });
+                            
+                            // Check if user should be admin
+                            const adminEmails = ['boymirzayevismoiljon@gmail.com', 'ibaymirzayev@gmail.com'];
+                            if (adminEmails.includes(user.email)) {
+                                set(ref(database, `admins/${user.uid}`), true);
+                            }
+                        }
+                        
+                        // Close auth modal and show success notification
+                        if (authModal) authModal.style.display = 'none';
+                        showNotification('Successfully signed in with Google!');
+                    });
+                })
+                .catch((error) => {
+                    // Handle Errors here
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    const email = error.customData?.email;
+                    const credential = GoogleAuthProvider.credentialFromError(error);
+                    
+                    // Show error in appropriate form
+                    const currentTab = document.querySelector('.auth-tab.active').getAttribute('data-tab');
+                    if (currentTab === 'login' && loginError) {
+                        loginError.textContent = errorMessage;
+                        loginError.style.display = 'block';
+                    } else if (currentTab === 'signup' && signupError) {
+                        signupError.textContent = errorMessage;
+                        signupError.style.display = 'block';
+                    }
+                });
+        }
+
         // Check if email exists
         async function checkEmailExists(email) {
             try {
@@ -4861,34 +4685,50 @@ function handleGoogleSignIn() {
         }
 
         // Show admin panel
-       function showAdminPanel() {
-  const user = auth.currentUser;
-  if (user) {
-    checkAdminStatus(user.uid).then(adminStatus => {
-      if (adminStatus.isAdmin) {
-        // Hide other sections and show admin panel
-        if (heroSection) heroSection.style.display = 'none';
-        if (filtersSection) filtersSection.style.display = 'none';
-        if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
-        if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
-        if (dashboard) dashboard.style.display = 'none';
-        if (adminPanel) adminPanel.style.display = 'block';
-        
-        // Render admin opportunities
-        renderAdminOpportunities();
-        
-        // Only show admin management for super admins
-        if (adminStatus.role === ADMIN_ROLES.SUPER_ADMIN) {
-          renderAdminManagement();
+        function showAdminPanel() {
+            const user = auth.currentUser;
+            if (user) {
+                // Check admin status using the stored variable
+                if (isAdminUser) {
+                    // Hide other sections and show admin panel
+                    if (heroSection) heroSection.style.display = 'none';
+                    if (filtersSection) filtersSection.style.display = 'none';
+                    if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
+                    if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
+                    if (dashboard) dashboard.style.display = 'none';
+                    if (adminPanel) adminPanel.style.display = 'block';
+                    
+                    // Render admin opportunities
+                    renderAdminOpportunities();
+                } else {
+                    // Double-check admin status in case it wasn't loaded yet
+                    checkAdminStatus(user.uid).then(adminStatus => {
+                        if (adminStatus) {
+                            isAdminUser = true;
+                            if (navAdmin) navAdmin.style.display = 'list-item';
+                            
+                            // Hide other sections and show admin panel
+                            if (heroSection) heroSection.style.display = 'none';
+                            if (filtersSection) filtersSection.style.display = 'none';
+                            if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
+                            if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
+                            if (dashboard) dashboard.style.display = 'none';
+                            if (adminPanel) adminPanel.style.display = 'block';
+                            
+                            // Render admin opportunities
+                            renderAdminOpportunities();
+                        } else {
+                            showNotification('Access denied. Admin privileges required.', 'error');
+                        }
+                    }).catch(error => {
+                        console.error('Error checking admin status:', error);
+                        showNotification('Error checking admin status', 'error');
+                    });
+                }
+            } else {
+                showNotification('Please sign in to access admin panel', 'warning');
+            }
         }
-      } else {
-        showNotification('Access denied. Admin privileges required.', 'error');
-      }
-    });
-  } else {
-    showNotification('Please sign in to access admin panel', 'warning');
-  }
-}
 
         // Switch dashboard tab
         function switchDashboardTab(tabName) {
