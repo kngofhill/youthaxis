@@ -3267,40 +3267,42 @@ function trackOpportunitySaves() {
         });
 
         // Load opportunities from Firebase
-        function loadOpportunitiesFromFirebase() {
-            const opportunitiesRef = ref(database, 'opportunities');
+       function loadOpportunitiesFromFirebase() {
+    const opportunitiesRef = ref(database, 'opportunities');
+    
+    onValue(opportunitiesRef, (snapshot) => {
+        const data = snapshot.val();
+        allOpportunities = [];
+        
+        if (data) {
+            for (const key in data) {
+                allOpportunities.push({
+                    id: key,
+                    ...data[key]
+                });
+            }
             
-            onValue(opportunitiesRef, (snapshot) => {
-                const data = snapshot.val();
-                allOpportunities = [];
-                
-                if (data) {
-                    for (const key in data) {
-                        allOpportunities.push({
-                            id: key,
-                            ...data[key]
-                        });
-                    }
-                    
-                    allOpportunities.forEach(opp => {
-                        if (!opp.field || (Array.isArray(opp.field) && opp.field.length === 0)) {
-                            opp.field = ['any'];
-                        }
-                    });
-                }
-                
-                applyFilters();
-                
-                if (adminPanel && adminPanel.style.display === 'block') {
-                    renderAdminOpportunities();
-                }
-                
-                if (auth.currentUser) {
-                    loadCuratorStats();
-                    loadLeaderboard();
+            allOpportunities.forEach(opp => {
+                if (!opp.field || (Array.isArray(opp.field) && opp.field.length === 0)) {
+                    opp.field = ['any'];
                 }
             });
         }
+        
+        applyFilters();
+        
+        // ADD THESE LINES HERE:
+        // Refresh curator stats and leaderboard when opportunities are loaded
+        if (auth.currentUser) {
+            loadCuratorStats();
+            loadLeaderboard();
+        }
+        
+        if (adminPanel && adminPanel.style.display === 'block') {
+            renderAdminOpportunities();
+        }
+    });
+}
 
         // Render opportunities to the grid
         function renderOpportunities() {
