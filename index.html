@@ -2783,6 +2783,24 @@
             document.querySelector('.nav-curator').style.display = 'list-item';
         }
     }
+           
+    function updateCuratorStatsOnSave(opportunityId, userId) {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    // Find the opportunity
+    const opportunity = allOpportunities.find(opp => opp.id === opportunityId);
+    if (!opportunity) return;
+
+    // Only update stats if the current user is the creator of this opportunity
+    if (opportunity.addedBy === user.uid) {
+        // Force reload curator stats
+        setTimeout(() => {
+            loadCuratorStats();
+            loadLeaderboard();
+        }, 500);
+    }
+}
 
     function trackOpportunitySaves() {
         const userOppRef = ref(database, 'userOpportunities');
