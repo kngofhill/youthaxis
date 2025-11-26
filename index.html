@@ -1928,6 +1928,20 @@
             <div class="badges-container" id="badgesContainer">
                 <!-- Badges will be dynamically added here -->
             </div>
+            <!-- Add this to your curator-profile section, after the badges container -->
+            <div class="community-application-section" style="margin: 2rem 0; padding: 1.5rem; background: var(--light); border-radius: 8px;">
+    <h3>Join Our Community</h3>
+    <p>Want to become a curator and help others find amazing opportunities?</p>
+    <button class="apply-link" id="joinCommunityBtn" style="margin-top: 1rem;">
+        <i class="fas fa-handshake"></i> I Want to Become a Part of This Community
+    </button>
+    
+    <!-- Application Status Display -->
+    <div id="applicationStatus" style="margin-top: 1rem; display: none;">
+        <p><strong>Your Application Status:</strong> <span id="statusText"></span></p>
+        <p id="statusMessage" style="font-size: 0.9rem; color: var(--gray);"></p>
+    </div>
+</div>
             
             <h3>Your Top Opportunities</h3>
             <div id="topOpportunitiesList">
@@ -2376,6 +2390,42 @@
             <p>&copy; 2025 OpportunityHub. All rights reserved.</p>
         </div>
     </footer>
+    <!-- Community Application Modal -->
+<div class="admin-modal" id="communityApplicationModal">
+    <div class="admin-modal-content">
+        <h2>Join Our Community</h2>
+        <p style="margin-bottom: 1.5rem; color: var(--gray);">Tell us a bit about yourself and why you want to join our community.</p>
+        
+        <form id="communityApplicationForm">
+            <div class="admin-form-group">
+                <label for="applicantName">Your Name *</label>
+                <input type="text" id="applicantName" required>
+            </div>
+            
+            <div class="admin-form-group">
+                <label for="applicantAge">Your Age *</label>
+                <input type="number" id="applicantAge" min="16" max="100" required>
+            </div>
+            
+            <div class="admin-form-group">
+                <label for="applicantReason">Why do you want to join our community? *</label>
+                <textarea 
+                    id="applicantReason" 
+                    placeholder="Please share why you're interested in becoming a curator and how you can contribute to our community... (minimum 20 characters)"
+                    minlength="20"
+                    required
+                    rows="5"
+                ></textarea>
+                <small style="color: var(--gray);">Minimum 20 characters required</small>
+            </div>
+            
+            <div class="admin-form-actions">
+                <button type="button" class="cancel-btn" id="cancelApplicationBtn">Cancel</button>
+                <button type="submit" class="submit-btn">Submit Application</button>
+            </div>
+        </form>
+    </div>
+</div>
 
     <!-- Firebase App (core SDK is always required) -->
 
