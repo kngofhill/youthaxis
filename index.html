@@ -4654,10 +4654,171 @@ function trackOpportunitySaves() {
             
             return false;
         }
+function initCommunityApplicationSystem() {
+    const joinCommunityBtn = document.getElementById('joinCommunityBtn');
+    const communityApplicationModal = document.getElementById('communityApplicationModal');
+    const communityApplicationForm = document.getElementById('communityApplicationForm');
+    const cancelApplicationBtn = document.getElementById('cancelApplicationBtn');
+    const applicationStatus = document.getElementById('applicationStatus');
+    const statusText = document.getElementById('statusText');
+    const statusMessage = document.getElementById('statusMessage');
+
+    // Check if user already has an application
+    function checkExistingApplication(userId) {
+        const applicationsRef = ref(database, 'community_applications');
+        
+        onValue(applicationsRef, (snapshot) => {
+            const applications = snapshot.val();
+            let userApplication = null;
+            
+            if (applications) {
+                for (const [appId, app] of Object.entries(applications)) {
+                    if (app.userId === userId) {
+                        userApplication = { id: appId, ...app };
+                        break;
+                    }
+                }
+            }
+            
+            updateApplicationStatusUI(userApplication);
+        });
+    }
+
+    function updateApplicationStatusUI(application) {
+        if (!application) {
+            applicationStatus.style.display = 'none';
+            return;
+        }
+        
+        applicationStatus.style.display = 'block';
+        
+        switch(application.status) {
+            case 'pending':
+                statusText.textContent = 'Under Review';
+                statusText.style.color = 'var(--warning)';
+                statusMessage.textContent = 'Your application is being reviewed. We\'ll get back to you soon!';
+                joinCommunityBtn.disabled = true;
+                joinCommunityBtn.innerHTML = '<i class="fas fa-clock"></i> Application Pending Review';
+                joinCommunityBtn.style.opacity = '0.6';
+                break;
+                
+            case 'approved':
+                statusText.textContent = 'Approved!';
+                statusText.style.color = 'var(--success)';
+                statusMessage.textContent = 'Welcome to our community! You now have curator privileges.';
+                joinCommunityBtn.disabled = true;
+                joinCommunityBtn.innerHTML = '<i class="fas fa-check"></i> Application Approved';
+                joinCommunityBtn.style.opacity = '0.6';
+                break;
+                
+            case 'rejected':
+                statusText.textContent = 'Not Approved';
+                statusText.style.color = 'var(--danger)';
+                statusMessage.textContent = application.rejectionReason || 'Your application was not approved at this time.';
+                joinCommunityBtn.disabled = false;
+                joinCommunityBtn.innerHTML = '<i class="fas fa-redo"></i> Apply Again';
+                joinCommunityBtn.style.opacity = '1';
+                break;
+                
+            default:
+                applicationStatus.style.display = 'none';
+        }
+    }
+
+    // Event Listeners
+    if (joinCommunityBtn) {
+        joinCommunityBtn.addEventListener('click', () => {
+            const user = auth.currentUser;
+            if (!user) {
+                showNotification('Please sign in to apply', 'warning');
+                return;
+            }
+            communityApplicationModal.style.display = 'flex';
+        });
+    }
+
+    if (cancelApplicationBtn) {
+        cancelApplicationBtn.addEventListener('click', () => {
+            communityApplicationModal.style.display = 'none';
+        });
+    }
+
+    if (communityApplicationForm) {
+        communityApplicationForm.addEventListener('submit', handleApplicationSubmit);
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === communityApplicationModal) {
+            communityApplicationModal.style.display = 'none';
+        }
+    });
+
+    // Check for existing application when user is logged in
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            checkExistingApplication(user.uid);
+        }
+    });
+}
+
+// Handle application submission
+function handleApplicationSubmit(e) {
+    e.preventDefault();
+    
+    const user = auth.currentUser;
+    if (!user) {
+        showNotification('Please sign in to apply', 'warning');
+        return;
+    }
+
+    const applicationData = {
+        userId: user.uid,
+        userEmail: user.email,
+        name: document.getElementById('applicantName').value.trim(),
+        age: parseInt(document.getElementById('applicantAge').value),
+        reason: document.getElementById('applicantReason').value.trim(),
+        status: 'pending',
+        appliedAt: new Date().toISOString()
+    };
+
+    // Validate reason length
+    if (applicationData.reason.length < 20) {
+        showNotification('Please write at least 20 characters for your reason', 'warning');
+        return;
+    }
+
+    // Submit application
+    const applicationRef = push(ref(database, 'community_applications'));
+    
+    applicationRef.set(applicationData)
+        .then(() => {
+            showNotification('Application submitted successfully! We will review it soon.');
+            document.getElementById('communityApplicationModal').style.display = 'none';
+            document.getElementById('communityApplicationForm').reset();
+            
+            // Update UI to show pending status
+            const joinCommunityBtn = document.getElementById('joinCommunityBtn');
+            joinCommunityBtn.disabled = true;
+            joinCommunityBtn.innerHTML = '<i class="fas fa-clock"></i> Application Pending Review';
+            joinCommunityBtn.style.opacity = '0.6';
+            
+            const applicationStatus = document.getElementById('applicationStatus');
+            applicationStatus.style.display = 'block';
+            document.getElementById('statusText').textContent = 'Under Review';
+            document.getElementById('statusText').style.color = 'var(--warning)';
+            document.getElementById('statusMessage').textContent = 'Your application is being reviewed. We\'ll get back to you soon!';
+        })
+        .catch((error) => {
+            console.error('Error submitting application:', error);
+            showNotification('Error submitting application. Please try again.', 'error');
+        });
+}
 
         // Initialize the app
         function initApp() {
             loadOpportunitiesFromFirebase();
+            initCommunityApplicationSystem(); 
         }
 
         // Initialize the app
