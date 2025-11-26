@@ -2802,29 +2802,30 @@
     }
 }
 
-    function trackOpportunitySaves() {
-        const userOppRef = ref(database, 'userOpportunities');
-        onValue(userOppRef, (snapshot) => {
-            const data = snapshot.val();
-            userSaveStats = {};
-            
-            if (data) {
-                for (const userId in data) {
-                    for (const oppId in data[userId]) {
-                        if (!userSaveStats[oppId]) {
-                            userSaveStats[oppId] = new Set();
-                        }
-                        userSaveStats[oppId].add(userId);
+function trackOpportunitySaves() {
+    const userOppRef = ref(database, 'userOpportunities');
+    onValue(userOppRef, (snapshot) => {
+        const data = snapshot.val();
+        userSaveStats = {};
+        
+        if (data) {
+            for (const userId in data) {
+                for (const oppId in data[userId]) {
+                    if (!userSaveStats[oppId]) {
+                        userSaveStats[oppId] = new Set();
                     }
-                }
-                
-                const user = auth.currentUser;
-                if (user) {
-                    loadCuratorStats();
+                    userSaveStats[oppId].add(userId);
                 }
             }
-        });
-    }
+            
+            const user = auth.currentUser;
+            if (user) {
+                loadCuratorStats();
+                loadLeaderboard();
+            }
+        }
+    });
+}
 
     function loadCuratorStats() {
         const user = auth.currentUser;
