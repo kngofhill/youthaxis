@@ -4320,8 +4320,8 @@ function trackOpportunitySaves() {
         function showOpportunities() {
             showHome();
         }
-
-     function showAdminPanel() {
+// Updated showAdminPanel function
+function showAdminPanel() {
     const user = auth.currentUser;
     if (user) {
         checkAdminStatus(user.uid).then(adminStatus => {
