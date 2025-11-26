@@ -4788,10 +4788,11 @@ function handleApplicationSubmit(e) {
         return;
     }
 
-    // Submit application
-    const applicationRef = push(ref(database, 'community_applications'));
+    // Submit application - CORRECTED VERSION
+    const applicationsRef = ref(database, 'community_applications');
+    const newApplicationRef = push(applicationsRef);
     
-    applicationRef.set(applicationData)
+    set(newApplicationRef, applicationData)
         .then(() => {
             showNotification('Application submitted successfully! We will review it soon.');
             document.getElementById('communityApplicationModal').style.display = 'none';
