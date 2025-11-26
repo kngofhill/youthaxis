@@ -4664,25 +4664,26 @@ function initCommunityApplicationSystem() {
     const statusMessage = document.getElementById('statusMessage');
 
     // Check if user already has an application
-    function checkExistingApplication(userId) {
-        const applicationsRef = ref(database, 'community_applications');
+   function checkExistingApplication(userId) {
+    const applicationsRef = ref(database, 'community_applications');
+    
+    onValue(applicationsRef, (snapshot) => {
+        const applications = snapshot.val();
+        let userApplication = null;
         
-        onValue(applicationsRef, (snapshot) => {
-            const applications = snapshot.val();
-            let userApplication = null;
-            
-            if (applications) {
-                for (const [appId, app] of Object.entries(applications)) {
-                    if (app.userId === userId) {
-                        userApplication = { id: appId, ...app };
-                        break;
-                    }
+        if (applications) {
+            for (const [appId, app] of Object.entries(applications)) {
+                // FIX: Only show applications that belong to the current user
+                if (app.userId === userId) {
+                    userApplication = { id: appId, ...app };
+                    break;
                 }
             }
-            
-            updateApplicationStatusUI(userApplication);
-        });
-    }
+        }
+        
+        updateApplicationStatusUI(userApplication);
+    });
+}
 
     function updateApplicationStatusUI(application) {
         if (!application) {
