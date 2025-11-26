@@ -4757,10 +4757,30 @@ function initCommunityApplicationSystem() {
 
     // Check for existing application when user is logged in
     onAuthStateChanged(auth, (user) => {
-        if (user) {
-            checkExistingApplication(user.uid);
+    if (user) {
+        checkExistingApplication(user.uid);
+        
+        // Reset the application button for new users
+        const joinCommunityBtn = document.getElementById('joinCommunityBtn');
+        const applicationStatus = document.getElementById('applicationStatus');
+        
+        // Only reset if we haven't found an application yet
+        setTimeout(() => {
+            if (applicationStatus.style.display === 'none' || 
+                applicationStatus.style.display === '') {
+                joinCommunityBtn.disabled = false;
+                joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
+                joinCommunityBtn.style.opacity = '1';
+            }
+        }, 1000);
+    } else {
+        // User is logged out, hide application status
+        const applicationStatus = document.getElementById('applicationStatus');
+        if (applicationStatus) {
+            applicationStatus.style.display = 'none';
         }
-    });
+    }
+});
 }
 
 // Handle application submission
