@@ -2887,26 +2887,42 @@ function trackOpportunitySaves() {
         curatorStats.badges = badges;
     }
 
-    function updateCuratorProfileUI() {
-        document.getElementById('opportunitiesCreated').textContent = curatorStats.opportunitiesCreated;
-        document.getElementById('totalSaves').textContent = curatorStats.totalSaves;
-        document.getElementById('uniqueSavers').textContent = curatorStats.uniqueSavers;
-        document.getElementById('curatorRank').textContent = curatorStats.curatorRank;
+   function updateCuratorProfileUI() {
+    document.getElementById('opportunitiesCreated').textContent = curatorStats.opportunitiesCreated;
+    document.getElementById('totalSaves').textContent = curatorStats.totalSaves;
+    document.getElementById('uniqueSavers').textContent = curatorStats.uniqueSavers;
+    document.getElementById('curatorRank').textContent = curatorStats.curatorRank;
 
-        const badgesContainer = document.getElementById('badgesContainer');
-        badgesContainer.innerHTML = '';
-        
-        curatorStats.badges.forEach(badge => {
-            const badgeElement = document.createElement('div');
-            badgeElement.className = `badge ${badge.level}`;
-            badgeElement.innerHTML = `
-                ${badge.icon} ${badge.name}
-            `;
-            badgesContainer.appendChild(badgeElement);
+    const badgesContainer = document.getElementById('badgesContainer');
+    badgesContainer.innerHTML = '';
+    
+    // ADD REFRESH BUTTON CODE:
+    // Add refresh button if it doesn't exist
+    if (!document.getElementById('refreshStatsBtn')) {
+        const refreshBtn = document.createElement('button');
+        refreshBtn.id = 'refreshStatsBtn';
+        refreshBtn.className = 'apply-link';
+        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Stats';
+        refreshBtn.style.marginTop = '10px';
+        refreshBtn.addEventListener('click', () => {
+            loadCuratorStats();
+            loadLeaderboard();
+            showNotification('Stats refreshed!');
         });
-
-        updateTopOpportunities();
+        document.querySelector('.curator-stats').appendChild(refreshBtn);
     }
+    
+    curatorStats.badges.forEach(badge => {
+        const badgeElement = document.createElement('div');
+        badgeElement.className = `badge ${badge.level}`;
+        badgeElement.innerHTML = `
+            ${badge.icon} ${badge.name}
+        `;
+        badgesContainer.appendChild(badgeElement);
+    });
+
+    updateTopOpportunities();
+}
 
     function updateTopOpportunities() {
         const user = auth.currentUser;
