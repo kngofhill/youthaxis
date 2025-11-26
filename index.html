@@ -2807,6 +2807,8 @@ function trackOpportunitySaves() {
         const data = snapshot.val();
         userSaveStats = {};
         
+        console.log('TrackOpportunitySaves - Raw data:', data);
+        
         if (data) {
             for (const userId in data) {
                 for (const oppId in data[userId]) {
@@ -2817,11 +2819,15 @@ function trackOpportunitySaves() {
                 }
             }
             
+            console.log('Processed userSaveStats:', userSaveStats);
+            
             const user = auth.currentUser;
             if (user) {
                 loadCuratorStats();
                 loadLeaderboard();
             }
+        } else {
+            console.log('No user opportunity data found');
         }
     });
 }
