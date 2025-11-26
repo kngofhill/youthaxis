@@ -2784,24 +2784,23 @@
         }
     }
            
-    function updateCuratorStatsOnSave(opportunityId, userId) {
-    const user = auth.currentUser;
-    if (!user) return;
-
+ function updateCuratorStatsOnSave(opportunityId, userId) {
     // Find the opportunity
     const opportunity = allOpportunities.find(opp => opp.id === opportunityId);
     if (!opportunity) return;
 
-    // Only update stats if the current user is the creator of this opportunity
-    if (opportunity.addedBy === user.uid) {
-        // Force reload curator stats
-        setTimeout(() => {
-            loadCuratorStats();
-            loadLeaderboard();
-        }, 500);
-    }
-}
+    // Get the creator's user ID from the opportunity
+    const creatorUserId = opportunity.addedBy;
+    
+    if (!creatorUserId) return;
 
+    // Force reload curator stats and leaderboard for ALL users
+    // This will update the stats for the creator of the saved opportunity
+    setTimeout(() => {
+        loadCuratorStats();
+        loadLeaderboard();
+    }, 500);
+}
 function trackOpportunitySaves() {
     const userOppRef = ref(database, 'userOpportunities');
     onValue(userOppRef, (snapshot) => {
