@@ -4215,29 +4215,32 @@ function trackOpportunitySaves() {
             showHome();
         }
 
-        function showAdminPanel() {
-            const user = auth.currentUser;
-            if (user) {
-                checkAdminStatus(user.uid).then(adminStatus => {
-                    if (adminStatus.isAdmin) {
-                        if (heroSection) heroSection.style.display = 'none';
-                        if (filtersSection) filtersSection.style.display = 'none';
-                        if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
-                        if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
-                        if (dashboard) dashboard.style.display = 'none';
-                        if (adminPanel) adminPanel.style.display = 'block';
-                        if (document.getElementById('curatorProfile')) document.getElementById('curatorProfile').style.display = 'none';
-                        if (document.getElementById('leaderboardSection')) document.getElementById('leaderboardSection').style.display = 'none';
-                        
-                        renderAdminOpportunities();
-                    } else {
-                        showNotification('Access denied. Admin privileges required.', 'error');
-                    }
-                });
+     function showAdminPanel() {
+    const user = auth.currentUser;
+    if (user) {
+        checkAdminStatus(user.uid).then(adminStatus => {
+            if (adminStatus.isAdmin) {
+                if (heroSection) heroSection.style.display = 'none';
+                if (filtersSection) filtersSection.style.display = 'none';
+                if (opportunitiesTitle) opportunitiesTitle.style.display = 'none';
+                if (opportunitiesGrid) opportunitiesGrid.style.display = 'none';
+                if (dashboard) dashboard.style.display = 'none';
+                if (adminPanel) adminPanel.style.display = 'block';
+                if (document.getElementById('curatorProfile')) document.getElementById('curatorProfile').style.display = 'none';
+                if (document.getElementById('leaderboardSection')) document.getElementById('leaderboardSection').style.display = 'none';
+                
+                renderAdminOpportunities();
+                
+                // Initialize application management (will only show for super admins)
+                initApplicationManagement();
             } else {
-                showNotification('Please sign in to access admin panel', 'warning');
+                showNotification('Access denied. Admin privileges required.', 'error');
             }
-        }
+        });
+    } else {
+        showNotification('Please sign in to access admin panel', 'warning');
+    }
+}
 
         function switchDashboardTab(tabName) {
             if (!dashboardTabs) return;
