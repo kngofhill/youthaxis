@@ -3719,37 +3719,40 @@
                 });
         }
 
-        function saveOpportunity(userId, opportunity) {
-            const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
-            
-            const alreadySaved = userOpportunities.pending.some(opp => opp.id === opportunity.id) || 
-                                userOpportunities.completed.some(opp => opp.id === opportunity.id);
-            
-            if (alreadySaved) {
-                showNotification('This opportunity is already in your dashboard!', 'warning');
-                return;
+       function saveOpportunity(userId, opportunity) {
+    const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
+    
+    const alreadySaved = userOpportunities.pending.some(opp => opp.id === opportunity.id) || 
+                        userOpportunities.completed.some(opp => opp.id === opportunity.id);
+    
+    if (alreadySaved) {
+        showNotification('This opportunity is already in your dashboard!', 'warning');
+        return;
+    }
+    
+    set(userOppRef, {
+        opportunityId: opportunity.id,
+        savedAt: new Date().toISOString(),
+        status: 'pending'
+    })
+    .then(() => {
+        showNotification('Opportunity saved to your dashboard!');
+        
+        // ADD THIS LINE HERE:
+        updateCuratorStatsOnSave(opportunity.id, userId);
+        
+        if (currentOpportunityDetails && currentOpportunityDetails.id === opportunity.id) {
+            const detailsSaveBtn = document.getElementById('detailsSaveBtn');
+            if (detailsSaveBtn) {
+                detailsSaveBtn.innerHTML = '<i class="fas fa-bookmark"></i> Remove from Dashboard';
+                detailsSaveBtn.classList.add('saved');
             }
-            
-            set(userOppRef, {
-                opportunityId: opportunity.id,
-                savedAt: new Date().toISOString(),
-                status: 'pending'
-            })
-            .then(() => {
-                showNotification('Opportunity saved to your dashboard!');
-                
-                if (currentOpportunityDetails && currentOpportunityDetails.id === opportunity.id) {
-                    const detailsSaveBtn = document.getElementById('detailsSaveBtn');
-                    if (detailsSaveBtn) {
-                        detailsSaveBtn.innerHTML = '<i class="fas fa-bookmark"></i> Remove from Dashboard';
-                        detailsSaveBtn.classList.add('saved');
-                    }
-                }
-            })
-            .catch((error) => {
-                console.error('Error saving opportunity:', error);
-            });
         }
+    })
+    .catch((error) => {
+        console.error('Error saving opportunity:', error);
+    });
+}
 
         function removeOpportunity(userId, opportunity) {
             const userOppRef = ref(database, `userOpportunities/${userId}/${opportunity.id}`);
