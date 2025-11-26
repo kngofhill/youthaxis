@@ -1791,6 +1791,68 @@
         .nav-curator {
             display: none;
         }
+        .application-filters {
+    margin: 1rem 0;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--primary);
+    background: white;
+    color: var(--primary);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn.active, .filter-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.application-reason {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-pending {
+    background: var(--warning);
+    color: var(--dark);
+}
+
+.status-approved {
+    background: var(--success);
+    color: white;
+}
+
+.status-rejected {
+    background: var(--danger);
+    color: white;
+}
+
+.super-admin-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    margin-left: 10px;
+    font-weight: 600;
+}
+
+.view-btn {
+    background-color: var(--primary);
+    color: white;
+}
 
         /* Responsive updates */
         @media (max-width: 768px) {
@@ -2204,6 +2266,38 @@
                 </div>
             </form>
         </div>
+        <div class="admin-section" style="margin: 2rem 0; display: none;" id="applicationsManagementSection">
+    <h3>Community Applications Management <span class="super-admin-badge">Super Admin Only</span></h3>
+    <div class="admin-actions">
+        <button class="apply-btn" id="refreshApplicationsBtn">
+            <i class="fas fa-sync-alt"></i> Refresh Applications
+        </button>
+    </div>
+    
+    <div class="application-filters" style="margin: 1rem 0; display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="filter-btn active" data-status="all">All</button>
+        <button class="filter-btn" data-status="pending">Pending</button>
+        <button class="filter-btn" data-status="approved">Approved</button>
+        <button class="filter-btn" data-status="rejected">Rejected</button>
+    </div>
+    
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Applicant</th>
+                <th>Age</th>
+                <th>Email</th>
+                <th>Reason</th>
+                <th>Applied Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="applicationsList">
+            <!-- Applications will be loaded here -->
+        </tbody>
+    </table>
+</div>
     </div>
     
     <!-- Details Modal -->
