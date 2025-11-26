@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -4586,47 +4587,44 @@ async function removeAdmin(userId) {
 }
 
         // Load opportunities from Firebase
-        function loadOpportunitiesFromFirebase() {
-            const opportunitiesRef = ref(database, 'opportunities');
-            
-            onValue(opportunitiesRef, (snapshot) => {
-                const data = snapshot.val();
-// ... (previous code continues from where it left off)
-
-onValue(opportunitiesRef, (snapshot) => {
-    const data = snapshot.val();
-    allOpportunities = [];
+      function loadOpportunitiesFromFirebase() {
+    const opportunitiesRef = ref(database, 'opportunities');
     
-    if (data) {
-        for (const key in data) {
-            allOpportunities.push({
-                id: key,
-                ...data[key]
+    onValue(opportunitiesRef, (snapshot) => {
+        const data = snapshot.val();
+        allOpportunities = [];
+        
+        if (data) {
+            for (const key in data) {
+                allOpportunities.push({
+                    id: key,
+                    ...data[key]
+                });
+            }
+            
+            // Fix for existing opportunities without fields - set them to 'any'
+            allOpportunities.forEach(opp => {
+                if (!opp.field || (Array.isArray(opp.field) && opp.field.length === 0)) {
+                    opp.field = ['any'];
+                }
             });
         }
         
-        // Fix for existing opportunities without fields - set them to 'any'
-        allOpportunities.forEach(opp => {
-            if (!opp.field || (Array.isArray(opp.field) && opp.field.length === 0)) {
-                opp.field = ['any'];
-            }
-        });
-    }
-    
-    // Apply current filters and render opportunities
-    applyFilters();
-    
-    // Render admin opportunities if admin panel is visible
-    if (adminPanel.style.display === 'block') {
-        renderAdminOpportunities();
-    }
-    
-    // Update curator system with new opportunities data
-    if (auth.currentUser) {
-        loadCuratorStats();
-        loadLeaderboard();
-    }
-});
+        // Apply current filters and render opportunities
+        applyFilters();
+        
+        // Render admin opportunities if admin panel is visible
+        if (adminPanel && adminPanel.style.display === 'block') {
+            renderAdminOpportunities();
+        }
+        
+        // Update curator system with new opportunities data
+        if (auth.currentUser) {
+            loadCuratorStats();
+            loadLeaderboard();
+        }
+    });
+}
 
 // Render opportunities to the grid
 function renderOpportunities() {
@@ -5674,6 +5672,7 @@ function initApp() {
 
 // Initialize the app
 initApp();
+
 
 // ... (rest of the code)
 </script>
