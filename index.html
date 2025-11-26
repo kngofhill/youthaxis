@@ -4939,6 +4939,343 @@ function handleApplicationSubmit(e) {
             showNotification('Error submitting application. Please try again.', 'error');
         });
 }
+    let allApplications = [];
+let filteredApplications = [];
+
+function initApplicationManagement() {
+    const user = auth.currentUser;
+    if (!user) return;
+    
+    checkAdminStatus(user.uid).then(adminStatus => {
+        if (adminStatus.role === ADMIN_ROLES.SUPER_ADMIN) {
+            // Only initialize if user is super admin
+            loadApplications();
+            
+            // Show the applications section
+            document.getElementById('applicationsManagementSection').style.display = 'block';
+            
+            // Event listeners for application management
+            const refreshBtn = document.getElementById('refreshApplicationsBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', loadApplications);
+            }
+            
+            // Filter buttons
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    filterApplications(this.dataset.status);
+                });
+            });
+        } else {
+            // Hide the applications section for non-super-admins
+            document.getElementById('applicationsManagementSection').style.display = 'none';
+        }
+    });
+}
+
+function loadApplications() {
+    const applicationsRef = ref(database, 'community_applications');
+    
+    onValue(applicationsRef, (snapshot) => {
+        const data = snapshot.val();
+        allApplications = [];
+        
+        if (data) {
+            for (const [key, app] of Object.entries(data)) {
+                allApplications.push({
+                    id: key,
+                    ...app
+                });
+            }
+            
+            // Sort by application date (newest first)
+            allApplications.sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt));
+        }
+        
+        filterApplications('all');
+        showNotification(`Loaded ${allApplications.length} applications`);
+    });
+}
+
+function filterApplications(status) {
+    if (status === 'all') {
+        filteredApplications = [...allApplications];
+    } else {
+        filteredApplications = allApplications.filter(app => app.status === status);
+    }
+    
+    renderApplications();
+}
+
+function renderApplications() {
+    const applicationsList = document.getElementById('applicationsList');
+    if (!applicationsList) return;
+    
+    applicationsList.innerHTML = '';
+    
+    if (filteredApplications.length === 0) {
+        applicationsList.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 2rem;">
+                    <div class="empty-state">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>No applications found</h3>
+                        <p>No applications match the current filter</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    filteredApplications.forEach(application => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${application.name || 'N/A'}</td>
+            <td>${application.age || 'N/A'}</td>
+            <td>${application.userEmail || 'N/A'}</td>
+            <td class="application-reason" title="${application.reason || ''}">
+                ${application.reason ? application.reason.substring(0, 50) + '...' : 'N/A'}
+            </td>
+            <td>${formatDate(application.appliedAt) || 'N/A'}</td>
+            <td>
+                <span class="status-badge status-${application.status}">
+                    ${application.status || 'pending'}
+                </span>
+            </td>
+            <td class="admin-actions-cell">
+                <button class="admin-btn view-btn" data-id="${application.id}">
+                    <i class="fas fa-eye"></i> View
+                </button>
+                ${application.status === 'pending' ? `
+                    <button class="admin-btn approve-btn" data-id="${application.id}">
+                        <i class="fas fa-check"></i> Approve
+                    </button>
+                    <button class="admin-btn delete-btn" data-id="${application.id}">
+                        <i class="fas fa-times"></i> Reject
+                    </button>
+                ` : ''}
+                ${application.status === 'rejected' ? `
+                    <button class="admin-btn approve-btn" data-id="${application.id}">
+                        <i class="fas fa-check"></i> Approve
+                    </button>
+                ` : ''}
+                ${application.status === 'approved' ? `
+                    <button class="admin-btn delete-btn" data-id="${application.id}">
+                        <i class="fas fa-times"></i> Revoke
+                    </button>
+                ` : ''}
+            </td>
+        `;
+        
+        applicationsList.appendChild(row);
+        
+        // Add event listeners
+        const viewBtn = row.querySelector('.view-btn');
+        viewBtn.addEventListener('click', () => viewApplication(application));
+        
+        const approveBtn = row.querySelector('.approve-btn');
+        if (approveBtn) {
+            approveBtn.addEventListener('click', () => approveApplication(application.id));
+        }
+        
+        const rejectBtn = row.querySelector('.delete-btn'); // Using delete-btn for reject/revoke
+        if (rejectBtn) {
+            rejectBtn.addEventListener('click', () => rejectApplication(application.id));
+        }
+    });
+}
+
+function viewApplication(application) {
+    const modal = document.createElement('div');
+    modal.className = 'admin-modal';
+    modal.style.display = 'flex';
+    
+    modal.innerHTML = `
+        <div class="admin-modal-content">
+            <h2>Application Details</h2>
+            
+            <div class="admin-form-group">
+                <label><strong>Applicant Name:</strong></label>
+                <p>${application.name || 'N/A'}</p>
+            </div>
+            
+            <div class="admin-form-group">
+                <label><strong>Age:</strong></label>
+                <p>${application.age || 'N/A'}</p>
+            </div>
+            
+            <div class="admin-form-group">
+                <label><strong>Email:</strong></label>
+                <p>${application.userEmail || 'N/A'}</p>
+            </div>
+            
+            <div class="admin-form-group">
+                <label><strong>Application Reason:</strong></label>
+                <div style="background: var(--light-gray); padding: 1rem; border-radius: 4px; margin-top: 0.5rem;">
+                    <p style="white-space: pre-wrap; line-height: 1.5;">${application.reason || 'No reason provided'}</p>
+                </div>
+            </div>
+            
+            <div class="admin-form-group">
+                <label><strong>Applied On:</strong></label>
+                <p>${formatDate(application.appliedAt) || 'N/A'}</p>
+            </div>
+            
+            <div class="admin-form-group">
+                <label><strong>Current Status:</strong></label>
+                <span class="status-badge status-${application.status}">
+                    ${application.status || 'pending'}
+                </span>
+            </div>
+            
+            ${application.rejectionReason ? `
+            <div class="admin-form-group">
+                <label><strong>Rejection Reason:</strong></label>
+                <p>${application.rejectionReason}</p>
+            </div>
+            ` : ''}
+            
+            <div class="admin-form-actions">
+                <button type="button" class="cancel-btn" id="closeViewModal">Close</button>
+                ${application.status === 'pending' ? `
+                    <button type="button" class="submit-btn" id="approveFromView" data-id="${application.id}">Approve</button>
+                    <button type="button" class="delete-btn" id="rejectFromView" data-id="${application.id}">Reject</button>
+                ` : ''}
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Event listeners for modal
+    document.getElementById('closeViewModal').addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+    
+    const approveBtn = document.getElementById('approveFromView');
+    if (approveBtn) {
+        approveBtn.addEventListener('click', () => {
+            approveApplication(application.id);
+            document.body.removeChild(modal);
+        });
+    }
+    
+    const rejectBtn = document.getElementById('rejectFromView');
+    if (rejectBtn) {
+        rejectBtn.addEventListener('click', () => {
+            document.body.removeChild(modal);
+            rejectApplication(application.id);
+        });
+    }
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            document.body.removeChild(modal);
+        }
+    });
+}
+
+function approveApplication(applicationId) {
+    const user = auth.currentUser;
+    if (!user) return;
+    
+    checkAdminStatus(user.uid).then(adminStatus => {
+        if (adminStatus.role !== ADMIN_ROLES.SUPER_ADMIN) {
+            showNotification('Only super admins can approve applications', 'error');
+            return;
+        }
+        
+        const applicationRef = ref(database, `community_applications/${applicationId}`);
+        
+        // First get the application to find the user ID
+        get(applicationRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const application = snapshot.val();
+                
+                // Update application status
+                update(applicationRef, {
+                    status: 'approved',
+                    reviewedAt: new Date().toISOString(),
+                    reviewedBy: user.uid
+                })
+                .then(() => {
+                    showNotification('Application approved successfully!');
+                    
+                    // Grant admin privileges to the user
+                    grantAdminPrivileges(application);
+                })
+                .catch((error) => {
+                    console.error('Error approving application:', error);
+                    showNotification('Error approving application', 'error');
+                });
+            }
+        });
+    });
+}
+
+function rejectApplication(applicationId) {
+    const user = auth.currentUser;
+    if (!user) return;
+    
+    checkAdminStatus(user.uid).then(adminStatus => {
+        if (adminStatus.role !== ADMIN_ROLES.SUPER_ADMIN) {
+            showNotification('Only super admins can reject applications', 'error');
+            return;
+        }
+        
+        const reason = prompt('Please provide a reason for rejection (optional):');
+        
+        const updates = {
+            status: 'rejected',
+            reviewedAt: new Date().toISOString(),
+            reviewedBy: user.uid
+        };
+        
+        if (reason) {
+            updates.rejectionReason = reason;
+        }
+        
+        const applicationRef = ref(database, `community_applications/${applicationId}`);
+        
+        update(applicationRef, updates)
+        .then(() => {
+            showNotification('Application rejected');
+        })
+        .catch((error) => {
+            console.error('Error rejecting application:', error);
+            showNotification('Error rejecting application', 'error');
+        });
+    });
+}
+
+function grantAdminPrivileges(application) {
+    const userId = application.userId;
+    
+    // Add user to admins list as REGULAR ADMIN (not super admin)
+    const adminRef = ref(database, `admins/${userId}`);
+    set(adminRef, {
+        userId: userId,
+        email: application.userEmail,
+        name: application.name,
+        role: ADMIN_ROLES.ADMIN, // Regular admin role
+        permissions: ["manage_opportunities"], // Can only manage their own opportunities
+        approvedAt: new Date().toISOString(),
+        approvedBy: auth.currentUser.uid,
+        applicationId: application.id
+    })
+    .then(() => {
+        showNotification('Admin privileges granted! User can now manage opportunities.');
+    })
+    .catch((error) => {
+        console.error('Error granting admin privileges:', error);
+        showNotification('Error granting admin privileges', 'error');
+    });
+}
 
         // Initialize the app
         function initApp() {
