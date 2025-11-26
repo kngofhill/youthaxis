@@ -4685,46 +4685,55 @@ function initCommunityApplicationSystem() {
     });
 }
 
-    function updateApplicationStatusUI(application) {
-        if (!application) {
-            applicationStatus.style.display = 'none';
-            return;
-        }
-        
-        applicationStatus.style.display = 'block';
-        
-        switch(application.status) {
-            case 'pending':
-                statusText.textContent = 'Under Review';
-                statusText.style.color = 'var(--warning)';
-                statusMessage.textContent = 'Your application is being reviewed. We\'ll get back to you soon!';
-                joinCommunityBtn.disabled = true;
-                joinCommunityBtn.innerHTML = '<i class="fas fa-clock"></i> Application Pending Review';
-                joinCommunityBtn.style.opacity = '0.6';
-                break;
-                
-            case 'approved':
-                statusText.textContent = 'Approved!';
-                statusText.style.color = 'var(--success)';
-                statusMessage.textContent = 'Welcome to our community! You now have curator privileges.';
-                joinCommunityBtn.disabled = true;
-                joinCommunityBtn.innerHTML = '<i class="fas fa-check"></i> Application Approved';
-                joinCommunityBtn.style.opacity = '0.6';
-                break;
-                
-            case 'rejected':
-                statusText.textContent = 'Not Approved';
-                statusText.style.color = 'var(--danger)';
-                statusMessage.textContent = application.rejectionReason || 'Your application was not approved at this time.';
-                joinCommunityBtn.disabled = false;
-                joinCommunityBtn.innerHTML = '<i class="fas fa-redo"></i> Apply Again';
-                joinCommunityBtn.style.opacity = '1';
-                break;
-                
-            default:
-                applicationStatus.style.display = 'none';
-        }
+ function updateApplicationStatusUI(application) {
+    const joinCommunityBtn = document.getElementById('joinCommunityBtn');
+    const applicationStatus = document.getElementById('applicationStatus');
+    
+    if (!application) {
+        applicationStatus.style.display = 'none';
+        joinCommunityBtn.disabled = false;
+        joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
+        joinCommunityBtn.style.opacity = '1';
+        return;
     }
+    
+    applicationStatus.style.display = 'block';
+    
+    switch(application.status) {
+        case 'pending':
+            statusText.textContent = 'Under Review';
+            statusText.style.color = 'var(--warning)';
+            statusMessage.textContent = 'Your application is being reviewed. We\'ll get back to you soon!';
+            joinCommunityBtn.disabled = true;
+            joinCommunityBtn.innerHTML = '<i class="fas fa-clock"></i> Application Pending Review';
+            joinCommunityBtn.style.opacity = '0.6';
+            break;
+            
+        case 'approved':
+            statusText.textContent = 'Approved!';
+            statusText.style.color = 'var(--success)';
+            statusMessage.textContent = 'Welcome to our community! You now have curator privileges.';
+            joinCommunityBtn.disabled = true;
+            joinCommunityBtn.innerHTML = '<i class="fas fa-check"></i> Application Approved';
+            joinCommunityBtn.style.opacity = '0.6';
+            break;
+            
+        case 'rejected':
+            statusText.textContent = 'Not Approved';
+            statusText.style.color = 'var(--danger)';
+            statusMessage.textContent = application.rejectionReason || 'Your application was not approved at this time.';
+            joinCommunityBtn.disabled = false;
+            joinCommunityBtn.innerHTML = '<i class="fas fa-redo"></i> Apply Again';
+            joinCommunityBtn.style.opacity = '1';
+            break;
+            
+        default:
+            applicationStatus.style.display = 'none';
+            joinCommunityBtn.disabled = false;
+            joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
+            joinCommunityBtn.style.opacity = '1';
+    }
+}
 
     // Event Listeners
     if (joinCommunityBtn) {
