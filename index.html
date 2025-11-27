@@ -5062,6 +5062,7 @@ function initApplicationManagement() {
             // Show the applications section for super admin
             if (applicationsSection) {
                 applicationsSection.style.display = 'block';
+                console.log('Applications management section shown for super admin');
             }
             
             // Load applications
@@ -5074,7 +5075,7 @@ function initApplicationManagement() {
             }
             
             // Filter buttons
-            const filterBtns = document.querySelectorAll('.filter-btn');
+            const filterBtns = document.querySelectorAll('.application-filters .filter-btn');
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     filterBtns.forEach(b => b.classList.remove('active'));
@@ -5088,6 +5089,8 @@ function initApplicationManagement() {
                 applicationsSection.style.display = 'none';
             }
         }
+    }).catch(error => {
+        console.error('Error checking admin status:', error);
     });
 }
 function loadApplications() {
@@ -5096,6 +5099,8 @@ function loadApplications() {
     onValue(applicationsRef, (snapshot) => {
         const data = snapshot.val();
         allApplications = [];
+        
+        console.log('Applications data loaded:', data);
         
         if (data) {
             for (const [key, app] of Object.entries(data)) {
@@ -5107,10 +5112,16 @@ function loadApplications() {
             
             // Sort by application date (newest first)
             allApplications.sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt));
+            console.log(`Loaded ${allApplications.length} applications`);
+        } else {
+            console.log('No applications found in database');
         }
         
         filterApplications('all');
         showNotification(`Loaded ${allApplications.length} applications`);
+    }, (error) => {
+        console.error('Error loading applications:', error);
+        showNotification('Error loading applications', 'error');
     });
 }
 
