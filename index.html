@@ -4837,34 +4837,38 @@ function initCommunityApplicationSystem() {
 
     // Check if user already has an application
  function checkExistingApplication(userId) {
+    console.log('Checking application for user:', userId);
+    
     const applicationsRef = ref(database, 'community_applications');
     
-    // Query only the applications for the current user
     get(applicationsRef).then((snapshot) => {
         const applications = snapshot.val();
         let userApplication = null;
         
-        console.log('Checking applications for user:', userId);
-        console.log('All applications:', applications);
-        
         if (applications) {
-            for (const [appId, app] of Object.entries(applications)) {
-                console.log('Checking application:', appId, app);
+            // Simple loop to find user's application
+            for (const appId in applications) {
+                const app = applications[appId];
                 if (app.userId === userId) {
                     userApplication = { id: appId, ...app };
-                    console.log('Found user application:', userApplication);
+                    console.log('FOUND application:', userApplication);
                     break;
                 }
             }
         }
         
-        updateApplicationStatusUI(userApplication);
-    }).catch((error) => {
-        console.error('Error loading applications:', error);
-        // If there's a permission error, it means the user has no applications
-        if (error.code === 'PERMISSION_DENIED') {
+        if (userApplication) {
+            console.log('Application found, updating UI');
+            updateApplicationStatusUI(userApplication);
+        } else {
+            console.log('No application found');
             updateApplicationStatusUI(null);
         }
+        
+    }).catch((error) => {
+        console.error('Error checking application:', error);
+        // If there's an error, just show the apply button
+        updateApplicationStatusUI(null);
     });
 }
 
@@ -5129,21 +5133,31 @@ function handleApplicationSubmit(e) {
         const applicationsRef = ref(database, 'community_applications');
         const newApplicationRef = push(applicationsRef);
         
-        set(newApplicationRef, applicationData)
-            .then(() => {
-                showNotification('Application submitted successfully! We will review it soon.');
-                document.getElementById('communityApplicationModal').style.display = 'none';
-                document.getElementById('communityApplicationForm').reset();
-                
-                // Force refresh the application status
-                setTimeout(() => {
-                    checkExistingApplication(user.uid);
-                }, 500);
-            })
-            .catch((error) => {
-                console.error('Error submitting application:', error);
-                showNotification('Error submitting application. Please try again.', 'error');
-            });
+set(newApplicationRef, applicationData)
+    .then(() => {
+        showNotification('Application submitted successfully! We will review it soon.');
+        document.getElementById('communityApplicationModal').style.display = 'none';
+        document.getElementById('communityApplicationForm').reset();
+        
+        // Immediately update the UI to show pending status
+        const pendingApplication = {
+            id: newApplicationRef.key,
+            ...applicationData,
+            status: 'pending'
+        };
+        
+        // Update UI immediately without waiting for database refresh
+        updateApplicationStatusUI(pendingApplication);
+        
+        // Also check database after a delay to confirm
+        setTimeout(() => {
+            checkExistingApplication(user.uid);
+        }, 2000);
+    })
+    .catch((error) => {
+        console.error('Error submitting application:', error);
+        showNotification('Error submitting application. Please try again.', 'error');
+    });
     });
 
 }
