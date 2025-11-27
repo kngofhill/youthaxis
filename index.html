@@ -5302,6 +5302,9 @@ function approveApplication(applicationId) {
                     
                     // Grant admin privileges to the user
                     grantAdminPrivileges(application);
+                    
+                    // Refresh the applications list
+                    loadApplications();
                 })
                 .catch((error) => {
                     console.error('Error approving application:', error);
@@ -5311,6 +5314,7 @@ function approveApplication(applicationId) {
         });
     });
 }
+
 
 function rejectApplication(applicationId) {
     const user = auth.currentUser;
@@ -5339,6 +5343,8 @@ function rejectApplication(applicationId) {
         update(applicationRef, updates)
         .then(() => {
             showNotification('Application rejected');
+            // Refresh the applications list
+            loadApplications();
         })
         .catch((error) => {
             console.error('Error rejecting application:', error);
@@ -5350,6 +5356,14 @@ function rejectApplication(applicationId) {
 function grantAdminPrivileges(application) {
     const userId = application.userId;
     
+    if (!userId) {
+        console.error('No user ID found in application');
+        showNotification('Error: No user ID found in application', 'error');
+        return;
+    }
+    
+    console.log('Granting admin privileges to user:', userId);
+    
     // Add user to admins list as REGULAR ADMIN (not super admin)
     const adminRef = ref(database, `admins/${userId}`);
     set(adminRef, {
@@ -5357,20 +5371,72 @@ function grantAdminPrivileges(application) {
         email: application.userEmail,
         name: application.name,
         role: ADMIN_ROLES.ADMIN, // Regular admin role
-        permissions: ["manage_opportunities"], // Can only manage their own opportunities
+        permissions: ["manage_opportunities"],
         approvedAt: new Date().toISOString(),
         approvedBy: auth.currentUser.uid,
         applicationId: application.id
     })
     .then(() => {
-        showNotification('Admin privileges granted! User can now manage opportunities.');
+        console.log('Admin privileges granted successfully');
+        showNotification(`Admin privileges granted to ${application.name || application.userEmail}!`);
+        
+        // Also update the user's profile to mark them as admin
+        const userProfileRef = ref(database, `users/${userId}`);
+        update(userProfileRef, {
+            isAdmin: true,
+            adminRole: ADMIN_ROLES.ADMIN,
+            adminSince: new Date().toISOString()
+        }).catch(error => {
+            console.error('Error updating user profile:', error);
+        });
     })
     .catch((error) => {
         console.error('Error granting admin privileges:', error);
-        showNotification('Error granting admin privileges', 'error');
+        showNotification('Error granting admin privileges: ' + error.message, 'error');
+    });
+}function revokeAdminPrivileges(applicationId) {
+    const user = auth.currentUser;
+    if (!user) return;
+    
+    checkAdminStatus(user.uid).then(adminStatus => {
+        if (adminStatus.role !== ADMIN_ROLES.SUPER_ADMIN) {
+            showNotification('Only super admins can revoke admin privileges', 'error');
+            return;
+        }
+        
+        const applicationRef = ref(database, `community_applications/${applicationId}`);
+        
+        // First get the application to find the user ID
+        get(applicationRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const application = snapshot.val();
+                const userId = application.userId;
+                
+                // Remove from admins list
+                const adminRef = ref(database, `admins/${userId}`);
+                remove(adminRef)
+                .then(() => {
+                    // Also update user profile
+                    const userProfileRef = ref(database, `users/${userId}`);
+                    update(userProfileRef, {
+                        isAdmin: false,
+                        adminRole: null,
+                        adminSince: null
+                    }).catch(error => {
+                        console.error('Error updating user profile:', error);
+                    });
+                    
+                    showNotification('Admin privileges revoked');
+                    loadApplications();
+                })
+                .catch((error) => {
+                    console.error('Error revoking admin privileges:', error);
+                    showNotification('Error revoking admin privileges', 'error');
+                });
+            }
+        });
     });
 }
-
         // Initialize the app
         function initApp() {
             loadOpportunitiesFromFirebase();
