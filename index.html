@@ -4337,7 +4337,7 @@ function showAdminPanel() {
                 
                 renderAdminOpportunities();
                 
-                // Initialize application management (will only show for super admins)
+                // FIX: Initialize application management for super admins
                 initApplicationManagement();
             } else {
                 showNotification('Access denied. Admin privileges required.', 'error');
