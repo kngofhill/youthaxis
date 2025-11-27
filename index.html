@@ -4836,75 +4836,103 @@ function initCommunityApplicationSystem() {
     const statusMessage = document.getElementById('statusMessage');
 
     // Check if user already has an application
-   function checkExistingApplication(userId) {
+  function checkExistingApplication(userId) {
     const applicationsRef = ref(database, 'community_applications');
     
     onValue(applicationsRef, (snapshot) => {
         const applications = snapshot.val();
         let userApplication = null;
         
+        console.log('Checking applications for user:', userId);
+        console.log('All applications:', applications);
+        
         if (applications) {
             for (const [appId, app] of Object.entries(applications)) {
-                // FIX: Only show applications that belong to the current user
+                console.log('Checking application:', appId, app);
                 if (app.userId === userId) {
                     userApplication = { id: appId, ...app };
+                    console.log('Found user application:', userApplication);
                     break;
                 }
             }
         }
         
         updateApplicationStatusUI(userApplication);
+    }, (error) => {
+        console.error('Error loading applications:', error);
     });
 }
 
- function updateApplicationStatusUI(application) {
+function updateApplicationStatusUI(application) {
     const joinCommunityBtn = document.getElementById('joinCommunityBtn');
     const applicationStatus = document.getElementById('applicationStatus');
+    const user = auth.currentUser;
     
-    if (!application) {
+    if (!user) {
         applicationStatus.style.display = 'none';
-        joinCommunityBtn.disabled = false;
-        joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
-        joinCommunityBtn.style.opacity = '1';
         return;
     }
     
-    applicationStatus.style.display = 'block';
-    
-    switch(application.status) {
-        case 'pending':
-            statusText.textContent = 'Under Review';
-            statusText.style.color = 'var(--warning)';
-            statusMessage.textContent = 'Your application is being reviewed. We\'ll get back to you soon!';
-            joinCommunityBtn.disabled = true;
-            joinCommunityBtn.innerHTML = '<i class="fas fa-clock"></i> Application Pending Review';
-            joinCommunityBtn.style.opacity = '0.6';
-            break;
-            
-        case 'approved':
-            statusText.textContent = 'Approved!';
+    // Check if user is already an admin
+    checkAdminStatus(user.uid).then(adminStatus => {
+        if (adminStatus.isAdmin) {
+            // User is already an admin - hide the button completely
+            joinCommunityBtn.style.display = 'none';
+            applicationStatus.style.display = 'block';
+            statusText.textContent = 'You are already a curator';
             statusText.style.color = 'var(--success)';
-            statusMessage.textContent = 'Welcome to our community! You now have curator privileges.';
-            joinCommunityBtn.disabled = true;
-            joinCommunityBtn.innerHTML = '<i class="fas fa-check"></i> Application Approved';
-            joinCommunityBtn.style.opacity = '0.6';
-            break;
-            
-        case 'rejected':
-            statusText.textContent = 'Not Approved';
-            statusText.style.color = 'var(--danger)';
-            statusMessage.textContent = application.rejectionReason || 'Your application was not approved at this time.';
-            joinCommunityBtn.disabled = false;
-            joinCommunityBtn.innerHTML = '<i class="fas fa-redo"></i> Apply Again';
-            joinCommunityBtn.style.opacity = '1';
-            break;
-            
-        default:
+            statusMessage.textContent = 'You have curator privileges and can manage opportunities.';
+            return;
+        }
+        
+        // User is not an admin, show application status
+        if (!application) {
             applicationStatus.style.display = 'none';
             joinCommunityBtn.disabled = false;
+            joinCommunityBtn.style.display = 'block';
             joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
             joinCommunityBtn.style.opacity = '1';
-    }
+            return;
+        }
+        
+        applicationStatus.style.display = 'block';
+        joinCommunityBtn.style.display = 'block';
+        
+        switch(application.status) {
+            case 'pending':
+                statusText.textContent = 'Under Review';
+                statusText.style.color = 'var(--warning)';
+                statusMessage.textContent = 'Your application is being reviewed. We\'ll get back to you soon!';
+                joinCommunityBtn.disabled = true;
+                joinCommunityBtn.innerHTML = '<i class="fas fa-clock"></i> Application Pending Review';
+                joinCommunityBtn.style.opacity = '0.6';
+                break;
+                
+            case 'approved':
+                statusText.textContent = 'Approved!';
+                statusText.style.color = 'var(--success)';
+                statusMessage.textContent = 'Welcome to our community! You now have curator privileges.';
+                joinCommunityBtn.disabled = true;
+                joinCommunityBtn.innerHTML = '<i class="fas fa-check"></i> Application Approved';
+                joinCommunityBtn.style.opacity = '0.6';
+                break;
+                
+            case 'rejected':
+                statusText.textContent = 'Not Approved';
+                statusText.style.color = 'var(--danger)';
+                statusMessage.textContent = application.rejectionReason || 'Your application was not approved at this time.';
+                joinCommunityBtn.disabled = false;
+                joinCommunityBtn.innerHTML = '<i class="fas fa-redo"></i> Apply Again';
+                joinCommunityBtn.style.opacity = '1';
+                break;
+                
+            default:
+                applicationStatus.style.display = 'none';
+                joinCommunityBtn.disabled = false;
+                joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
+                joinCommunityBtn.style.opacity = '1';
+        }
+    });
 }
 
     // Event Listeners
@@ -4937,28 +4965,42 @@ function initCommunityApplicationSystem() {
     });
 
     // Check for existing application when user is logged in
-    onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, (user) => {
     if (user) {
+        console.log('User logged in, checking application status:', user.uid);
         checkExistingApplication(user.uid);
         
-        // Reset the application button for new users
-        const joinCommunityBtn = document.getElementById('joinCommunityBtn');
-        const applicationStatus = document.getElementById('applicationStatus');
-        
-        // Only reset if we haven't found an application yet
-        setTimeout(() => {
-            if (applicationStatus.style.display === 'none' || 
-                applicationStatus.style.display === '') {
-                joinCommunityBtn.disabled = false;
-                joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
-                joinCommunityBtn.style.opacity = '1';
+        // Also check admin status to properly hide/show the button
+        checkAdminStatus(user.uid).then(adminStatus => {
+            if (adminStatus.isAdmin) {
+                // User is admin, ensure button is hidden
+                const joinCommunityBtn = document.getElementById('joinCommunityBtn');
+                const applicationStatus = document.getElementById('applicationStatus');
+                
+                if (joinCommunityBtn) {
+                    joinCommunityBtn.style.display = 'none';
+                }
+                if (applicationStatus) {
+                    applicationStatus.style.display = 'block';
+                    document.getElementById('statusText').textContent = 'You are already a curator';
+                    document.getElementById('statusText').style.color = 'var(--success)';
+                    document.getElementById('statusMessage').textContent = 'You have curator privileges and can manage opportunities.';
+                }
             }
-        }, 1000);
+        });
     } else {
         // User is logged out, hide application status
         const applicationStatus = document.getElementById('applicationStatus');
+        const joinCommunityBtn = document.getElementById('joinCommunityBtn');
+        
         if (applicationStatus) {
             applicationStatus.style.display = 'none';
+        }
+        if (joinCommunityBtn) {
+            joinCommunityBtn.style.display = 'block';
+            joinCommunityBtn.disabled = false;
+            joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
+            joinCommunityBtn.style.opacity = '1';
         }
     }
 });
@@ -4974,48 +5016,51 @@ function handleApplicationSubmit(e) {
         return;
     }
 
-    const applicationData = {
-        userId: user.uid,
-        userEmail: user.email,
-        name: document.getElementById('applicantName').value.trim(),
-        age: parseInt(document.getElementById('applicantAge').value),
-        reason: document.getElementById('applicantReason').value.trim(),
-        status: 'pending',
-        appliedAt: new Date().toISOString()
-    };
-
-    // Validate reason length
-    if (applicationData.reason.length < 20) {
-        showNotification('Please write at least 20 characters for your reason', 'warning');
-        return;
-    }
-
-    // Submit application - CORRECTED VERSION
-    const applicationsRef = ref(database, 'community_applications');
-    const newApplicationRef = push(applicationsRef);
-    
-    set(newApplicationRef, applicationData)
-        .then(() => {
-            showNotification('Application submitted successfully! We will review it soon.');
+    // Check if user is already admin
+    checkAdminStatus(user.uid).then(adminStatus => {
+        if (adminStatus.isAdmin) {
+            showNotification('You are already a curator!', 'warning');
             document.getElementById('communityApplicationModal').style.display = 'none';
-            document.getElementById('communityApplicationForm').reset();
-            
-            // Update UI to show pending status
-            const joinCommunityBtn = document.getElementById('joinCommunityBtn');
-            joinCommunityBtn.disabled = true;
-            joinCommunityBtn.innerHTML = '<i class="fas fa-clock"></i> Application Pending Review';
-            joinCommunityBtn.style.opacity = '0.6';
-            
-            const applicationStatus = document.getElementById('applicationStatus');
-            applicationStatus.style.display = 'block';
-            document.getElementById('statusText').textContent = 'Under Review';
-            document.getElementById('statusText').style.color = 'var(--warning)';
-            document.getElementById('statusMessage').textContent = 'Your application is being reviewed. We\'ll get back to you soon!';
-        })
-        .catch((error) => {
-            console.error('Error submitting application:', error);
-            showNotification('Error submitting application. Please try again.', 'error');
-        });
+            return;
+        }
+
+        const applicationData = {
+            userId: user.uid,
+            userEmail: user.email,
+            name: document.getElementById('applicantName').value.trim(),
+            age: parseInt(document.getElementById('applicantAge').value),
+            reason: document.getElementById('applicantReason').value.trim(),
+            status: 'pending',
+            appliedAt: new Date().toISOString()
+        };
+
+        // Validate reason length
+        if (applicationData.reason.length < 20) {
+            showNotification('Please write at least 20 characters for your reason', 'warning');
+            return;
+        }
+
+        // Submit application
+        const applicationsRef = ref(database, 'community_applications');
+        const newApplicationRef = push(applicationsRef);
+        
+        set(newApplicationRef, applicationData)
+            .then(() => {
+                showNotification('Application submitted successfully! We will review it soon.');
+                document.getElementById('communityApplicationModal').style.display = 'none';
+                document.getElementById('communityApplicationForm').reset();
+                
+                // Force refresh the application status
+                setTimeout(() => {
+                    checkExistingApplication(user.uid);
+                }, 500);
+            })
+            .catch((error) => {
+                console.error('Error submitting application:', error);
+                showNotification('Error submitting application. Please try again.', 'error');
+            });
+    });
+}
 }
     let allApplications = [];
 let filteredApplications = [];
