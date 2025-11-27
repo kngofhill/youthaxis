@@ -5399,7 +5399,8 @@ function grantAdminPrivileges(application) {
         console.error('Error granting admin privileges:', error);
         showNotification('Error granting admin privileges: ' + error.message, 'error');
     });
-}function revokeAdminPrivileges(applicationId) {
+}
+       function revokeAdminPrivileges(applicationId) {
     const user = auth.currentUser;
     if (!user) return;
     
@@ -5417,6 +5418,11 @@ function grantAdminPrivileges(application) {
                 const application = snapshot.val();
                 const userId = application.userId;
                 
+                if (!userId) {
+                    showNotification('Error: No user ID found in application', 'error');
+                    return;
+                }
+                
                 // Remove from admins list
                 const adminRef = ref(database, `admins/${userId}`);
                 remove(adminRef)
@@ -5431,8 +5437,22 @@ function grantAdminPrivileges(application) {
                         console.error('Error updating user profile:', error);
                     });
                     
-                    showNotification('Admin privileges revoked');
-                    loadApplications();
+                    // Update application status to rejected
+                    update(applicationRef, {
+                        status: 'rejected',
+                        revokedAt: new Date().toISOString(),
+                        revokedBy: user.uid,
+                        rejectionReason: 'Admin privileges revoked'
+                    })
+                    .then(() => {
+                        showNotification('Admin privileges revoked successfully');
+                        loadApplications();
+                    })
+                    .catch(error => {
+                        console.error('Error updating application status:', error);
+                        showNotification('Admin privileges revoked but failed to update application status', 'warning');
+                        loadApplications();
+                    });
                 })
                 .catch((error) => {
                     console.error('Error revoking admin privileges:', error);
