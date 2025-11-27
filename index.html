@@ -5305,8 +5305,8 @@ function approveApplication(applicationId) {
                 .then(() => {
                     showNotification('Application approved successfully!');
                     
-                    // Grant admin privileges to the user
-                    grantAdminPrivileges(application);
+                    // Grant admin privileges to the user - pass both application data and ID
+                    grantAdminPrivileges(application, applicationId);
                     
                     // Refresh the applications list
                     loadApplications();
@@ -5358,7 +5358,8 @@ function rejectApplication(applicationId) {
     });
 }
 
-function grantAdminPrivileges(application) {
+
+function grantAdminPrivileges(application, applicationId) {
     const userId = application.userId;
     
     if (!userId) {
@@ -5379,20 +5380,22 @@ function grantAdminPrivileges(application) {
         permissions: ["manage_opportunities"],
         approvedAt: new Date().toISOString(),
         approvedBy: auth.currentUser.uid,
-        applicationId: application.id
+        applicationId: applicationId // Use the passed applicationId parameter
     })
     .then(() => {
         console.log('Admin privileges granted successfully');
         showNotification(`Admin privileges granted to ${application.name || application.userEmail}!`);
         
-        // Also update the user's profile to mark them as admin
+        // Try to update user profile, but don't fail if it doesn't work
         const userProfileRef = ref(database, `users/${userId}`);
         update(userProfileRef, {
             isAdmin: true,
             adminRole: ADMIN_ROLES.ADMIN,
             adminSince: new Date().toISOString()
+        }).then(() => {
+            console.log('User profile updated successfully');
         }).catch(error => {
-            console.error('Error updating user profile:', error);
+            console.warn('Could not update user profile (this is okay):', error);
         });
     })
     .catch((error) => {
@@ -5400,6 +5403,7 @@ function grantAdminPrivileges(application) {
         showNotification('Error granting admin privileges: ' + error.message, 'error');
     });
 }
+        
        function revokeAdminPrivileges(applicationId) {
     const user = auth.currentUser;
     if (!user) return;
@@ -5427,14 +5431,16 @@ function grantAdminPrivileges(application) {
                 const adminRef = ref(database, `admins/${userId}`);
                 remove(adminRef)
                 .then(() => {
-                    // Also update user profile
+                    // Try to update user profile, but don't fail if it doesn't work
                     const userProfileRef = ref(database, `users/${userId}`);
                     update(userProfileRef, {
                         isAdmin: false,
                         adminRole: null,
                         adminSince: null
+                    }).then(() => {
+                        console.log('User profile updated successfully');
                     }).catch(error => {
-                        console.error('Error updating user profile:', error);
+                        console.warn('Could not update user profile (this is okay):', error);
                     });
                     
                     // Update application status to rejected
