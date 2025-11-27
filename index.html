@@ -4836,10 +4836,11 @@ function initCommunityApplicationSystem() {
     const statusMessage = document.getElementById('statusMessage');
 
     // Check if user already has an application
-  function checkExistingApplication(userId) {
+ function checkExistingApplication(userId) {
     const applicationsRef = ref(database, 'community_applications');
     
-    onValue(applicationsRef, (snapshot) => {
+    // Query only the applications for the current user
+    get(applicationsRef).then((snapshot) => {
         const applications = snapshot.val();
         let userApplication = null;
         
@@ -4858,8 +4859,12 @@ function initCommunityApplicationSystem() {
         }
         
         updateApplicationStatusUI(userApplication);
-    }, (error) => {
+    }).catch((error) => {
         console.error('Error loading applications:', error);
+        // If there's a permission error, it means the user has no applications
+        if (error.code === 'PERMISSION_DENIED') {
+            updateApplicationStatusUI(null);
+        }
     });
 }
 
@@ -4869,68 +4874,148 @@ function updateApplicationStatusUI(application) {
     const user = auth.currentUser;
     
     if (!user) {
-        applicationStatus.style.display = 'none';
+        if (applicationStatus) applicationStatus.style.display = 'none';
+        if (joinCommunityBtn) {
+            joinCommunityBtn.style.display = 'block';
+            joinCommunityBtn.disabled = false;
+            joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
+            joinCommunityBtn.style.opacity = '1';
+        }
         return;
     }
     
-    // Check if user is already an admin
+    // Check if user is already an admin (this will fail for regular users, but that's okay)
     checkAdminStatus(user.uid).then(adminStatus => {
         if (adminStatus.isAdmin) {
             // User is already an admin - hide the button completely
-            joinCommunityBtn.style.display = 'none';
-            applicationStatus.style.display = 'block';
-            statusText.textContent = 'You are already a curator';
-            statusText.style.color = 'var(--success)';
-            statusMessage.textContent = 'You have curator privileges and can manage opportunities.';
+            if (joinCommunityBtn) joinCommunityBtn.style.display = 'none';
+            if (applicationStatus) {
+                applicationStatus.style.display = 'block';
+                statusText.textContent = 'You are already a curator';
+                statusText.style.color = 'var(--success)';
+                statusMessage.textContent = 'You have curator privileges and can manage opportunities.';
+            }
             return;
         }
         
         // User is not an admin, show application status
         if (!application) {
-            applicationStatus.style.display = 'none';
-            joinCommunityBtn.disabled = false;
-            joinCommunityBtn.style.display = 'block';
-            joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
-            joinCommunityBtn.style.opacity = '1';
+            if (applicationStatus) applicationStatus.style.display = 'none';
+            if (joinCommunityBtn) {
+                joinCommunityBtn.disabled = false;
+                joinCommunityBtn.style.display = 'block';
+                joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
+                joinCommunityBtn.style.opacity = '1';
+            }
             return;
         }
         
-        applicationStatus.style.display = 'block';
-        joinCommunityBtn.style.display = 'block';
+        if (applicationStatus) applicationStatus.style.display = 'block';
+        if (joinCommunityBtn) joinCommunityBtn.style.display = 'block';
         
         switch(application.status) {
             case 'pending':
                 statusText.textContent = 'Under Review';
                 statusText.style.color = 'var(--warning)';
                 statusMessage.textContent = 'Your application is being reviewed. We\'ll get back to you soon!';
-                joinCommunityBtn.disabled = true;
-                joinCommunityBtn.innerHTML = '<i class="fas fa-clock"></i> Application Pending Review';
-                joinCommunityBtn.style.opacity = '0.6';
+                if (joinCommunityBtn) {
+                    joinCommunityBtn.disabled = true;
+                    joinCommunityBtn.innerHTML = '<i class="fas fa-clock"></i> Application Pending Review';
+                    joinCommunityBtn.style.opacity = '0.6';
+                }
                 break;
                 
             case 'approved':
                 statusText.textContent = 'Approved!';
                 statusText.style.color = 'var(--success)';
                 statusMessage.textContent = 'Welcome to our community! You now have curator privileges.';
-                joinCommunityBtn.disabled = true;
-                joinCommunityBtn.innerHTML = '<i class="fas fa-check"></i> Application Approved';
-                joinCommunityBtn.style.opacity = '0.6';
+                if (joinCommunityBtn) {
+                    joinCommunityBtn.disabled = true;
+                    joinCommunityBtn.innerHTML = '<i class="fas fa-check"></i> Application Approved';
+                    joinCommunityBtn.style.opacity = '0.6';
+                }
                 break;
                 
             case 'rejected':
                 statusText.textContent = 'Not Approved';
                 statusText.style.color = 'var(--danger)';
                 statusMessage.textContent = application.rejectionReason || 'Your application was not approved at this time.';
-                joinCommunityBtn.disabled = false;
-                joinCommunityBtn.innerHTML = '<i class="fas fa-redo"></i> Apply Again';
-                joinCommunityBtn.style.opacity = '1';
+                if (joinCommunityBtn) {
+                    joinCommunityBtn.disabled = false;
+                    joinCommunityBtn.innerHTML = '<i class="fas fa-redo"></i> Apply Again';
+                    joinCommunityBtn.style.opacity = '1';
+                }
                 break;
                 
             default:
-                applicationStatus.style.display = 'none';
+                if (applicationStatus) applicationStatus.style.display = 'none';
+                if (joinCommunityBtn) {
+                    joinCommunityBtn.disabled = false;
+                    joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
+                    joinCommunityBtn.style.opacity = '1';
+                }
+        }
+    }).catch(error => {
+        // If checking admin status fails (permission denied), just treat user as non-admin
+        console.log('User is not an admin (or cannot check admin status)');
+        
+        // User is not an admin, show application status
+        if (!application) {
+            if (applicationStatus) applicationStatus.style.display = 'none';
+            if (joinCommunityBtn) {
                 joinCommunityBtn.disabled = false;
+                joinCommunityBtn.style.display = 'block';
                 joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
                 joinCommunityBtn.style.opacity = '1';
+            }
+            return;
+        }
+        
+        if (applicationStatus) applicationStatus.style.display = 'block';
+        if (joinCommunityBtn) joinCommunityBtn.style.display = 'block';
+        
+        // ... rest of the status handling logic
+        switch(application.status) {
+            case 'pending':
+                statusText.textContent = 'Under Review';
+                statusText.style.color = 'var(--warning)';
+                statusMessage.textContent = 'Your application is being reviewed. We\'ll get back to you soon!';
+                if (joinCommunityBtn) {
+                    joinCommunityBtn.disabled = true;
+                    joinCommunityBtn.innerHTML = '<i class="fas fa-clock"></i> Application Pending Review';
+                    joinCommunityBtn.style.opacity = '0.6';
+                }
+                break;
+                
+            case 'approved':
+                statusText.textContent = 'Approved!';
+                statusText.style.color = 'var(--success)';
+                statusMessage.textContent = 'Welcome to our community! You now have curator privileges.';
+                if (joinCommunityBtn) {
+                    joinCommunityBtn.disabled = true;
+                    joinCommunityBtn.innerHTML = '<i class="fas fa-check"></i> Application Approved';
+                    joinCommunityBtn.style.opacity = '0.6';
+                }
+                break;
+                
+            case 'rejected':
+                statusText.textContent = 'Not Approved';
+                statusText.style.color = 'var(--danger)';
+                statusMessage.textContent = application.rejectionReason || 'Your application was not approved at this time.';
+                if (joinCommunityBtn) {
+                    joinCommunityBtn.disabled = false;
+                    joinCommunityBtn.innerHTML = '<i class="fas fa-redo"></i> Apply Again';
+                    joinCommunityBtn.style.opacity = '1';
+                }
+                break;
+                
+            default:
+                if (applicationStatus) applicationStatus.style.display = 'none';
+                if (joinCommunityBtn) {
+                    joinCommunityBtn.disabled = false;
+                    joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
+                    joinCommunityBtn.style.opacity = '1';
+                }
         }
     });
 }
