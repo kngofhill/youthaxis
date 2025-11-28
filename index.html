@@ -4831,11 +4831,50 @@ function initCommunityApplicationSystem() {
     const communityApplicationModal = document.getElementById('communityApplicationModal');
     const communityApplicationForm = document.getElementById('communityApplicationForm');
     const cancelApplicationBtn = document.getElementById('cancelApplicationBtn');
-    const applicationStatus = document.getElementById('applicationStatus');
-    const statusText = document.getElementById('statusText');
-    const statusMessage = document.getElementById('statusMessage');
 
-    // Check if user already has an application
+    // Event Listeners
+    if (joinCommunityBtn) {
+        joinCommunityBtn.addEventListener('click', () => {
+            const user = auth.currentUser;
+            if (!user) {
+                showNotification('Please sign in to apply', 'warning');
+                return;
+            }
+            communityApplicationModal.style.display = 'flex';
+        });
+    }
+
+    if (cancelApplicationBtn) {
+        cancelApplicationBtn.addEventListener('click', () => {
+            communityApplicationModal.style.display = 'none';
+        });
+    }
+
+    if (communityApplicationForm) {
+        communityApplicationForm.addEventListener('submit', handleApplicationSubmit);
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === communityApplicationModal) {
+            communityApplicationModal.style.display = 'none';
+        }
+    });
+
+    // Check for existing application when user is logged in
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            console.log('User logged in, checking application status:', user.uid);
+            checkExistingApplication(user.uid);
+            
+            // Set up real-time listener for application status changes
+            setupApplicationStatusListener(user.uid);
+        } else {
+            // User is logged out, reset UI
+            resetApplicationUI();
+        }
+    });
+}
  function checkExistingApplication(userId) {
     console.log('Checking application for user:', userId);
     
