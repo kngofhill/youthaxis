@@ -4885,28 +4885,21 @@ function initCommunityApplicationSystem() {
         let userApplication = null;
         
         if (applications) {
-            // Simple loop to find user's application
             for (const appId in applications) {
                 const app = applications[appId];
                 if (app.userId === userId) {
                     userApplication = { id: appId, ...app };
-                    console.log('FOUND application:', userApplication);
+                    console.log('Found application:', userApplication);
                     break;
                 }
             }
         }
         
-        if (userApplication) {
-            console.log('Application found, updating UI');
-            updateApplicationStatusUI(userApplication);
-        } else {
-            console.log('No application found');
-            updateApplicationStatusUI(null);
-        }
+        updateApplicationStatusUI(userApplication);
         
     }).catch((error) => {
         console.error('Error checking application:', error);
-        // If there's an error, just show the apply button
+        // If there's a permission error, user can still see the apply button
         updateApplicationStatusUI(null);
     });
 }
@@ -4914,23 +4907,19 @@ function initCommunityApplicationSystem() {
 function updateApplicationStatusUI(application) {
     const joinCommunityBtn = document.getElementById('joinCommunityBtn');
     const applicationStatus = document.getElementById('applicationStatus');
+    const statusText = document.getElementById('statusText');
+    const statusMessage = document.getElementById('statusMessage');
     const user = auth.currentUser;
     
     if (!user) {
-        if (applicationStatus) applicationStatus.style.display = 'none';
-        if (joinCommunityBtn) {
-            joinCommunityBtn.style.display = 'block';
-            joinCommunityBtn.disabled = false;
-            joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
-            joinCommunityBtn.style.opacity = '1';
-        }
+        resetApplicationUI();
         return;
     }
     
-    // Check if user is already an admin (this will fail for regular users, but that's okay)
+    // First check if user is already an admin
     checkAdminStatus(user.uid).then(adminStatus => {
         if (adminStatus.isAdmin) {
-            // User is already an admin - hide the button completely
+            // User is already an admin
             if (joinCommunityBtn) joinCommunityBtn.style.display = 'none';
             if (applicationStatus) {
                 applicationStatus.style.display = 'block';
@@ -4941,20 +4930,21 @@ function updateApplicationStatusUI(application) {
             return;
         }
         
-        // User is not an admin, show application status
+        // User is not an admin, handle application status
         if (!application) {
+            // No application found - show apply button
             if (applicationStatus) applicationStatus.style.display = 'none';
             if (joinCommunityBtn) {
-                joinCommunityBtn.disabled = false;
                 joinCommunityBtn.style.display = 'block';
+                joinCommunityBtn.disabled = false;
                 joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
                 joinCommunityBtn.style.opacity = '1';
             }
             return;
         }
         
+        // User has an application - show status
         if (applicationStatus) applicationStatus.style.display = 'block';
-        if (joinCommunityBtn) joinCommunityBtn.style.display = 'block';
         
         switch(application.status) {
             case 'pending':
@@ -4991,6 +4981,7 @@ function updateApplicationStatusUI(application) {
                 break;
                 
             default:
+                // Unknown status, show apply button
                 if (applicationStatus) applicationStatus.style.display = 'none';
                 if (joinCommunityBtn) {
                     joinCommunityBtn.disabled = false;
@@ -4999,15 +4990,13 @@ function updateApplicationStatusUI(application) {
                 }
         }
     }).catch(error => {
-        // If checking admin status fails (permission denied), just treat user as non-admin
+        // If checking admin status fails, treat as non-admin
         console.log('User is not an admin (or cannot check admin status)');
         
-        // User is not an admin, show application status
         if (!application) {
             if (applicationStatus) applicationStatus.style.display = 'none';
             if (joinCommunityBtn) {
                 joinCommunityBtn.disabled = false;
-                joinCommunityBtn.style.display = 'block';
                 joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
                 joinCommunityBtn.style.opacity = '1';
             }
@@ -5015,9 +5004,8 @@ function updateApplicationStatusUI(application) {
         }
         
         if (applicationStatus) applicationStatus.style.display = 'block';
-        if (joinCommunityBtn) joinCommunityBtn.style.display = 'block';
         
-        // ... rest of the status handling logic
+        // Handle application status
         switch(application.status) {
             case 'pending':
                 statusText.textContent = 'Under Review';
@@ -5033,7 +5021,7 @@ function updateApplicationStatusUI(application) {
             case 'approved':
                 statusText.textContent = 'Approved!';
                 statusText.style.color = 'var(--success)';
-                statusMessage.textContent = 'Welcome to our community! You now have curator privileges.';
+                statusMessage.textContent = 'Welcome to our community!';
                 if (joinCommunityBtn) {
                     joinCommunityBtn.disabled = true;
                     joinCommunityBtn.innerHTML = '<i class="fas fa-check"></i> Application Approved';
@@ -5051,88 +5039,10 @@ function updateApplicationStatusUI(application) {
                     joinCommunityBtn.style.opacity = '1';
                 }
                 break;
-                
-            default:
-                if (applicationStatus) applicationStatus.style.display = 'none';
-                if (joinCommunityBtn) {
-                    joinCommunityBtn.disabled = false;
-                    joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
-                    joinCommunityBtn.style.opacity = '1';
-                }
         }
     });
 }
 
-    // Event Listeners
-    if (joinCommunityBtn) {
-        joinCommunityBtn.addEventListener('click', () => {
-            const user = auth.currentUser;
-            if (!user) {
-                showNotification('Please sign in to apply', 'warning');
-                return;
-            }
-            communityApplicationModal.style.display = 'flex';
-        });
-    }
-
-    if (cancelApplicationBtn) {
-        cancelApplicationBtn.addEventListener('click', () => {
-            communityApplicationModal.style.display = 'none';
-        });
-    }
-
-    if (communityApplicationForm) {
-        communityApplicationForm.addEventListener('submit', handleApplicationSubmit);
-    }
-
-    // Close modal when clicking outside
-    window.addEventListener('click', (e) => {
-        if (e.target === communityApplicationModal) {
-            communityApplicationModal.style.display = 'none';
-        }
-    });
-
-    // Check for existing application when user is logged in
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        console.log('User logged in, checking application status:', user.uid);
-        checkExistingApplication(user.uid);
-        
-        // Also check admin status to properly hide/show the button
-        checkAdminStatus(user.uid).then(adminStatus => {
-            if (adminStatus.isAdmin) {
-                // User is admin, ensure button is hidden
-                const joinCommunityBtn = document.getElementById('joinCommunityBtn');
-                const applicationStatus = document.getElementById('applicationStatus');
-                
-                if (joinCommunityBtn) {
-                    joinCommunityBtn.style.display = 'none';
-                }
-                if (applicationStatus) {
-                    applicationStatus.style.display = 'block';
-                    document.getElementById('statusText').textContent = 'You are already a curator';
-                    document.getElementById('statusText').style.color = 'var(--success)';
-                    document.getElementById('statusMessage').textContent = 'You have curator privileges and can manage opportunities.';
-                }
-            }
-        });
-    } else {
-        // User is logged out, hide application status
-        const applicationStatus = document.getElementById('applicationStatus');
-        const joinCommunityBtn = document.getElementById('joinCommunityBtn');
-        
-        if (applicationStatus) {
-            applicationStatus.style.display = 'none';
-        }
-        if (joinCommunityBtn) {
-            joinCommunityBtn.style.display = 'block';
-            joinCommunityBtn.disabled = false;
-            joinCommunityBtn.innerHTML = '<i class="fas fa-handshake"></i> I Want to Become a Part of This Community';
-            joinCommunityBtn.style.opacity = '1';
-        }
-    }
-});
-}
 
 // Handle application submission
 function handleApplicationSubmit(e) {
@@ -5172,33 +5082,25 @@ function handleApplicationSubmit(e) {
         const applicationsRef = ref(database, 'community_applications');
         const newApplicationRef = push(applicationsRef);
         
-set(newApplicationRef, applicationData)
-    .then(() => {
-        showNotification('Application submitted successfully! We will review it soon.');
-        document.getElementById('communityApplicationModal').style.display = 'none';
-        document.getElementById('communityApplicationForm').reset();
-        
-        // Immediately update the UI to show pending status
-        const pendingApplication = {
-            id: newApplicationRef.key,
-            ...applicationData,
-            status: 'pending'
-        };
-        
-        // Update UI immediately without waiting for database refresh
-        updateApplicationStatusUI(pendingApplication);
-        
-        // Also check database after a delay to confirm
-        setTimeout(() => {
-            checkExistingApplication(user.uid);
-        }, 2000);
-    })
-    .catch((error) => {
-        console.error('Error submitting application:', error);
-        showNotification('Error submitting application. Please try again.', 'error');
+        set(newApplicationRef, applicationData)
+            .then(() => {
+                showNotification('Application submitted successfully! We will review it soon.');
+                document.getElementById('communityApplicationModal').style.display = 'none';
+                document.getElementById('communityApplicationForm').reset();
+                
+                // Update UI immediately
+                const pendingApplication = {
+                    id: newApplicationRef.key,
+                    ...applicationData,
+                    status: 'pending'
+                };
+                updateApplicationStatusUI(pendingApplication);
+            })
+            .catch((error) => {
+                console.error('Error submitting application:', error);
+                showNotification('Error submitting application. Please try again.', 'error');
+            });
     });
-    });
-
 }
     let allApplications = [];
 let filteredApplications = [];
@@ -5540,6 +5442,31 @@ function rejectApplication(applicationId) {
         });
     });
 }
+function setupApplicationStatusListener(userId) {
+    const applicationsRef = ref(database, 'community_applications');
+    
+    onValue(applicationsRef, (snapshot) => {
+        const applications = snapshot.val();
+        let userApplication = null;
+        
+        if (applications) {
+            for (const appId in applications) {
+                const app = applications[appId];
+                if (app.userId === userId) {
+                    userApplication = { id: appId, ...app };
+                    break;
+                }
+            }
+        }
+        
+        updateApplicationStatusUI(userApplication);
+    }, (error) => {
+        console.error('Error listening to application status:', error);
+        // If permission denied, try one-time check
+        checkExistingApplication(userId);
+    });
+}
+           
 
 
 function grantAdminPrivileges(application, applicationId) {
