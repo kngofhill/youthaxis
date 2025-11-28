@@ -4781,51 +4781,95 @@ function showAdminPanel() {
             });
         }
 
-        async function checkAdminStatus(userId) {
+      async function checkAdminStatus(userId) {
+    try {
+        console.log('Checking admin status for user:', userId);
+        
+        const adminRef = ref(database, `admins/${userId}`);
+        const snapshot = await get(adminRef);
+        
+        if (snapshot.exists()) {
+            const adminData = snapshot.val();
+            console.log('Admin data found:', adminData);
+            
+            return {
+                isAdmin: true,
+                role: adminData.role || ADMIN_ROLES.ADMIN,
+                data: adminData
+            };
+        } else {
+            console.log('No admin data found for user:', userId);
+            return { 
+                isAdmin: false, 
+                role: null,
+                data: null 
+            };
+        }
+    } catch (error) {
+        console.error('Error checking admin status:', error);
+        
+        // If it's a permission error, try a different approach
+        if (error.code === 'PERMISSION_DENIED') {
+            console.log('Permission denied for admin check, trying alternative method...');
+            
+            // Try to check if user can access admin features by testing a simple operation
             try {
-                const adminRef = ref(database, `admins/${userId}`);
-                const snapshot = await get(adminRef);
+                const testRef = ref(database, `admins`);
+                const testSnapshot = await get(testRef);
                 
-                if (snapshot.exists()) {
-                    const adminData = snapshot.val();
+                if (testSnapshot.exists()) {
+                    const allAdmins = testSnapshot.val();
+                    const isUserAdmin = allAdmins && allAdmins[userId];
+                    
                     return {
-                        isAdmin: true,
-                        role: adminData.role || ADMIN_ROLES.ADMIN
+                        isAdmin: !!isUserAdmin,
+                        role: isUserAdmin ? (isUserAdmin.role || ADMIN_ROLES.ADMIN) : null,
+                        data: isUserAdmin || null
                     };
                 }
-                return { isAdmin: false, role: null };
-            } catch (error) {
-                console.error('Error checking admin status:', error);
-                return { isAdmin: false, role: null };
+            } catch (secondError) {
+                console.error('Alternative admin check also failed:', secondError);
             }
         }
+        
+        // Default to non-admin if we can't determine status
+        return { 
+            isAdmin: false, 
+            role: null,
+            data: null,
+            error: error.message 
+        };
+    }
+}
 
-        async function canUserModifyOpportunity(opportunityId) {
-            const user = auth.currentUser;
-            if (!user) return false;
-            
-            const adminStatus = await checkAdminStatus(user.uid);
-            
-            if (adminStatus.role === ADMIN_ROLES.SUPER_ADMIN) {
-                return true;
-            }
-            
-            if (adminStatus.isAdmin) {
-                try {
-                    const opportunityRef = ref(database, `opportunities/${opportunityId}`);
-                    const snapshot = await get(opportunityRef);
-                    
-                    if (snapshot.exists()) {
-                        const opportunity = snapshot.val();
-                        return opportunity.addedBy === user.uid;
-                    }
-                } catch (error) {
-                    console.error('Error checking opportunity ownership:', error);
-                }
-            }
-            
-            return false;
+       async function canUserModifyOpportunity(opportunityId) {
+    const user = auth.currentUser;
+    if (!user) return false;
+    
+    try {
+        const adminStatus = await checkAdminStatus(user.uid);
+        
+        if (adminStatus.role === ADMIN_ROLES.SUPER_ADMIN) {
+            return true;
         }
+        
+        if (adminStatus.isAdmin) {
+            // For regular admins, check if they created this opportunity
+            const opportunityRef = ref(database, `opportunities/${opportunityId}`);
+            const snapshot = await get(opportunityRef);
+            
+            if (snapshot.exists()) {
+                const opportunity = snapshot.val();
+                return opportunity.addedBy === user.uid;
+            }
+        }
+        
+        return false;
+    } catch (error) {
+        console.error('Error checking opportunity ownership:', error);
+        return false;
+    }
+}
 function initCommunityApplicationSystem() {
     const joinCommunityBtn = document.getElementById('joinCommunityBtn');
     const communityApplicationModal = document.getElementById('communityApplicationModal');
