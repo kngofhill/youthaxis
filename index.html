@@ -758,27 +758,48 @@
     margin-bottom: 1rem;
 }
         
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 2rem;
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
+   .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
         
-        .admin-table th, .admin-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--light-gray);
-        }
+    .admin-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--light-gray);
+}
         
-        .admin-table th {
-            background-color: var(--primary);
-            color: white;
-            font-weight: 600;
-        }
+    .admin-table th {
+    background: var(--primary);
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+}
+        @media (max-width: 768px) {
+    .admin-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .application-filters {
+        justify-content: center;
+    }
+    
+    .admin-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+}
         
         .admin-table tr:nth-child(even) {
             background-color: #f8f9fa;
