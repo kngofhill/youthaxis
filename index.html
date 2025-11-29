@@ -3614,88 +3614,70 @@ function trackOpportunitySaves() {
 }
 
         // Render opportunities to the grid
-        function renderOpportunities() {
-            if (!opportunitiesGrid) return;
-            
-            opportunitiesGrid.innerHTML = '';
-            
-            if (filteredOpportunities.length === 0) {
-                opportunitiesGrid.innerHTML = '<p class="no-results">No opportunities match your filters. Try adjusting your search criteria.</p>';
+     function renderAdminOpportunities() {
+    if (!adminOpportunitiesList) return;
+    
+    adminOpportunitiesList.innerHTML = '';
+    
+    if (allOpportunities.length === 0) {
+        adminOpportunitiesList.innerHTML = '<tr><td colspan="8" style="text-align: center;">No opportunities found</td></tr>';
+        return;
+    }
+    
+    allOpportunities.forEach(async (opp) => {
+        const timeRemaining = calculateTimeRemaining(opp.deadline);
+        const canModify = await canUserModifyOpportunity(opp.id);
+        const isOwnOpportunity = opp.addedBy === auth.currentUser?.uid;
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${opp.title || 'Untitled'}</td>
+            <td>${opp.organization || 'Unknown'}</td>
+            <td>${getOpportunityTypeText(opp.type)}</td>
+            <td>${getFormatText(opp.format)}</td>
+            <td>${formatDate(opp.deadline)} <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span></td>
+            <td>${opp.addedByName || 'Unknown'}</td>
+            <td>
+                ${isOwnOpportunity ? 
+                    '<span style="color: var(--success);">You</span>' : 
+                    '<span style="color: var(--gray);">Other Admin</span>'}
+            </td>
+            <td class="admin-actions-cell">
+                <button class="admin-btn edit-btn" data-id="${opp.id}" 
+                    ${!canModify && !isOwnOpportunity ? 'disabled' : ''}>
+                    Edit
+                </button>
+                <button class="admin-btn delete-btn" data-id="${opp.id}" 
+                    ${!canModify && !isOwnOpportunity ? 'disabled' : ''}>
+                    Delete
+                </button>
+            </td>
+        `;
+        
+        adminOpportunitiesList.appendChild(row);
+        
+        const editButton = row.querySelector('.edit-btn');
+        editButton.addEventListener('click', function() {
+            if (this.disabled) {
+                showNotification('You can only edit opportunities that you created', 'warning');
                 return;
             }
-            
-            filteredOpportunities.forEach(opp => {
-                const isSaved = userOpportunities.pending.some(item => item.id === opp.id) || 
-                               userOpportunities.completed.some(item => item.id === opp.id);
-                
-                const isExpired = isOpportunityExpired(opp.deadline);
-                const isUrgent = isDeadlineUrgent(opp.deadline);
-                const timeRemaining = calculateTimeRemaining(opp.deadline);
-                
-                const opportunityCard = document.createElement('div');
-                opportunityCard.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
-                opportunityCard.innerHTML = `
-                    <div class="card-header">
-                        <span class="opportunity-badge type-badge">${getOpportunityTypeText(opp.type)}</span>
-                        <span class="opportunity-badge field-badge">${getFieldText(opp.field)}</span>
-                        ${getFormatBadge(opp.format)}
-                        <h3>${opp.title || 'Untitled Opportunity'}</h3>
-                        <p class="organization">${opp.organization || 'Unknown Organization'}</p>
-                    </div>
-                    
-                    <div class="card-body">
-                        <div class="detail">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opp.deadline)} 
-                                <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
-                            </span>
-                        </div>
-                        <p>${(opp.description || 'No description available').substring(0, 150)}${opp.description && opp.description.length > 150 ? '...' : ''}</p>
-                    </div>
-                    
-                    <div class="card-footer">
-                        <div class="card-actions">
-                            <div class="left-actions">
-                                <button class="save-btn ${isSaved ? 'saved' : ''}" data-id="${opp.id}" title="${isSaved ? 'Remove from dashboard' : 'Save to dashboard'}">
-                                    <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i>
-                                </button>
-                            </div>
-                            <div class="right-actions">
-                                <button class="details-btn" data-id="${opp.id}">View Details</button>
-                                <a href="${opp.applyLink || '#'}" target="_blank" class="apply-link">Apply Now</a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                opportunitiesGrid.appendChild(opportunityCard);
-                
-                const saveButton = opportunityCard.querySelector('.save-btn');
-                saveButton.addEventListener('click', function() {
-                    const user = auth.currentUser;
-                    if (user) {
-                        const oppId = this.getAttribute('data-id');
-                        const opportunity = allOpportunities.find(opp => opp.id === oppId);
-                        if (this.classList.contains('saved')) {
-                            removeOpportunity(user.uid, opportunity);
-                        } else {
-                            saveOpportunity(user.uid, opportunity);
-                        }
-                    } else {
-                        showAuthModal('login');
-                        showNotification('Please sign in to save opportunities', 'warning');
-                    }
-                });
-                
-                const detailsButton = opportunityCard.querySelector('.details-btn');
-                detailsButton.addEventListener('click', function() {
-                    const oppId = this.getAttribute('data-id');
-                    const opportunity = allOpportunities.find(opp => opp.id === oppId);
-                    showOpportunityDetails(opportunity);
-                });
-            });
-        }
-
+            const oppId = this.getAttribute('data-id');
+            const opportunity = allOpportunities.find(opp => opp.id === oppId);
+            showAdminModal(opportunity);
+        });
+        
+        const deleteButton = row.querySelector('.delete-btn');
+        deleteButton.addEventListener('click', function() {
+            if (this.disabled) {
+                showNotification('You can only delete opportunities that you created', 'warning');
+                return;
+            }
+            const oppId = this.getAttribute('data-id');
+            deleteOpportunity(oppId);
+        });
+    });
+}
         function showOpportunityDetails(opportunity) {
             const detailsModal = document.getElementById('detailsModal');
             const detailsTitle = document.getElementById('detailsTitle');
