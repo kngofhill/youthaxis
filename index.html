@@ -4712,31 +4712,33 @@ function showAdminPanel() {
             }
         }
 
-        function gatherFormData() {
-            const format = document.getElementById('adminFormat').value;
-            let location = '';
-            if (format === 'online') {
-                location = 'Online';
-            } else {
-                location = document.getElementById('adminLocation').value;
-            }
-            
-            return {
-                title: document.getElementById('adminTitle').value.trim(),
-                organization: document.getElementById('adminOrganization').value.trim(),
-                type: adminTypeMultiSelect.getSelected(),
-                field: adminFieldMultiSelect.getSelected(),
-                format: format,
-                description: document.getElementById('adminDescription').value.trim(),
-                location: location,
-                deadline: document.getElementById('adminDeadline').value,
-                applyLink: document.getElementById('adminApplyLink').value.trim(),
-                timeCommitment: document.getElementById('adminTimeCommitment').value,
-                duration: document.getElementById('adminDuration').value,
-                language: document.getElementById('adminLanguage').value,
-                ageRestrictions: document.getElementById('adminAgeRestrictions').value
-            };
-        }
+    function gatherFormData() {
+    const format = document.getElementById('adminFormat').value;
+    let location = '';
+    if (format === 'online') {
+        location = 'Online';
+    } else {
+        location = document.getElementById('adminLocation').value;
+    }
+    
+    // FIX: Only gather editable fields, don't include creator info
+    return {
+        title: document.getElementById('adminTitle').value.trim(),
+        organization: document.getElementById('adminOrganization').value.trim(),
+        type: adminTypeMultiSelect.getSelected(),
+        field: adminFieldMultiSelect.getSelected(),
+        format: format,
+        description: document.getElementById('adminDescription').value.trim(),
+        location: location,
+        deadline: document.getElementById('adminDeadline').value,
+        applyLink: document.getElementById('adminApplyLink').value.trim(),
+        timeCommitment: document.getElementById('adminTimeCommitment').value,
+        duration: document.getElementById('adminDuration').value,
+        language: document.getElementById('adminLanguage').value,
+        ageRestrictions: document.getElementById('adminAgeRestrictions').value
+        // Note: addedBy, addedByName, createdAt are handled separately
+    };
+}
 
      async function handleAdminFormSubmit(e) {
     e.preventDefault();
