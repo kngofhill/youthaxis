@@ -4738,35 +4738,45 @@ function showAdminPanel() {
             };
         }
 
-        async function handleAdminFormSubmit(e) {
-            e.preventDefault();
-            
-            const user = auth.currentUser;
-            if (!user || !isAdminUser) {
-                showNotification('Admin privileges required.', 'error');
-                return;
-            }
-            
-            const opportunityId = document.getElementById('opportunityId').value;
-            const opportunityData = gatherFormData();
-            
-            opportunityData.addedBy = user.uid;
-            opportunityData.addedByName = user.displayName || user.email;
-            opportunityData.createdAt = opportunityId ? allOpportunities.find(opp => opp.id === opportunityId).createdAt : new Date().toISOString();
-            opportunityData.updatedAt = new Date().toISOString();
-            
-            if (!opportunityId) {
-                const duplicateCheck = await checkForDuplicateOpportunity(opportunityData);
-                
-                if (duplicateCheck.isDuplicate) {
-                    showDuplicateWarning(duplicateCheck, opportunityData);
-                    return;
-                }
-            }
-            
-            saveOpportunityData(opportunityId, opportunityData);
+     async function handleAdminFormSubmit(e) {
+    e.preventDefault();
+    
+    const user = auth.currentUser;
+    if (!user || !isAdminUser) {
+        showNotification('Admin privileges required.', 'error');
+        return;
+    }
+    
+    const opportunityId = document.getElementById('opportunityId').value;
+    const opportunityData = gatherFormData();
+    
+    // FIX: Preserve original creator information when editing
+    if (opportunityId) {
+        // Editing existing opportunity - preserve original creator
+        const originalOpportunity = allOpportunities.find(opp => opp.id === opportunityId);
+        opportunityData.addedBy = originalOpportunity.addedBy;
+        opportunityData.addedByName = originalOpportunity.addedByName;
+        opportunityData.createdAt = originalOpportunity.createdAt;
+    } else {
+        // Creating new opportunity - set current user as creator
+        opportunityData.addedBy = user.uid;
+        opportunityData.addedByName = user.displayName || user.email;
+        opportunityData.createdAt = new Date().toISOString();
+    }
+    
+    opportunityData.updatedAt = new Date().toISOString();
+    
+    if (!opportunityId) {
+        const duplicateCheck = await checkForDuplicateOpportunity(opportunityData);
+        
+        if (duplicateCheck.isDuplicate) {
+            showDuplicateWarning(duplicateCheck, opportunityData);
+            return;
         }
-
+    }
+    
+    saveOpportunityData(opportunityId, opportunityData);
+}
         function closeAdminModal() {
             if (adminModal) {
                 adminModal.style.display = 'none';
