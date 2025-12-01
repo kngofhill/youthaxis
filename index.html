@@ -4231,66 +4231,76 @@ function trackOpportunitySaves() {
             .catch((error) => console.error('Error updating opportunity:', error));
         }
 
-        function applyFilters() {
-            const selectedFields = fieldMultiSelect.getSelected();
-            const selectedTypes = typeMultiSelect.getSelected();
-            const formatFilter = document.getElementById('format').value;
-            const deadlineFilter = document.getElementById('deadline').value;
-            const languageFilter = document.getElementById('language').value;
-            const searchTerm = searchInput.value.toLowerCase();
-            
-            filteredOpportunities = allOpportunities.filter(opp => {
-                if (selectedFields.length > 0) {
-                    const oppFields = Array.isArray(opp.field) ? opp.field : [opp.field];
-                    const hasAnyField = oppFields.includes('any');
-                    const hasMatchingField = oppFields.some(field => selectedFields.includes(field));
-                    
-                    if (!hasAnyField && !hasMatchingField) return false;
-                }
-                
-                if (selectedTypes.length > 0) {
-                    const oppTypes = Array.isArray(opp.type) ? opp.type : [opp.type];
-                    const hasMatchingType = oppTypes.some(type => selectedTypes.includes(type));
-                    if (!hasMatchingType) return false;
-                }
-                
-                if (formatFilter && opp.format !== formatFilter) return false;
-                
-                if (languageFilter && opp.language && opp.language !== languageFilter) return false;
-                
-                if (searchTerm && !(
-                    (opp.title && opp.title.toLowerCase().includes(searchTerm)) ||
-                    (opp.organization && opp.organization.toLowerCase().includes(searchTerm)) ||
-                    (opp.description && opp.description.toLowerCase().includes(searchTerm)) ||
-                    (opp.field && (Array.isArray(opp.field) ? 
-                        opp.field.some(f => {
-                            if (f === 'any') return true;
-                            return FIELD_OPTIONS[f] && FIELD_OPTIONS[f].toLowerCase().includes(searchTerm);
-                        }) : 
-                        (opp.field === 'any' || (FIELD_OPTIONS[opp.field] && FIELD_OPTIONS[opp.field].toLowerCase().includes(searchTerm)))
-                    ))
-                )) return false;
-                
-                if (deadlineFilter && opp.deadline) {
-                    const today = new Date();
-                    const oppDeadline = new Date(opp.deadline);
-                    
-                    if (oppDeadline < today) return false;
-                    
-                    const diffTime = oppDeadline - today;
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    if (deadlineFilter === 'week' && diffDays > 7) return false;
-                    if (deadlineFilter === 'month' && diffDays > 30) return false;
-                    if (deadlineFilter === '3months' && diffDays > 90) return false;
-                }
-                
-                return true;
-            });
-            
-            renderOpportunities();
-            showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
+     function applyFilters() {
+    const selectedFields = fieldMultiSelect.getSelected();
+    const selectedTypes = typeMultiSelect.getSelected();
+    const formatFilter = document.getElementById('format').value;
+    const deadlineFilter = document.getElementById('deadline').value;
+    const languageFilter = document.getElementById('language').value;
+    const searchTerm = searchInput.value.toLowerCase();
+    
+    filteredOpportunities = allOpportunities.filter(opp => {
+        // Check if the opportunity is expired
+        const isExpired = isOpportunityExpired(opp.deadline);
+        
+        // For regular viewing (not admin), hide expired opportunities
+        const user = auth.currentUser;
+        const isAdminViewing = adminPanel && adminPanel.style.display === 'block';
+        if (isExpired && !isAdminViewing) {
+            return false;
         }
+        
+        if (selectedFields.length > 0) {
+            const oppFields = Array.isArray(opp.field) ? opp.field : [opp.field];
+            const hasAnyField = oppFields.includes('any');
+            const hasMatchingField = oppFields.some(field => selectedFields.includes(field));
+            
+            if (!hasAnyField && !hasMatchingField) return false;
+        }
+        
+        if (selectedTypes.length > 0) {
+            const oppTypes = Array.isArray(opp.type) ? opp.type : [opp.type];
+            const hasMatchingType = oppTypes.some(type => selectedTypes.includes(type));
+            if (!hasMatchingType) return false;
+        }
+        
+        if (formatFilter && opp.format !== formatFilter) return false;
+        
+        if (languageFilter && opp.language && opp.language !== languageFilter) return false;
+        
+        if (searchTerm && !(
+            (opp.title && opp.title.toLowerCase().includes(searchTerm)) ||
+            (opp.organization && opp.organization.toLowerCase().includes(searchTerm)) ||
+            (opp.description && opp.description.toLowerCase().includes(searchTerm)) ||
+            (opp.field && (Array.isArray(opp.field) ? 
+                opp.field.some(f => {
+                    if (f === 'any') return true;
+                    return FIELD_OPTIONS[f] && FIELD_OPTIONS[f].toLowerCase().includes(searchTerm);
+                }) : 
+                (opp.field === 'any' || (FIELD_OPTIONS[opp.field] && FIELD_OPTIONS[opp.field].toLowerCase().includes(searchTerm)))
+            ))
+        )) return false;
+        
+        if (deadlineFilter && opp.deadline) {
+            const today = new Date();
+            const oppDeadline = new Date(opp.deadline);
+            
+            if (oppDeadline < today) return false;
+            
+            const diffTime = oppDeadline - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (deadlineFilter === 'week' && diffDays > 7) return false;
+            if (deadlineFilter === 'month' && diffDays > 30) return false;
+            if (deadlineFilter === '3months' && diffDays > 90) return false;
+        }
+        
+        return true;
+    });
+    
+    renderOpportunities();
+    showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
+}
 
         function applySearchFilter() {
             applyFilters();
