@@ -4906,9 +4906,16 @@ function resetApplicationUI() {
             if (document.getElementById('leaderboardSection')) document.getElementById('leaderboardSection').style.display = 'none';
         }
 
-        function showOpportunities() {
-            showHome();
-        }
+       function showOpportunities() {
+    if (heroSection) heroSection.style.display = 'block';
+    if (filtersSection) filtersSection.style.display = 'block';
+    if (opportunitiesTitle) opportunitiesTitle.style.display = 'block';
+    if (opportunitiesGrid) opportunitiesGrid.style.display = 'grid';
+    if (dashboard) dashboard.style.display = 'none';
+    if (adminPanel) adminPanel.style.display = 'none';
+    if (document.getElementById('curatorProfile')) document.getElementById('curatorProfile').style.display = 'none';
+    if (document.getElementById('leaderboardSection')) document.getElementById('leaderboardSection').style.display = 'none';
+}
 // Updated showAdminPanel function
 function showAdminPanel() {
     const user = auth.currentUser;
