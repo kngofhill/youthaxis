@@ -3298,47 +3298,56 @@ function trackOpportunitySaves() {
         });
     }
 
-    function loadLeaderboard() {
-        const creatorStats = {};
-        
-        allOpportunities.forEach(opp => {
-            if (!creatorStats[opp.addedBy]) {
-                creatorStats[opp.addedBy] = {
-                    id: opp.addedBy,
-                    name: opp.addedByName || 'Unknown Curator',
-                    opportunities: 0,
-                    totalSaves: 0,
-                    uniqueSavers: new Set()
-                };
-            }
-            
-            creatorStats[opp.addedBy].opportunities++;
-            
-            if (userSaveStats[opp.id]) {
-                creatorStats[opp.addedBy].totalSaves += userSaveStats[opp.id].size;
-                userSaveStats[opp.id].forEach(saverId => {
-                    creatorStats[opp.addedBy].uniqueSavers.add(saverId);
-                });
-            }
-        });
-
-        leaderboardData = Object.values(creatorStats).map(creator => {
-            const score = creator.opportunities * 2 + creator.totalSaves + creator.uniqueSavers.size * 3;
-            return {
-                ...creator,
-                uniqueSavers: creator.uniqueSavers.size,
-                score: score
+  function loadLeaderboard() {
+    const creatorStats = {};
+    
+    allOpportunities.forEach(opp => {
+        if (!creatorStats[opp.addedBy]) {
+            creatorStats[opp.addedBy] = {
+                id: opp.addedBy,
+                name: opp.addedByName || 'Unknown Curator',
+                opportunities: 0,
+                totalSaves: 0,
+                uniqueSavers: new Set()
             };
-        });
+        }
+        
+        creatorStats[opp.addedBy].opportunities++;
+        
+        if (userSaveStats[opp.id]) {
+            creatorStats[opp.addedBy].totalSaves += userSaveStats[opp.id].size;
+            userSaveStats[opp.id].forEach(saverId => {
+                creatorStats[opp.addedBy].uniqueSavers.add(saverId);
+            });
+        }
+    });
 
-        leaderboardData.sort((a, b) => b.score - a.score);
+    leaderboardData = Object.values(creatorStats).map(creator => {
+        const score = creator.opportunities * 2 + creator.totalSaves + creator.uniqueSavers.size * 3;
+        return {
+            ...creator,
+            uniqueSavers: creator.uniqueSavers.size,
+            score: score
+        };
+    });
 
-        leaderboardData.forEach((creator, index) => {
-            creator.rank = index + 1;
-        });
+    leaderboardData.sort((a, b) => b.score - a.score);
 
-        updateLeaderboardUI();
-    }
+    leaderboardData.forEach((creator, index) => {
+        creator.rank = index + 1;
+    });
+
+    // Store in global variable
+    window.globalLeaderboardData = leaderboardData;
+    
+    // Show all-time by default
+    updateLeaderboardUIWithData(leaderboardData);
+    
+    // Initialize the tabs AFTER the leaderboard is loaded
+    setTimeout(() => {
+        initLeaderboardTabs();
+    }, 100);
+}
 
   function initLeaderboardTabs() {
     const leaderboardTabs = document.querySelectorAll('.leaderboard-tab');
