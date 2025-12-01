@@ -516,99 +516,134 @@
 /* Replace the existing dashboard card styles with these */
 
 /* Dashboard Card Improvements - LENGHTENED */
+/* Replace the entire dashboard section styles with these */
+
+/* Dashboard Card Improvements - SIGNIFICANTLY LENGTHENED */
 .dashboard .opportunity-card {
     display: flex;
     flex-direction: column;
-    height: 420px; /* Increased from 380px */
+    height: 480px; /* Increased from 380px to 480px */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .dashboard .card-header {
-    padding: 1.2rem;
+    padding: 1.5rem;
     border-bottom: 1px solid var(--light-gray);
     flex-shrink: 0;
+    background: linear-gradient(135deg, var(--light), white);
 }
 
 .dashboard .dashboard-card-title {
-    font-size: 1.3rem; /* Increased from 1.2rem */
-    margin: 8px 0 5px 0;
+    font-size: 1.4rem; /* Increased from 1.2rem */
+    margin: 12px 0 8px 0;
     line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     min-height: 2.8em;
+    color: var(--dark);
+    font-weight: 600;
 }
 
 .dashboard .organization {
-    color: var(--gray);
-    font-size: 0.95rem; /* Increased from 0.9rem */
-    margin-bottom: 8px;
+    color: var(--primary);
+    font-size: 1rem;
+    margin-bottom: 10px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dashboard .organization:before {
+    content: "🏢";
+    font-size: 0.9rem;
 }
 
 .dashboard .card-body {
-    padding: 1.2rem;
+    padding: 1.5rem;
     flex: 1;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Added gap between details */
+    gap: 12px; /* Added gap between details */
 }
 
 .dashboard .detail {
     display: flex;
     align-items: flex-start;
-    margin-bottom: 10px; /* Reduced from 12px */
-    min-height: 24px;
-    font-size: 0.95rem; /* Added font size */
+    margin-bottom: 12px;
+    min-height: 26px;
+    font-size: 1rem;
+    color: var(--dark);
 }
 
 .dashboard .detail i {
-    width: 20px;
+    width: 22px;
     color: var(--primary);
-    margin-right: 10px;
+    margin-right: 12px;
     flex-shrink: 0;
+    font-size: 1.1rem;
 }
 
 .dashboard .deadline {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 8px;
-    font-weight: 500;
-    margin-top: 5px; /* Added margin */
+    gap: 10px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #fff5f5, #ffe6e6);
+    border-radius: 6px;
+    margin-top: 8px;
+    border-left: 4px solid var(--danger);
 }
 
 .dashboard .description-container {
     flex: 1;
     overflow: hidden;
     position: relative;
-    line-height: 1.6; /* Increased from 1.5 */
-    font-size: 1rem; /* Increased from 0.95rem */
-    margin-top: 10px;
-    max-height: 140px; /* Set max height */
+    line-height: 1.7; /* Increased from 1.5 */
+    font-size: 1.05rem; /* Increased from 0.95rem */
+    margin-top: 15px;
+    padding: 15px;
+    background: var(--light);
+    border-radius: 6px;
+    border: 1px solid var(--light-gray);
+    max-height: 180px; /* Increased max height */
+    overflow-y: auto; /* Make it scrollable if content is too long */
     padding-bottom: 30px; /* Make room for fade effect */
 }
 
-/* Improve fade effect for longer descriptions */
+/* Remove the fade effect since we have scroll now */
 .dashboard .description-container::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 40px; /* Increased from 30px */
-    background: linear-gradient(to bottom, transparent, white);
-    pointer-events: none;
+    content: none;
+}
+
+/* Custom scrollbar for description */
+.dashboard .description-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dashboard .description-container::-webkit-scrollbar-track {
+    background: var(--light-gray);
+    border-radius: 3px;
+}
+
+.dashboard .description-container::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 3px;
 }
 
 .dashboard .card-footer {
-    padding: 1rem 1.2rem;
-    background-color: var(--light);
-    border-top: 1px solid var(--light-gray);
+    padding: 1.2rem 1.5rem;
+    background: linear-gradient(135deg, var(--light), #f0f4ff);
+    border-top: 2px solid var(--light-gray);
     flex-shrink: 0;
 }
 
@@ -616,87 +651,259 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     width: 100%;
 }
 
 .dashboard .left-actions, 
 .dashboard .right-actions {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     align-items: center;
 }
 
 .dashboard .save-btn {
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     background: none;
     border: none;
     cursor: pointer;
     color: var(--accent);
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.dashboard .save-btn:hover {
+    background: rgba(247, 37, 133, 0.1);
+    transform: scale(1.1);
 }
 
 .dashboard .details-btn,
 .dashboard .apply-link,
 .dashboard .complete-btn {
-    padding: 10px 16px; /* Increased from 8px 12px */
-    font-size: 0.9rem; /* Increased from 0.85rem */
+    padding: 12px 20px; /* Increased from 8px 12px */
+    font-size: 1rem; /* Increased from 0.85rem */
     white-space: nowrap;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+    min-width: 140px;
+}
+
+.dashboard .details-btn {
+    background: var(--primary);
+    color: white;
+    border: 2px solid var(--primary);
+}
+
+.dashboard .apply-link {
+    background: white;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.dashboard .complete-btn {
+    background: var(--success);
+    color: white;
+    border: 2px solid var(--success);
+}
+
+.dashboard .details-btn:hover,
+.dashboard .apply-link:hover,
+.dashboard .complete-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .dashboard .completed-badge {
-    background-color: var(--success);
+    background: linear-gradient(135deg, var(--success), #2ecc71);
     color: white;
-    padding: 8px 14px; /* Increased from 6px 12px */
-    border-radius: 4px;
-    font-size: 0.9rem; /* Increased from 0.85rem */
+    padding: 10px 18px; /* Increased from 6px 12px */
+    border-radius: 8px;
+    font-size: 1rem; /* Increased from 0.85rem */
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dashboard .completed-badge:before {
+    content: "✓";
+    font-weight: bold;
+}
+
+/* Opportunity badges in dashboard - make them more prominent */
+.dashboard .opportunity-badge {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    margin-right: 8px;
+}
+
+.dashboard .type-badge {
+    background: linear-gradient(135deg, #e6f7ff, #b3e0ff);
+    color: #0066cc;
+    border: 1px solid #b3e0ff;
+}
+
+.dashboard .field-badge {
+    background: linear-gradient(135deg, #f0e6ff, #d9b3ff);
+    color: #6600cc;
+    border: 1px solid #d9b3ff;
+}
+
+.dashboard .format-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-left: 8px;
 }
 
 /* Ensure all cards have equal height in dashboard grid */
 .dashboard-opportunities {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); /* Increased from 320px */
-    gap: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); /* Increased from 320px */
+    gap: 30px;
     align-items: stretch;
 }
 
+/* Add status indicators for pending opportunities */
+.dashboard .status-indicator {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    z-index: 1;
+}
+
+.dashboard .status-pending {
+    background: var(--warning);
+    color: var(--dark);
+}
+
+.dashboard .status-completed {
+    background: var(--success);
+    color: white;
+}
+
+/* Time remaining styles in dashboard */
+.dashboard .time-remaining {
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+/* Empty state improvements */
+.dashboard .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--gray);
+    background: white;
+    border-radius: 12px;
+    border: 2px dashed var(--light-gray);
+    grid-column: 1 / -1;
+}
+
+.dashboard .empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    color: var(--light-gray);
+}
+
+.dashboard .empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--dark);
+}
+
+.dashboard .empty-state p {
+    font-size: 1.1rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
 /* Responsive adjustments for dashboard */
+@media (max-width: 1024px) {
+    .dashboard-opportunities {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
+
 @media (max-width: 768px) {
     .dashboard .opportunity-card {
         height: auto;
-        min-height: 400px; /* Increased from 350px */
+        min-height: 450px;
     }
     
     .dashboard .card-actions {
         flex-direction: column;
-        gap: 10px;
+        gap: 15px;
     }
     
     .dashboard .left-actions,
     .dashboard .right-actions {
         width: 100%;
         justify-content: space-between;
+        flex-wrap: wrap;
     }
     
     .dashboard-opportunities {
         grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .dashboard .details-btn,
+    .dashboard .apply-link,
+    .dashboard .complete-btn {
+        min-width: 120px;
+        padding: 10px 16px;
+        font-size: 0.95rem;
     }
 }
 
 @media (max-width: 480px) {
     .dashboard .dashboard-card-title {
-        font-size: 1.2rem; /* Increased from 1.1rem */
+        font-size: 1.3rem;
     }
     
     .dashboard .description-container {
-        font-size: 0.95rem; /* Increased from 0.9rem */
+        font-size: 1rem;
+        max-height: 160px;
     }
     
     .dashboard .opportunity-card {
-        min-height: 380px;
+        min-height: 420px;
+    }
+    
+    .dashboard .card-actions {
+        flex-direction: column;
+    }
+    
+    .dashboard .left-actions,
+    .dashboard .right-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .dashboard .details-btn,
+    .dashboard .apply-link,
+    .dashboard .complete-btn {
+        width: 100%;
+        min-width: unset;
+        margin-bottom: 8px;
     }
 }
-        
         .card-header {
             padding: 1.5rem;
             border-bottom: 1px solid var(--light-gray);
