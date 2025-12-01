@@ -5744,10 +5744,13 @@ function grantAdminPrivileges(application, applicationId) {
         function initApp() {
             loadOpportunitiesFromFirebase();
             initCommunityApplicationSystem(); 
+            // In the DOMContentLoaded event listener, add this:
+            initExpiredOpportunitiesFilter();
         }
 
         // Initialize the app
         initApp();
+        
     });
 </script>
 </body>
