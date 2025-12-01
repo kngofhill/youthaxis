@@ -4404,49 +4404,59 @@ function updateLeaderboardUIWithData(leaderboardData) {
             }
         }
 
-        function createDashboardOpportunityElement(opportunity, status) {
-            const isExpired = isOpportunityExpired(opportunity.deadline);
-            const isUrgent = isDeadlineUrgent(opportunity.deadline);
-            const timeRemaining = calculateTimeRemaining(opportunity.deadline);
-            
-            const element = document.createElement('div');
-            element.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
-            element.innerHTML = `
-                <div class="card-header">
-                    <span class="opportunity-badge type-badge">${getOpportunityTypeText(opportunity.type)}</span>
-                    <span class="opportunity-badge field-badge">${getFieldText(opportunity.field)}</span>
-                    ${getFormatBadge(opportunity.format)}
-                    <h3>${opportunity.title || 'Untitled Opportunity'}</h3>
-                    <p class="organization">${opportunity.organization || 'Unknown Organization'}</p>
+    function createDashboardOpportunityElement(opportunity, status) {
+    const isExpired = isOpportunityExpired(opportunity.deadline);
+    const isUrgent = isDeadlineUrgent(opportunity.deadline);
+    const timeRemaining = calculateTimeRemaining(opportunity.deadline);
+    
+    const element = document.createElement('div');
+    element.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
+    
+    // Truncate description to 150 characters for dashboard
+    const truncatedDescription = opportunity.description ? 
+        (opportunity.description.length > 150 ? 
+            opportunity.description.substring(0, 150) + '...' : 
+            opportunity.description) : 
+        'No description available';
+    
+    element.innerHTML = `
+        <div class="card-header">
+            <span class="opportunity-badge type-badge">${getOpportunityTypeText(opportunity.type)}</span>
+            <span class="opportunity-badge field-badge">${getFieldText(opportunity.field)}</span>
+            ${getFormatBadge(opportunity.format)}
+            <h3>${opportunity.title || 'Untitled Opportunity'}</h3>
+            <p class="organization">${opportunity.organization || 'Unknown Organization'}</p>
+        </div>
+        
+        <div class="card-body">
+            <div class="detail">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opportunity.deadline)} 
+                    <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
+                </span>
+            </div>
+            <p style="max-height: 60px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                ${truncatedDescription}
+            </p>
+        </div>
+        
+        <div class="card-footer">
+            <div class="card-actions">
+                <div class="left-actions">
+                    <button class="save-btn saved" data-id="${opportunity.id}" title="Remove from dashboard">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
                 </div>
-                
-                <div class="card-body">
-                    <div class="detail">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opportunity.deadline)} 
-                            <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>
-                        </span>
-                    </div>
-                    <p>${opportunity.description || 'No description available'}</p>
+                <div class="right-actions">
+                    <button class="details-btn" data-id="${opportunity.id}">View Details</button>
+                    <a href="${opportunity.applyLink || '#'}" target="_blank" class="apply-link">Apply Now</a>
+                    ${status === 'pending' ? 
+                    `<button class="apply-link complete-btn" data-id="${opportunity.id}">Mark as Complete</button>` : 
+                    `<span class="completed-badge">Completed</span>`}
                 </div>
-                
-                <div class="card-footer">
-                    <div class="card-actions">
-                        <div class="left-actions">
-                            <button class="save-btn saved" data-id="${opportunity.id}" title="Remove from dashboard">
-                                <i class="fas fa-bookmark"></i>
-                            </button>
-                        </div>
-                        <div class="right-actions">
-                            <button class="details-btn" data-id="${opportunity.id}">View Details</button>
-                            <a href="${opportunity.applyLink || '#'}" target="_blank" class="apply-link">Apply Now</a>
-                            ${status === 'pending' ? 
-                            `<button class="apply-link complete-btn" data-id="${opportunity.id}">Mark as Complete</button>` : 
-                            `<span class="completed-badge">Completed</span>`}
-                        </div>
-                    </div>
-                </div>
-            `;
+            </div>
+        </div>
+    `;
             
             const removeBtn = element.querySelector('.save-btn');
             removeBtn.addEventListener('click', function() {
