@@ -3618,30 +3618,70 @@ function trackOpportunitySaves() {
         }
     });
 }
+        function initExpiredOpportunitiesFilter() {
+    const filterExpiredBtn = document.getElementById('filterExpiredBtn');
+    if (!filterExpiredBtn) return;
+    
+    let showExpiredOnly = false;
+    
+    filterExpiredBtn.addEventListener('click', function() {
+        showExpiredOnly = !showExpiredOnly;
+        
+        if (showExpiredOnly) {
+            this.innerHTML = '<i class="fas fa-hourglass-end"></i> Show All';
+            this.classList.add('filter-expired');
+            renderAdminOpportunities(true);
+        } else {
+            this.innerHTML = '<i class="fas fa-hourglass-end"></i> Show Expired Only';
+            this.classList.remove('filter-expired');
+            renderAdminOpportunities();
+        }
+    });
+}
 
         // Render opportunities to the grid
-     function renderAdminOpportunities() {
+  function renderAdminOpportunities(showExpiredOnly = false) {
     if (!adminOpportunitiesList) return;
     
     adminOpportunitiesList.innerHTML = '';
     
-    if (allOpportunities.length === 0) {
+    let filteredOpportunities = allOpportunities;
+    
+    if (showExpiredOnly) {
+        filteredOpportunities = allOpportunities.filter(opp => {
+            return isOpportunityExpired(opp.deadline);
+        });
+    }
+    
+    if (filteredOpportunities.length === 0) {
         adminOpportunitiesList.innerHTML = '<tr><td colspan="8" style="text-align: center;">No opportunities found</td></tr>';
         return;
     }
     
-    allOpportunities.forEach(async (opp) => {
+    filteredOpportunities.forEach(async (opp) => {
         const timeRemaining = calculateTimeRemaining(opp.deadline);
         const canModify = await canUserModifyOpportunity(opp.id);
         const isOwnOpportunity = opp.addedBy === auth.currentUser?.uid;
+        const isExpired = isOpportunityExpired(opp.deadline);
         
         const row = document.createElement('tr');
+        if (isExpired) {
+            row.style.opacity = '0.7';
+        }
+        
         row.innerHTML = `
-            <td>${opp.title || 'Untitled'}</td>
+            <td>${opp.title || 'Untitled'}
+                ${isExpired ? '<span style="color: var(--danger); margin-left: 10px; font-size: 0.8rem;">(Expired)</span>' : ''}
+            </td>
             <td>${opp.organization || 'Unknown'}</td>
             <td>${getOpportunityTypeText(opp.type)}</td>
             <td>${getFormatText(opp.format)}</td>
-            <td>${formatDate(opp.deadline)} <span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span></td>
+            <td>${formatDate(opp.deadline)} 
+                ${isExpired ? 
+                    '<span class="time-remaining" style="background-color: var(--danger);">Expired</span>' : 
+                    `<span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>`
+                }
+            </td>
             <td>${opp.addedByName || 'Unknown'}</td>
             <td>
                 ${isOwnOpportunity ? 
