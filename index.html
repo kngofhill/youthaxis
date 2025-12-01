@@ -3340,36 +3340,145 @@ function trackOpportunitySaves() {
         updateLeaderboardUI();
     }
 
-    function updateLeaderboardUI() {
-        const leaderboardList = document.getElementById('leaderboardList');
-        leaderboardList.innerHTML = '';
-
-        const topCurators = leaderboardData.slice(0, 20);
-        
-        topCurators.forEach(creator => {
-            const item = document.createElement('div');
-            item.className = 'leaderboard-item';
-            item.innerHTML = `
-                <div class="rank rank-${creator.rank}">${creator.rank}</div>
-                <div class="curator-info">
-                    <div class="curator-name">${creator.name}</div>
-                    <div class="curator-stats-small">
-                        <span>${creator.opportunities} opportunities</span>
-                        <span>${creator.totalSaves} saves</span>
-                        <span>${creator.uniqueSavers} students reached</span>
-                    </div>
-                </div>
-                <button class="view-curator-btn" data-userid="${creator.id}">
-                    View Profile
-                </button>
-            `;
-            leaderboardList.appendChild(item);
+  function initLeaderboardTabs() {
+    const leaderboardTabs = document.querySelectorAll('.leaderboard-tab');
+    
+    leaderboardTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            leaderboardTabs.forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            this.classList.add('active');
+            
+            // Get the period (week, month, all)
+            const period = this.getAttribute('data-period');
+            
+            // Filter leaderboard based on period
+            filterLeaderboardByPeriod(period);
         });
+    });
+}
 
-        document.getElementById('leaderboardUpdateTime').textContent = 
-            `Last updated: ${new Date().toLocaleTimeString()}`;
+// Add this function to filter leaderboard by period
+function filterLeaderboardByPeriod(period) {
+    const currentDate = new Date();
+    let filteredStats = {};
+    
+    // Get opportunities for the period
+    let periodOpportunities = [];
+    
+    if (period === 'week') {
+        // Get opportunities created in the last 7 days
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        
+        periodOpportunities = allOpportunities.filter(opp => {
+            const oppDate = new Date(opp.createdAt || opp.updatedAt || '2000-01-01');
+            return oppDate >= oneWeekAgo;
+        });
+    } else if (period === 'month') {
+        // Get opportunities created in the last 30 days
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+        
+        periodOpportunities = allOpportunities.filter(opp => {
+            const oppDate = new Date(opp.createdAt || opp.updatedAt || '2000-01-01');
+            return oppDate >= oneMonthAgo;
+        });
+    } else {
+        // All time - use all opportunities
+        periodOpportunities = allOpportunities;
     }
+    
+    console.log(`Filtered ${periodOpportunities.length} opportunities for ${period} period`);
+    
+    // Calculate creator stats for this period
+    periodOpportunities.forEach(opp => {
+        if (!filteredStats[opp.addedBy]) {
+            filteredStats[opp.addedBy] = {
+                id: opp.addedBy,
+                name: opp.addedByName || 'Unknown Curator',
+                opportunities: 0,
+                totalSaves: 0,
+                uniqueSavers: new Set()
+            };
+        }
+        
+        filteredStats[opp.addedBy].opportunities++;
+        
+        if (userSaveStats[opp.id]) {
+            filteredStats[opp.addedBy].totalSaves += userSaveStats[opp.id].size;
+            userSaveStats[opp.id].forEach(saverId => {
+                filteredStats[opp.addedBy].uniqueSavers.add(saverId);
+            });
+        }
+    });
 
+    // Convert to array and calculate scores
+    let periodLeaderboardData = Object.values(filteredStats).map(creator => {
+        const score = creator.opportunities * 2 + creator.totalSaves + creator.uniqueSavers.size * 3;
+        return {
+            ...creator,
+            uniqueSavers: creator.uniqueSavers.size,
+            score: score
+        };
+    });
+
+    // Sort by score
+    periodLeaderboardData.sort((a, b) => b.score - a.score);
+
+    // Add ranks
+    periodLeaderboardData.forEach((creator, index) => {
+        creator.rank = index + 1;
+    });
+
+    // Update the leaderboard UI with filtered data
+    updateLeaderboardUIWithData(periodLeaderboardData);
+}
+
+// Modified version of updateLeaderboardUI to accept data parameter
+function updateLeaderboardUIWithData(leaderboardData) {
+    const leaderboardList = document.getElementById('leaderboardList');
+    if (!leaderboardList) return;
+    
+    leaderboardList.innerHTML = '';
+
+    const topCurators = leaderboardData.slice(0, 20);
+    
+    if (topCurators.length === 0) {
+        leaderboardList.innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: var(--gray);">
+                <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 1rem; color: var(--light-gray);"></i>
+                <h3>No curators found</h3>
+                <p>No curators have added opportunities in this period</p>
+            </div>
+        `;
+        return;
+    }
+    
+    topCurators.forEach(creator => {
+        const item = document.createElement('div');
+        item.className = 'leaderboard-item';
+        item.innerHTML = `
+            <div class="rank rank-${creator.rank}">${creator.rank}</div>
+            <div class="curator-info">
+                <div class="curator-name">${creator.name}</div>
+                <div class="curator-stats-small">
+                    <span>${creator.opportunities} opportunities</span>
+                    <span>${creator.totalSaves} saves</span>
+                    <span>${creator.uniqueSavers} students reached</span>
+                </div>
+            </div>
+            <button class="view-curator-btn" data-userid="${creator.id}">
+                View Profile
+            </button>
+        `;
+        leaderboardList.appendChild(item);
+    });
+
+    document.getElementById('leaderboardUpdateTime').textContent = 
+        `Last updated: ${new Date().toLocaleTimeString()}`;
+}
     function showCuratorProfile() {
         document.getElementById('curatorProfile').style.display = 'block';
         document.getElementById('leaderboardSection').style.display = 'block';
