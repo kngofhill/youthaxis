@@ -3660,47 +3660,68 @@ function trackOpportunitySaves() {
         }
     });
 }
-        function initExpiredOpportunitiesFilter() {
+     function initExpiredOpportunitiesFilter() {
     const filterExpiredBtn = document.getElementById('filterExpiredBtn');
     if (!filterExpiredBtn) return;
     
     let showExpiredOnly = false;
+    let originalOpportunities = [...allOpportunities]; // Store original list
     
     filterExpiredBtn.addEventListener('click', function() {
         showExpiredOnly = !showExpiredOnly;
         
         if (showExpiredOnly) {
-            this.innerHTML = '<i class="fas fa-hourglass-end"></i> Show All';
-            this.classList.add('filter-expired');
-            renderAdminOpportunities(true);
+            // Show expired only
+            this.innerHTML = '<i class="fas fa-list"></i> Show All';
+            this.classList.remove('filter-expired-btn');
+            this.classList.add('filter-all');
+            
+            // Filter to show only expired opportunities
+            const filteredOpportunities = allOpportunities.filter(opp => {
+                return isOpportunityExpired(opp.deadline);
+            });
+            
+            // Update the admin table
+            renderAdminOpportunities(filteredOpportunities);
+            showNotification(`Showing ${filteredOpportunities.length} expired opportunities`);
+            
         } else {
+            // Show all opportunities
             this.innerHTML = '<i class="fas fa-hourglass-end"></i> Show Expired Only';
-            this.classList.remove('filter-expired');
-            renderAdminOpportunities();
+            this.classList.remove('filter-all');
+            this.classList.add('filter-expired-btn');
+            
+            // Show all opportunities
+            renderAdminOpportunities(allOpportunities);
+            showNotification(`Showing all ${allOpportunities.length} opportunities`);
         }
     });
 }
-
         // Render opportunities to the grid
-  function renderAdminOpportunities(showExpiredOnly = false) {
+ function renderAdminOpportunities(opportunitiesToRender = null) {
     if (!adminOpportunitiesList) return;
+    
+    // Use provided opportunities or default to allOpportunities
+    const opportunities = opportunitiesToRender || allOpportunities;
     
     adminOpportunitiesList.innerHTML = '';
     
-    let filteredOpportunities = allOpportunities;
-    
-    if (showExpiredOnly) {
-        filteredOpportunities = allOpportunities.filter(opp => {
-            return isOpportunityExpired(opp.deadline);
-        });
-    }
-    
-    if (filteredOpportunities.length === 0) {
-        adminOpportunitiesList.innerHTML = '<tr><td colspan="8" style="text-align: center;">No opportunities found</td></tr>';
+    if (opportunities.length === 0) {
+        adminOpportunitiesList.innerHTML = `
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 2rem;">
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>No opportunities found</h3>
+                        <p>No opportunities match the current filter</p>
+                    </div>
+                </td>
+            </tr>
+        `;
         return;
     }
     
-    filteredOpportunities.forEach(async (opp) => {
+    opportunities.forEach(async (opp) => {
         const timeRemaining = calculateTimeRemaining(opp.deadline);
         const canModify = await canUserModifyOpportunity(opp.id);
         const isOwnOpportunity = opp.addedBy === auth.currentUser?.uid;
@@ -3708,12 +3729,15 @@ function trackOpportunitySaves() {
         
         const row = document.createElement('tr');
         if (isExpired) {
-            row.style.opacity = '0.7';
+            row.style.backgroundColor = '#fff5f5';
+            row.style.borderLeft = '4px solid var(--danger)';
         }
         
         row.innerHTML = `
             <td>${opp.title || 'Untitled'}
-                ${isExpired ? '<span style="color: var(--danger); margin-left: 10px; font-size: 0.8rem;">(Expired)</span>' : ''}
+                ${isExpired ? 
+                    '<span style="color: var(--danger); margin-left: 10px; font-size: 0.8rem; font-weight: 600;">(EXPIRED)</span>' : 
+                    ''}
             </td>
             <td>${opp.organization || 'Unknown'}</td>
             <td>${getOpportunityTypeText(opp.type)}</td>
@@ -3727,17 +3751,21 @@ function trackOpportunitySaves() {
             <td>${opp.addedByName || 'Unknown'}</td>
             <td>
                 ${isOwnOpportunity ? 
-                    '<span style="color: var(--success);">You</span>' : 
-                    '<span style="color: var(--gray);">Other Admin</span>'}
+                    '<span style="color: var(--success); font-weight: 600;">You</span>' : 
+                    '<span style="color: var(--gray);">Other</span>'}
             </td>
             <td class="admin-actions-cell">
                 <button class="admin-btn edit-btn" data-id="${opp.id}" 
-                    ${!canModify && !isOwnOpportunity ? 'disabled' : ''}>
-                    Edit
+                    ${!canModify && !isOwnOpportunity ? 'disabled' : ''}
+                    title="${!canModify && !isOwnOpportunity ? 'Can only edit your own opportunities' : 'Edit'}"
+                    style="${!canModify && !isOwnOpportunity ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
+                    <i class="fas fa-edit"></i> Edit
                 </button>
                 <button class="admin-btn delete-btn" data-id="${opp.id}" 
-                    ${!canModify && !isOwnOpportunity ? 'disabled' : ''}>
-                    Delete
+                    ${!canModify && !isOwnOpportunity ? 'disabled' : ''}
+                    title="${!canModify && !isOwnOpportunity ? 'Can only delete your own opportunities' : 'Delete'}"
+                    style="${!canModify && !isOwnOpportunity ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
+                    <i class="fas fa-trash"></i> Delete
                 </button>
             </td>
         `;
@@ -3762,9 +3790,28 @@ function trackOpportunitySaves() {
                 return;
             }
             const oppId = this.getAttribute('data-id');
-            deleteOpportunity(oppId);
+            if (confirm('Are you sure you want to delete this opportunity?\n\nThis action cannot be undone.')) {
+                deleteOpportunity(oppId);
+            }
         });
     });
+}
+        function isOpportunityExpired(deadline) {
+    if (!deadline) return false;
+    
+    try {
+        // Set time to end of day for the deadline
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
+        
+        const deadlineDate = new Date(deadline);
+        deadlineDate.setHours(23, 59, 59, 999);
+        
+        return deadlineDate < today;
+    } catch (e) {
+        console.error('Error checking expiration:', e);
+        return false;
+    }
 }
         function showOpportunityDetails(opportunity) {
             const detailsModal = document.getElementById('detailsModal');
