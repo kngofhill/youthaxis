@@ -4849,6 +4849,7 @@ function showAdminPanel() {
                 document.getElementById('adminOrganization').value = opportunity.organization;
                 adminTypeMultiSelect.setSelected(opportunity.type);
                 adminFieldMultiSelect.setSelected(opportunity.field);
+                 adminStudentTypeMultiSelect.setSelected(opportunity.studentType || ['highschool', 'any']);
                 document.getElementById('adminFormat').value = opportunity.format;
                 document.getElementById('adminDescription').value = opportunity.description;
                 document.getElementById('adminLocation').value = opportunity.location;
@@ -4865,6 +4866,7 @@ function showAdminPanel() {
                 document.getElementById('opportunityId').value = '';
                 adminTypeMultiSelect.clear();
                 adminFieldMultiSelect.setSelected(['any']);
+                 adminStudentTypeMultiSelect.setSelected(opportunity.studentType || ['highschool', 'any']);
                 
                 handleFormatChange();
             }
