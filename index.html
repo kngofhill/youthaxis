@@ -2875,7 +2875,22 @@
         
         return FIELD_OPTIONS[field] || field;
     }
-
+    function getStudentTypeText(studentType) {
+    if (!studentType) return 'High School';
+    
+    if (Array.isArray(studentType)) {
+        if (studentType.includes('any')) {
+            return 'All Levels';
+        }
+        return studentType.map(st => STUDENT_TYPE_OPTIONS[st] || st).join(', ');
+    }
+    
+    if (studentType === 'any') {
+        return 'All Levels';
+    }
+    
+    return STUDENT_TYPE_OPTIONS[studentType] || studentType;
+}
     function getFormatBadge(format) {
         switch(format) {
             case 'online': return '<span class="format-badge format-online">Online</span>';
