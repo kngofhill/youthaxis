@@ -2451,7 +2451,16 @@
                 <label for="adminLocation">Location *</label>
                 <input type="text" id="adminLocation">
             </div>
-            
+            <div class="admin-form-group">
+    <label for="adminStudentTypeInput">Student Level *</label>
+    <div class="multiselect-container">
+        <input type="text" id="adminStudentTypeInput" placeholder="Select levels..." readonly required>
+        <div class="multiselect-dropdown" id="adminStudentTypeDropdown">
+            <!-- Student type options will be populated by JavaScript -->
+        </div>
+        <div class="multiselect-tags" id="adminStudentTypeTags"></div>
+    </div>
+</div>
             <div class="admin-form-group">
                 <label for="adminDescription">Description *</label>
                 <textarea id="adminDescription" required></textarea>
