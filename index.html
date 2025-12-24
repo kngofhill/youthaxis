@@ -4749,18 +4749,19 @@ function resetApplicationUI() {
             applyFilters();
         }
 
-        function resetFilters() {
-            fieldMultiSelect.clear();
-            typeMultiSelect.clear();
-            document.getElementById('format').value = '';
-            document.getElementById('deadline').value = '';
-            document.getElementById('language').value = '';
-            if (searchInput) searchInput.value = '';
-            
-            filteredOpportunities = [...allOpportunities];
-            renderOpportunities();
-            showNotification('Filters reset');
-        }
+function resetFilters() {
+    fieldMultiSelect.clear();
+    typeMultiSelect.clear();
+    studentTypeMultiSelect.clear(); // ADD THIS
+    document.getElementById('format').value = '';
+    document.getElementById('deadline').value = '';
+    document.getElementById('language').value = '';
+    if (searchInput) searchInput.value = '';
+    
+    filteredOpportunities = [...allOpportunities];
+    renderOpportunities();
+    showNotification('Filters reset');
+}}
 
         function showDashboard() {
             const user = auth.currentUser;
