@@ -5143,12 +5143,13 @@ function showAdminPanel() {
         location = document.getElementById('adminLocation').value;
     }
     
-    // FIX: Only gather editable fields, don't include creator info
     return {
         title: document.getElementById('adminTitle').value.trim(),
         organization: document.getElementById('adminOrganization').value.trim(),
         type: adminTypeMultiSelect.getSelected(),
         field: adminFieldMultiSelect.getSelected(),
+        // ADD THIS LINE:
+        studentType: adminStudentTypeMultiSelect.getSelected(), 
         format: format,
         description: document.getElementById('adminDescription').value.trim(),
         location: location,
@@ -5158,7 +5159,6 @@ function showAdminPanel() {
         duration: document.getElementById('adminDuration').value,
         language: document.getElementById('adminLanguage').value,
         ageRestrictions: document.getElementById('adminAgeRestrictions').value
-        // Note: addedBy, addedByName, createdAt are handled separately
     };
 }
 
