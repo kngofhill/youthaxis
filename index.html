@@ -3813,6 +3813,9 @@ adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStu
                 if (!opp.field || (Array.isArray(opp.field) && opp.field.length === 0)) {
                     opp.field = ['any'];
                 }
+                 if (!opp.studentType) {
+        opp.studentType = ['highschool', 'any'];
+    }
             });
         }
         
