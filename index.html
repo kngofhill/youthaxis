@@ -2247,6 +2247,16 @@
             
             <div class="filter-row">
                 <div class="filter-group">
+    <label for="studentTypeInput">Student Level</label>
+    <div class="multiselect-container">
+        <input type="text" id="studentTypeInput" placeholder="Select levels..." readonly>
+        <div class="multiselect-dropdown" id="studentTypeDropdown">
+            <!-- Student type options will be populated by JavaScript -->
+        </div>
+        <div class="multiselect-tags" id="studentTypeTags"></div>
+    </div>
+</div>
+                <div class="filter-group">
                     <label for="deadline">Deadline Within</label>
                     <select id="deadline">
                         <option value="">Any Time</option>
