@@ -4020,6 +4020,9 @@ adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStu
             if (opportunity.format) {
                 additionalInfo += `<p><strong>Format:</strong> ${getFormatText(opportunity.format)}</p>`;
             }
+            if (opportunity.studentType) {
+    additionalInfo += `<p><strong>Student Level:</strong> ${getStudentTypeText(opportunity.studentType)}</p>`;
+}
             if (opportunity.timeCommitment) {
                 additionalInfo += `<p><strong>Time Commitment:</strong> ${opportunity.timeCommitment}</p>`;
             }
