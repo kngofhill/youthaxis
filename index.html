@@ -3560,11 +3560,20 @@ function updateLeaderboardUIWithData(leaderboardData) {
         const mainHeader = document.getElementById('mainHeader');
 
         // Initialize multi-select components
-        fieldMultiSelect = new MultiSelect('fieldInput', 'fieldDropdown', 'fieldTags', FIELD_OPTIONS);
-        typeMultiSelect = new MultiSelect('typeInput', 'typeDropdown', 'typeTags', TYPE_OPTIONS);
-        adminFieldMultiSelect = new MultiSelect('adminFieldInput', 'adminFieldDropdown', 'adminFieldTags', FIELD_OPTIONS);
-        adminTypeMultiSelect = new MultiSelect('adminTypeInput', 'adminTypeDropdown', 'adminTypeTags', TYPE_OPTIONS);
+   // Initialize multi-select components
+let fieldMultiSelect, typeMultiSelect, adminFieldMultiSelect, adminTypeMultiSelect;
+// ADD THESE TWO LINES:
+let studentTypeMultiSelect, adminStudentTypeMultiSelect;
 
+// Later in your DOMContentLoaded function:
+fieldMultiSelect = new MultiSelect('fieldInput', 'fieldDropdown', 'fieldTags', FIELD_OPTIONS);
+typeMultiSelect = new MultiSelect('typeInput', 'typeDropdown', 'typeTags', TYPE_OPTIONS);
+adminFieldMultiSelect = new MultiSelect('adminFieldInput', 'adminFieldDropdown', 'adminFieldTags', FIELD_OPTIONS);
+adminTypeMultiSelect = new MultiSelect('adminTypeInput', 'adminTypeDropdown', 'adminTypeTags', TYPE_OPTIONS);
+// ADD THESE TWO LINES HERE:
+studentTypeMultiSelect = new MultiSelect('studentTypeInput', 'studentTypeDropdown', 'studentTypeTags', STUDENT_TYPE_OPTIONS);
+adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStudentTypeDropdown', 'adminStudentTypeTags', STUDENT_TYPE_OPTIONS);
+    
         // Event Listeners
         if (loginBtn) loginBtn.addEventListener('click', () => showAuthModal('login'));
         if (signupBtn) signupBtn.addEventListener('click', () => showAuthModal('signup'));
