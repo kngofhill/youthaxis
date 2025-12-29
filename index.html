@@ -4597,15 +4597,20 @@ adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStu
     renderOpportunities();
     showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
 }
-  function renderOpportunities() {
+function renderOpportunities() {
     if (!opportunitiesGrid) return;
     
-    if (filteredOpportunities.length === 0) {
+    // FILTER OUT EXPIRED OPPORTUNITIES HERE
+    const nonExpiredOpportunities = filteredOpportunities.filter(opp => !isOpportunityExpired(opp.deadline));
+    
+    if (nonExpiredOpportunities.length === 0) {
         opportunitiesGrid.innerHTML = `
             <div class="no-results">
                 <i class="fas fa-search"></i>
-                <h3>No opportunities found</h3>
-                <p>Try adjusting your filters or search terms</p>
+                <h3>No active opportunities found</h3>
+                <p>${filteredOpportunities.length > 0 ? 
+                    'All matching opportunities have expired. Try adjusting your filters.' : 
+                    'Try adjusting your filters or search terms'}</p>
             </div>
         `;
         return;
@@ -4613,7 +4618,7 @@ adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStu
     
     opportunitiesGrid.innerHTML = '';
     
-    filteredOpportunities.forEach((opportunity) => {
+    nonExpiredOpportunities.forEach((opportunity) => {
         const isExpired = isOpportunityExpired(opportunity.deadline);
         const isUrgent = isDeadlineUrgent(opportunity.deadline);
         const timeRemaining = calculateTimeRemaining(opportunity.deadline);
@@ -4629,7 +4634,6 @@ adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStu
             <div class="card-header">
                 <span class="opportunity-badge type-badge">${getOpportunityTypeText(opportunity.type)}</span>
                 <span class="opportunity-badge field-badge">${getFieldText(opportunity.field)}</span>
-                <!-- ADD THIS LINE FOR STUDENT TYPE BADGE: -->
                 <span class="opportunity-badge level-badge">${getStudentTypeText(opportunity.studentType)}</span>
                 ${getFormatBadge(opportunity.format)}
                 <h3>${opportunity.title || 'Untitled Opportunity'}</h3>
