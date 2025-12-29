@@ -4559,7 +4559,7 @@ adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStu
             .catch((error) => console.error('Error updating opportunity:', error));
         }
 
-  function applyFilters() {
+function applyFilters() {
     const selectedFields = fieldMultiSelect.getSelected();
     const selectedTypes = typeMultiSelect.getSelected();
     const selectedStudentTypes = studentTypeMultiSelect.getSelected();
@@ -4609,10 +4609,14 @@ adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStu
         // Language filter
         if (languageFilter && opp.language !== languageFilter) return false;
         
-        // Deadline filter
+        // Deadline filter - FIXED SECTION
         if (deadlineFilter && opp.deadline) {
             const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
             const deadlineDate = new Date(opp.deadline);
+            deadlineDate.setHours(0, 0, 0, 0);
+            
             const diffTime = deadlineDate - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             
@@ -4626,16 +4630,39 @@ adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStu
                 case '3months':
                     if (diffDays > 90 || diffDays < 0) return false;
                     break;
+                case 'expired':
+                    // Only show expired opportunities
+                    if (diffDays >= 0) return false; // If not expired, exclude
+                    break;
             }
+        } else if (deadlineFilter === 'expired') {
+            // If no deadline specified, exclude from expired filter
+            if (!opp.deadline) return false;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const deadlineDate = new Date(opp.deadline);
+            deadlineDate.setHours(0, 0, 0, 0);
+            
+            if (deadlineDate >= today) return false; // Not expired
         }
         
         return true;
     });
     
-    // REMOVE EXPIRED OPPORTUNITIES FROM MAIN VIEW
-    // Only show expired opportunities if explicitly filtered
+    // REMOVE EXPIRED OPPORTUNITIES FROM MAIN VIEW unless explicitly filtered
     if (deadlineFilter !== 'expired') {
-        tempFiltered = tempFiltered.filter(opp => !isOpportunityExpired(opp.deadline));
+        tempFiltered = tempFiltered.filter(opp => {
+            if (!opp.deadline) return true; // Keep opportunities with no deadline
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const deadlineDate = new Date(opp.deadline);
+            deadlineDate.setHours(0, 0, 0, 0);
+            
+            return deadlineDate >= today; // Only show non-expired
+        });
     }
     
     filteredOpportunities = tempFiltered;
@@ -4645,17 +4672,12 @@ adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStu
 function renderOpportunities() {
     if (!opportunitiesGrid) return;
     
-    // FILTER OUT EXPIRED OPPORTUNITIES HERE
-    const nonExpiredOpportunities = filteredOpportunities.filter(opp => !isOpportunityExpired(opp.deadline));
-    
-    if (nonExpiredOpportunities.length === 0) {
+    if (filteredOpportunities.length === 0) {
         opportunitiesGrid.innerHTML = `
             <div class="no-results">
                 <i class="fas fa-search"></i>
-                <h3>No active opportunities found</h3>
-                <p>${filteredOpportunities.length > 0 ? 
-                    'All matching opportunities have expired. Try adjusting your filters.' : 
-                    'Try adjusting your filters or search terms'}</p>
+                <h3>No opportunities found</h3>
+                <p>Try adjusting your filters or search terms</p>
             </div>
         `;
         return;
@@ -4663,7 +4685,7 @@ function renderOpportunities() {
     
     opportunitiesGrid.innerHTML = '';
     
-    nonExpiredOpportunities.forEach((opportunity) => {
+    filteredOpportunities.forEach((opportunity) => {
         const isExpired = isOpportunityExpired(opportunity.deadline);
         const isUrgent = isDeadlineUrgent(opportunity.deadline);
         const timeRemaining = calculateTimeRemaining(opportunity.deadline);
@@ -4675,8 +4697,12 @@ function renderOpportunities() {
         const oppElement = document.createElement('div');
         oppElement.className = `opportunity-card ${isExpired ? 'expired' : ''}`;
         
+        // Add expired styling
+        const expiredStyle = isExpired ? 'style="background-color: #fff5f5; border-left: 4px solid var(--danger);"' : '';
+        
         oppElement.innerHTML = `
-            <div class="card-header">
+            <div class="card-header" ${expiredStyle}>
+                ${isExpired ? '<span style="color: var(--danger); font-weight: 600; font-size: 0.9rem;">[EXPIRED]</span>' : ''}
                 <span class="opportunity-badge type-badge">${getOpportunityTypeText(opportunity.type)}</span>
                 <span class="opportunity-badge field-badge">${getFieldText(opportunity.field)}</span>
                 <span class="opportunity-badge level-badge">${getStudentTypeText(opportunity.studentType)}</span>
@@ -4693,10 +4719,12 @@ function renderOpportunities() {
                 
                 <div class="detail">
                     <i class="fas fa-calendar-alt"></i>
-                    <span class="deadline ${isUrgent ? 'urgent' : ''}">Deadline: ${formatDate(opportunity.deadline)} 
+                    <span class="deadline ${isUrgent ? 'urgent' : ''} ${isExpired ? 'expired' : ''}">
+                        Deadline: ${formatDate(opportunity.deadline)} 
                         ${timeRemaining.text !== 'No deadline' ? 
                             `<span class="time-remaining ${timeRemaining.class}">${timeRemaining.text}</span>` : 
                             ''}
+                        ${isExpired ? '<span class="time-remaining" style="background-color: var(--danger);">Expired</span>' : ''}
                     </span>
                 </div>
                 
@@ -4741,7 +4769,7 @@ function renderOpportunities() {
         
         opportunitiesGrid.appendChild(oppElement);
         
-        // Add event listeners
+        // Add event listeners...
         const saveBtn = oppElement.querySelector('.save-btn');
         saveBtn.addEventListener('click', function() {
             const user = auth.currentUser;
