@@ -4552,17 +4552,24 @@ adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStu
             .catch((error) => console.error('Error updating opportunity:', error));
         }
 
-    function applyFilters() {
+  function applyFilters() {
     const selectedFields = fieldMultiSelect.getSelected();
     const selectedTypes = typeMultiSelect.getSelected();
-    const selectedStudentTypes = studentTypeMultiSelect.getSelected(); // ADD THIS
+    const selectedStudentTypes = studentTypeMultiSelect.getSelected();
     const formatFilter = document.getElementById('format').value;
     const deadlineFilter = document.getElementById('deadline').value;
     const languageFilter = document.getElementById('language').value;
     const searchTerm = searchInput.value.toLowerCase();
     
-    filteredOpportunities = allOpportunities.filter(opp => {
-        // ... existing expiration check ...
+    // Get all opportunities first
+    let tempFiltered = allOpportunities.filter(opp => {
+        // Search filter
+        if (searchTerm) {
+            const titleMatch = opp.title.toLowerCase().includes(searchTerm);
+            const orgMatch = opp.organization.toLowerCase().includes(searchTerm);
+            const descMatch = opp.description.toLowerCase().includes(searchTerm);
+            if (!titleMatch && !orgMatch && !descMatch) return false;
+        }
         
         // Field filter
         if (selectedFields.length > 0) {
@@ -4580,7 +4587,7 @@ adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStu
             if (!hasMatchingType) return false;
         }
         
-        // ADD STUDENT TYPE FILTER HERE:
+        // Student Type filter
         if (selectedStudentTypes.length > 0) {
             const oppStudentTypes = Array.isArray(opp.studentType) ? opp.studentType : [opp.studentType || 'highschool'];
             const hasAnyStudentType = oppStudentTypes.includes('any');
@@ -4589,11 +4596,42 @@ adminStudentTypeMultiSelect = new MultiSelect('adminStudentTypeInput', 'adminStu
             if (!hasAnyStudentType && !hasMatchingStudentType) return false;
         }
         
-        // ... rest of existing filters ...
+        // Format filter
+        if (formatFilter && opp.format !== formatFilter) return false;
+        
+        // Language filter
+        if (languageFilter && opp.language !== languageFilter) return false;
+        
+        // Deadline filter
+        if (deadlineFilter && opp.deadline) {
+            const today = new Date();
+            const deadlineDate = new Date(opp.deadline);
+            const diffTime = deadlineDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            switch(deadlineFilter) {
+                case 'week':
+                    if (diffDays > 7 || diffDays < 0) return false;
+                    break;
+                case 'month':
+                    if (diffDays > 30 || diffDays < 0) return false;
+                    break;
+                case '3months':
+                    if (diffDays > 90 || diffDays < 0) return false;
+                    break;
+            }
+        }
         
         return true;
     });
     
+    // REMOVE EXPIRED OPPORTUNITIES FROM MAIN VIEW
+    // Only show expired opportunities if explicitly filtered
+    if (deadlineFilter !== 'expired') {
+        tempFiltered = tempFiltered.filter(opp => !isOpportunityExpired(opp.deadline));
+    }
+    
+    filteredOpportunities = tempFiltered;
     renderOpportunities();
     showNotification(`Found ${filteredOpportunities.length} opportunities matching your filters`);
 }
