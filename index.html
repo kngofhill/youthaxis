@@ -2960,16 +2960,22 @@
     }
 
     function isOpportunityExpired(deadline) {
-        if (!deadline) return false;
+    if (!deadline) return false;
+    
+    try {
+        const today = new Date();
+        // Set time to end of day for fair comparison
+        today.setHours(23, 59, 59, 999);
         
-        try {
-            const today = new Date();
-            const deadlineDate = new Date(deadline);
-            return deadlineDate < today;
-        } catch (e) {
-            return false;
-        }
+        const deadlineDate = new Date(deadline);
+        deadlineDate.setHours(23, 59, 59, 999);
+        
+        return deadlineDate < today;
+    } catch (e) {
+        console.error('Error checking expiration:', e);
+        return false;
     }
+}
 
     function isDeadlineUrgent(deadline) {
         if (!deadline) return false;
