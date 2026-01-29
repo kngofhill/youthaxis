@@ -4904,52 +4904,72 @@ function showAdminPanel() {
                 document.getElementById('completedContent').classList.add('active');
             }
         }
-
-        function showAdminModal(opportunity = null) {
-            if (!adminModal) return;
-            
-            const user = auth.currentUser;
-            if (!user) {
-                showNotification('Please sign in to access admin features', 'warning');
-                return;
-            }
-            
-            if (!isAdminUser) {
-                showNotification('Access denied. Admin privileges required.', 'error');
-                return;
-            }
-            
-            if (opportunity) {
-                adminModalTitle.textContent = 'Edit Opportunity';
-                document.getElementById('opportunityId').value = opportunity.id;
-                document.getElementById('adminTitle').value = opportunity.title;
-                document.getElementById('adminOrganization').value = opportunity.organization;
-                adminTypeMultiSelect.setSelected(opportunity.type);
-                adminFieldMultiSelect.setSelected(opportunity.field);
-                 adminStudentTypeMultiSelect.setSelected(opportunity.studentType || ['highschool', 'any']);
-                document.getElementById('adminFormat').value = opportunity.format;
-                document.getElementById('adminDescription').value = opportunity.description;
-                document.getElementById('adminLocation').value = opportunity.location;
-                document.getElementById('adminDeadline').value = opportunity.deadline;
-                document.getElementById('adminApplyLink').value = opportunity.applyLink;
-                document.getElementById('adminTimeCommitment').value = opportunity.timeCommitment || '';
-                document.getElementById('adminDuration').value = opportunity.duration || '';
-                document.getElementById('adminLanguage').value = opportunity.language || '';
-                
-                handleFormatChange();
-            } else {
-                adminModalTitle.textContent = 'Add New Opportunity';
-                adminOpportunityForm.reset();
-                document.getElementById('opportunityId').value = '';
-                adminTypeMultiSelect.clear();
-                adminFieldMultiSelect.setSelected(['any']);
-                 adminStudentTypeMultiSelect.setSelected(opportunity.studentType || ['highschool', 'any']);
-                
-                handleFormatChange();
-            }
-            
-            adminModal.style.display = 'flex';
-        }
+function showAdminModal(opportunity = null) {
+    if (!adminModal) return;
+    
+    const user = auth.currentUser;
+    if (!user) {
+        showNotification('Please sign in to access admin features', 'warning');
+        return;
+    }
+    
+    if (!isAdminUser) {
+        showNotification('Access denied. Admin privileges required.', 'error');
+        return;
+    }
+    
+    if (opportunity) {
+        // EDITING existing opportunity
+        adminModalTitle.textContent = 'Edit Opportunity';
+        document.getElementById('opportunityId').value = opportunity.id;
+        document.getElementById('adminTitle').value = opportunity.title;
+        document.getElementById('adminOrganization').value = opportunity.organization;
+        adminTypeMultiSelect.setSelected(opportunity.type);
+        adminFieldMultiSelect.setSelected(opportunity.field);
+        
+        // FIX: Handle studentType safely - check if it exists
+        adminStudentTypeMultiSelect.setSelected(
+            opportunity.studentType || ['highschool', 'any']
+        );
+        
+        document.getElementById('adminFormat').value = opportunity.format;
+        document.getElementById('adminDescription').value = opportunity.description;
+        document.getElementById('adminLocation').value = opportunity.location;
+        document.getElementById('adminDeadline').value = opportunity.deadline;
+        document.getElementById('adminApplyLink').value = opportunity.applyLink;
+        document.getElementById('adminTimeCommitment').value = opportunity.timeCommitment || '';
+        document.getElementById('adminDuration').value = opportunity.duration || '';
+        document.getElementById('adminLanguage').value = opportunity.language || '';
+        document.getElementById('adminAgeRestrictions').value = opportunity.ageRestrictions || '';
+        
+        handleFormatChange();
+    } else {
+        // ADDING new opportunity
+        adminModalTitle.textContent = 'Add New Opportunity';
+        adminOpportunityForm.reset();
+        document.getElementById('opportunityId').value = '';
+        adminTypeMultiSelect.clear();
+        adminFieldMultiSelect.setSelected(['any']);
+        
+        // FIX: Set default studentType for new opportunity
+        adminStudentTypeMultiSelect.setSelected(['highschool', 'any']);
+        
+        // Clear other fields
+        document.getElementById('adminFormat').value = '';
+        document.getElementById('adminDescription').value = '';
+        document.getElementById('adminLocation').value = '';
+        document.getElementById('adminDeadline').value = '';
+        document.getElementById('adminApplyLink').value = '';
+        document.getElementById('adminTimeCommitment').value = '';
+        document.getElementById('adminDuration').value = '';
+        document.getElementById('adminLanguage').value = '';
+        document.getElementById('adminAgeRestrictions').value = '';
+        
+        handleFormatChange();
+    }
+    
+    adminModal.style.display = 'flex';
+}
 
         function fuzzyMatch(str1, str2, threshold = 0.8) {
             if (!str1 || !str2) return 0;
